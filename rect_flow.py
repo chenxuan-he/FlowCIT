@@ -2,6 +2,9 @@ from torch import nn
 import torch
 import numpy as np
 
+device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+
+
 class MLP(nn.Module):
     def __init__(self, input_dim=2, hidden_num=128, output_dim=1, binary=False, positive=False, activation="relu"):
         super().__init__()
