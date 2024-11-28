@@ -3,4 +3,5 @@ __pycache__
 *.xlsx
 *.xls
 *.log
+*.out
 flow_test_res/
