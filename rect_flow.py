@@ -77,16 +77,16 @@ def train_rectified_flow(rectified_flow, optimizer, pairs, batchsize, inner_iter
 
 
 class ConditionalRectifiedFlow():
-    def __init__(self, model=None, num_steps=1000):
-        self.model = model
+    def __init__(self, model=None, num_steps=1000, device="cpu"):
+        self.model = model.to(device)
         self.N = num_steps
     def get_train_tuples(self, z0=None, z1=None, c1=None):
         t = torch.rand((z1.shape[0], 1))
-        z_t =  t * z1 + (1.-t) * z0
-        target = z1 - z0 
+        z_t =  (t * z1 + (1.-t) * z0)
+        target = (z1 - z0)
         return z_t, t, target
     #@torch.no_grad()
-    def sample_conditional_ode(self, z0=None, c1=None, N=None):
+    def sample_conditional_ode(self, z0=None, c1=None, N=None, device="cpu"):
         ### NOTE: Use Euler method to sample from the learned flow
         if N is None:
             N = self.N    
@@ -97,13 +97,13 @@ class ConditionalRectifiedFlow():
         traj.append(z.clone())
         for i in range(N):
             t = torch.ones((batchsize,1)) * i / N
-            pred = self.model(torch.cat([z, c1, t], dim=1))
-            z = z.clone() + pred * dt
+            pred = self.model(torch.cat([z, c1, t], dim=1).to(device))
+            z = z.clone() + pred.cpu() * dt
             traj.append(z.clone())
         return traj
 
 
-def train_conditional_rectified_flow(rectified_flow, optimizer, pairs, batchsize, inner_iters):
+def train_conditional_rectified_flow(rectified_flow, optimizer, pairs, batchsize, inner_iters, device="cpu"):
     loss_curve = []
     n = pairs[0].shape[0]
     for i in range(inner_iters+1):
@@ -114,8 +114,8 @@ def train_conditional_rectified_flow(rectified_flow, optimizer, pairs, batchsize
         z1 = pairs[1][indices].detach().clone()
         c1 = pairs[2][indices].detach().clone()
         z_t, t, target = rectified_flow.get_train_tuples(z0=z0, z1=z1)
-        pred = rectified_flow.model(torch.cat([z_t, c1, t], dim=1))
-        loss = (target - pred).view(pred.shape[0], -1).abs().pow(2).sum(dim=1)
+        pred = rectified_flow.model(torch.cat([z_t, c1, t], dim=1).to(device))
+        loss = (target.to(device) - pred).view(pred.shape[0], -1).abs().pow(2).sum(dim=1)
         loss = loss.mean()
         loss.backward()
         optimizer.step()
