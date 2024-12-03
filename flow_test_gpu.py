@@ -18,7 +18,7 @@ def parse_args():
     parser.add_argument('--p', type=int, default=10, help='Dimension of X')
     parser.add_argument('--q', type=int, default=10, help='Dimension of Y')
     parser.add_argument('--d', type=int, default=10, help='Dimension of Z.')
-    parser.add_argument('--nsim', type=int, default=100,
+    parser.add_argument('--nsim', type=int, default=10,
                         help='Number of simulations.')
     parser.add_argument('--cores', type=int, default=5,
                         help="Number of parallel cores.")
@@ -83,7 +83,7 @@ def sim(seed=0, p=10, q=10, d=3, n=1000, alpha=.1, batchsize=50, iteration_flow=
 
 if __name__ == "__main__":
     multiprocessing.set_start_method('spawn')
-    cpu_cores_to_use = os.cpu_count() // 2
+    cpu_cores_to_use = os.cpu_count()*9 // 10
     p = psutil.Process()
     p.cpu_affinity(list(range(cpu_cores_to_use))) 
 
@@ -93,14 +93,14 @@ if __name__ == "__main__":
         
     args = parse_args()
     nsim = args.nsim
-    # device_ids = [f'cuda:{i % min(torch.cuda.device_count(), cores)}' if torch.cuda.is_available() else 'cpu' for i in range(nsim)]
-    device_ids = [f'cuda:1' if torch.cuda.is_available() else 'cpu']
-    results = pool.starmap(sim, [(i, args.p, args.q, args.d, args.n, 0.1, 50, 1000, 128, 5e-3, 1000, device_ids[0]) for i in range(nsim)])
+    device_ids = [f'cuda:{i % min(torch.cuda.device_count(), cores)}' if torch.cuda.is_available() else 'cpu' for i in range(nsim)]
+    # device_ids = [f'cuda:1' if torch.cuda.is_available() else 'cpu']
+    results = pool.starmap(sim, [(i, args.p, args.q, args.d, args.n, 0.1, 50, 1000, 128, 5e-3, 1000, device_ids[i]) for i in range(nsim)])
     pool.close()
 
     dc_1, p_1, dc_2, p_2, dc_3, p_3 = zip(*results)
     data_list = [dc_1, p_1, dc_2, p_2, dc_3, p_3]
     
     # Save data_list to a file
-    with open('flow_test_res/'+str(args.p) + '_'+ str(args.q) + '_' + str(args.d) + 'simulation_results.pkl', 'wb') as f:
+    with open('flow_test_res/tmp_'+str(args.p) + '_'+ str(args.q) + '_' + str(args.d) + 'simulation_results.pkl', 'wb') as f:
         pickle.dump(data_list, f)
