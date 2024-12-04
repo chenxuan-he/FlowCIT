@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Load a DataFrame from a .pkl file
-df = pd.read_pickle('flow_test_res/5_5_5simulation_results.pkl')
+df = pd.read_pickle('flow_test_res/tmp_100_10_3simulation_results.pkl')
 
 sum(1 for value in df[1] if value > 0.05)
 

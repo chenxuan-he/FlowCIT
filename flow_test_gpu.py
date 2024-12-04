@@ -12,27 +12,33 @@ import argparse
 # Function to parse command-line arguments
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Simulation script with IV Data Generating Process and SCAD Regression")
+        description="Simulation script.")
     # Add arguments for n, p, q, and first_k_beta with default values
-    parser.add_argument('--n', type=int, default=1000, help='Observations.')
-    parser.add_argument('--p', type=int, default=10, help='Dimension of X')
+    parser.add_argument('--n', type=int, default=2000, help='Observations.')
+    parser.add_argument('--p', type=int, default=100, help='Dimension of X')
     parser.add_argument('--q', type=int, default=10, help='Dimension of Y')
-    parser.add_argument('--d', type=int, default=10, help='Dimension of Z.')
-    parser.add_argument('--nsim', type=int, default=10,
+    parser.add_argument('--d', type=int, default=3, help='Dimension of Z.')
+    parser.add_argument('--nsim', type=int, default=100,
                         help='Number of simulations.')
     parser.add_argument('--cores', type=int, default=5,
                         help="Number of parallel cores.")
     # Parse arguments
     return parser.parse_args()
 
-def generate_data(n=1000, p=200, q=200, d=200, alpha=.1, seed=0):
+def generate_data(n=1000, p=200, q=200, d=200, alpha=.1, seed=0, first_k=3):
     np.random.seed(seed)
     torch.manual_seed(seed)
     random.seed(seed)
     # Under H0: X is independent of Y given Z
     beta_1 = torch.randn((d, p))
+    beta_1[first_k:, :] = 0 
+    beta_1[:, first_k:] = 0
     beta_2 = torch.randn((d, q))
+    beta_2[first_k:, :] = 0
+    beta_2[:, first_k:] = 0
     beta_3 = torch.randn((p, q))
+    beta_3[first_k:, :] = 0
+    beta_3[:, first_k:] = 0
     # Generate Z and X
     Z = torch.randn((n, d))
     X = Z @ beta_1 + torch.randn((n, p))
@@ -71,7 +77,7 @@ def flow_test(x, y, z, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3
     return dc, dc_p
 
 
-def sim(seed=0, p=10, q=10, d=3, n=1000, alpha=.1, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3, num_steps=100, device="cpu"):
+def sim(seed=0, p=10, q=10, d=3, n=1000, alpha=.1, batchsize=50, iteration_flow=500, hidden_num=128, lr=5e-3, num_steps=100, device="cpu"):
     # generate data
     (X_H0, Y_H0, Z_H0), (X_H1, Y_H1, Z_H1), (X_H1_2, Y_H1_2, Z_H1_2) = generate_data(alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
     # flow test
@@ -95,7 +101,7 @@ if __name__ == "__main__":
     nsim = args.nsim
     device_ids = [f'cuda:{i % min(torch.cuda.device_count(), cores)}' if torch.cuda.is_available() else 'cpu' for i in range(nsim)]
     # device_ids = [f'cuda:1' if torch.cuda.is_available() else 'cpu']
-    results = pool.starmap(sim, [(i, args.p, args.q, args.d, args.n, 0.1, 50, 1000, 128, 5e-3, 1000, device_ids[i]) for i in range(nsim)])
+    results = pool.starmap(sim, [(i, args.p, args.q, args.d, args.n, 0.3, 100, 500, 64, 5e-3, 200, device_ids[i]) for i in range(nsim)])
     pool.close()
 
     dc_1, p_1, dc_2, p_2, dc_3, p_3 = zip(*results)
