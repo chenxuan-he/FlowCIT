@@ -4,4 +4,5 @@ __pycache__
 *.xls
 *.log
 *.out
-flow_test_res/
+flow_test_res/*
+!flow_test_res/.gitkeep
