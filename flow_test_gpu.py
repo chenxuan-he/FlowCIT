@@ -134,7 +134,6 @@ def sim_split(seed=0, p=10, q=10, d=3, n=1000, alpha=.1, batchsize=50, iteration
 if __name__ == "__main__":
     sim_split()
 
-
     multiprocessing.set_start_method('spawn')
     cpu_cores_to_use = os.cpu_count()*9 // 10
     p = psutil.Process()
