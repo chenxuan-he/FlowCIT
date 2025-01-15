@@ -4,7 +4,7 @@ from rect_flow import ConditionalRectifiedFlow, train_conditional_rectified_flow
 import torch
 import random
 import multiprocessing
-import pickle
+
 
 def generate_data(n=1000, p=200, q=200, d=200, alpha=.1, seed=0):
     np.random.seed(seed)
