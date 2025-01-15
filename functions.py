@@ -1,12 +1,14 @@
-# from rpy2.robjects.packages import importr
+import rpy2.robjects as ro
+from rpy2.robjects.packages import importr
+import numpy as np
+# Import ggplot2
+ggplot2 = importr('ggplot2')
 
-# # Import ggplot2
-# ggplot2 = importr('ggplot2')
+# Create a simple plot using ggplot2 in R
+r_code = """
+df <- rnorm(100)
+"""
+ro.r(r_code)
+r_data = ro.r['df']
 
-# # Create a simple plot using ggplot2 in R
-# r_code = """
-# library(ggplot2)
-# df <- data.frame(x = c(1, 2, 3), y = c(4, 5, 6))
-# ggplot(df, aes(x, y)) + geom_point()
-# """
-# ro.r(r_code)
+np.array(r_data)
