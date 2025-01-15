@@ -1,5 +1,5 @@
 import numpy as np
-from dc import distance_correlation, permutation_test
+from functions import distance_correlation, permutation_test
 from rect_flow import ConditionalRectifiedFlow, train_conditional_rectified_flow, MLP
 import torch
 import random
