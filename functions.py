@@ -14,7 +14,7 @@ def distance_correlation(eps1, eps2, alpha=.05):
     dcorr = dcov / torch.sqrt(dvar_x * dvar_y + 1e-10)
     test_stat = n*dcorr**2
     rej = (test_stat > (stats.norm.ppf(1-alpha/2))**2)
-    return dcorr, test_stat, rej  # Avoid division by zero
+    return dcorr, test_stat, rej 
 
 def permutation_test(X, Y, num_permutations=1000, seed=0):
     """Perform a permutation test to assess the significance of the distance correlation."""
@@ -33,3 +33,5 @@ def permutation_test(X, Y, num_permutations=1000, seed=0):
     
     return observed_dcor.item(), p_value
 
+def conditional_distance_correlation():
+    return 0
