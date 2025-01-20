@@ -3,6 +3,10 @@ from functions import permutation_test
 import torch
 import random
 from torch import nn
+import os
+
+# Set the environment variable to make only the first 4 GPUs visible
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
 
 device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 

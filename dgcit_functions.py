@@ -3,27 +3,28 @@ import logging
 import numpy as np
 import tensorflow as tf
 import tensorflow_probability as tfp
-from sklearn.metrics.pairwise import rbf_kernel
-from scipy.stats import rankdata, ks_2samp, wilcoxon
-import cit_gan
-import gan_utils
-import pandas as pd
 from sklearn.model_selection import KFold
-tf.random.set_seed(42)
-np.random.seed(42)
+import os
 logging.getLogger('tensorflow').disabled = True
 tf.keras.backend.set_floatx('float32')
 
+# Set the environment variable to make only the first 4 GPUs visible
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
 
-def dgcit(x, y, z, n=500, z_dim=100, simulation='type1error', batch_size=64, n_iter=1000, train_writer=None,
-          current_iters=0, nstd=1.0, z_dist='gaussian', x_dims=1, y_dims=1, a_x=0.05, M=500, k=2,
-          var_idx=1, b=30, j=1000):
-    
+
+def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, train_writer=None, current_iters=0, M=500, k=2, b=30, j=1000):
+    tf.random.set_seed(seed)
+    np.random.seed(seed)
+    x = x.cpu().numpy()
+    y = y.cpu().numpy()
+    z = z.cpu().numpy()
+    n, z_dim = z.shape
+    _, y_dims = y.shape
+    _, x_dims = x.shape
     # no. of random and hidden dimensions
     if z_dim <= 20:
         v_dims = int(3)
         h_dims = int(3)
-
     else:
         v_dims = int(50)
         h_dims = int(512)
@@ -31,10 +32,10 @@ def dgcit(x, y, z, n=500, z_dim=100, simulation='type1error', batch_size=64, n_i
     v_dist = tfp.distributions.Normal(0, scale=tf.sqrt(1.0 / 3.0))
     # create instance of G & D
     lr = 0.0005
-    generator_x = cit_gan.WGanGenerator(n, z_dim, h_dims, v_dims, x_dims, batch_size)
-    generator_y = cit_gan.WGanGenerator(n, z_dim, h_dims, v_dims, y_dims, batch_size)
-    discriminator_x = cit_gan.WGanDiscriminator(n, z_dim, h_dims, x_dims, batch_size)
-    discriminator_y = cit_gan.WGanDiscriminator(n, z_dim, h_dims, y_dims, batch_size)
+    generator_x = WGanGenerator(n, z_dim, h_dims, v_dims, x_dims, batch_size)
+    generator_y = WGanGenerator(n, z_dim, h_dims, v_dims, y_dims, batch_size)
+    discriminator_x = WGanDiscriminator(n, z_dim, h_dims, x_dims, batch_size)
+    discriminator_y = WGanDiscriminator(n, z_dim, h_dims, y_dims, batch_size)
 
     gen_clipping_val = 0.5
     gen_clipping_norm = 1.0
@@ -44,10 +45,10 @@ def dgcit(x, y, z, n=500, z_dim=100, simulation='type1error', batch_size=64, n_i
     sinkhorn_eps = 0.8
     sinkhorn_l = 30
 
-    gx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm, clipvalue=gen_clipping_val)
-    dx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm, clipvalue=w_clipping_val)
-    gy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm, clipvalue=gen_clipping_val)
-    dy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm, clipvalue=w_clipping_val)
+    gx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm)#, clipvalue=gen_clipping_val)
+    dx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm)#, clipvalue=w_clipping_val)
+    gy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm)#, clipvalue=gen_clipping_val)
+    dy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm)#, clipvalue=w_clipping_val)
 
     @tf.function
     def x_update_d(real_x, real_x_p, real_z, real_z_p, v, v_p):
@@ -68,8 +69,7 @@ def dgcit(x, y, z, n=500, z_dim=100, simulation='type1error', batch_size=64, n_i
             f_fake_p = discriminator_x.call(d_fake_p)
             # call compute loss using @tf.function + autograph
 
-            loss1 = gan_utils.benchmark_loss(f_real, f_fake, scaling_coef, sinkhorn_eps, sinkhorn_l,
-                                             f_real_p, f_fake_p)
+            loss1 = benchmark_loss(f_real, f_fake, scaling_coef, sinkhorn_eps, sinkhorn_l, f_real_p, f_fake_p)
             # disc_loss = - tf.math.minimum(loss1, 1)
             disc_loss = - loss1
         # update discriminator parameters
@@ -93,8 +93,7 @@ def dgcit(x, y, z, n=500, z_dim=100, simulation='type1error', batch_size=64, n_i
             f_real_p = discriminator_x.call(d_real_p)
             f_fake_p = discriminator_x.call(d_fake_p)
             # call compute loss using @tf.function + autograph
-            gen_loss = gan_utils.benchmark_loss(f_real, f_fake, scaling_coef, sinkhorn_eps,
-                                                                           sinkhorn_l, f_real_p, f_fake_p)
+            gen_loss = benchmark_loss(f_real, f_fake, scaling_coef, sinkhorn_eps, sinkhorn_l, f_real_p, f_fake_p)
         # update generator parameters
         generator_grads = gen_tape.gradient(gen_loss, generator_x.trainable_variables)
         gx_optimiser.apply_gradients(zip(generator_grads, generator_x.trainable_variables))
@@ -119,8 +118,7 @@ def dgcit(x, y, z, n=500, z_dim=100, simulation='type1error', batch_size=64, n_i
             f_fake_p = discriminator_y.call(d_fake_p)
             # call compute loss using @tf.function + autograph
 
-            loss1 = gan_utils.benchmark_loss(f_real, f_fake, scaling_coef, sinkhorn_eps, sinkhorn_l,
-                                             f_real_p, f_fake_p)
+            loss1 = benchmark_loss(f_real, f_fake, scaling_coef, sinkhorn_eps, sinkhorn_l, f_real_p, f_fake_p)
             disc_loss = - loss1
         # update discriminator parameters
         d_grads = disc_tape.gradient(disc_loss, discriminator_y.trainable_variables)
@@ -143,8 +141,7 @@ def dgcit(x, y, z, n=500, z_dim=100, simulation='type1error', batch_size=64, n_i
             f_real_p = discriminator_y.call(d_real_p)
             f_fake_p = discriminator_y.call(d_fake_p)
             # call compute loss using @tf.function + autograph
-            gen_loss = gan_utils.benchmark_loss(f_real, f_fake, scaling_coef, sinkhorn_eps,
-                                                                           sinkhorn_l, f_real_p, f_fake_p)
+            gen_loss = benchmark_loss(f_real, f_fake, scaling_coef, sinkhorn_eps, sinkhorn_l, f_real_p, f_fake_p)
         # update generator parameters
         generator_grads = gen_tape.gradient(gen_loss, generator_y.trainable_variables)
         gy_optimiser.apply_gradients(zip(generator_grads, generator_y.trainable_variables))
@@ -237,8 +234,8 @@ def dgcit(x, y, z, n=500, z_dim=100, simulation='type1error', batch_size=64, n_i
             y = (y - tf.reduce_mean(y)) / tf.math.reduce_std(y)
             z = (z - tf.reduce_mean(z)) / tf.math.reduce_std(z)
 
-        f1 = cit_gan.CharacteristicFunction(M, x_dims, z_dim, test_size)
-        f2 = cit_gan.CharacteristicFunction(M, y_dims, z_dim, test_size)
+        f1 = CharacteristicFunction(M, x_dims, z_dim, test_size)
+        f2 = CharacteristicFunction(M, y_dims, z_dim, test_size)
         for i in range(test_samples):
             phi_x = tf.reduce_mean(f1.call(x_samples, z), axis=1)
             phi_y = tf.reduce_mean(f2.call(y_samples, z), axis=1)
@@ -465,3 +462,111 @@ class CharacteristicFunction:
         out = tf.nn.sigmoid(tf.matmul(h1, self.w2))
         return out
 
+
+def t_and_sigma(psy_x_i, psy_y_i, phi_x_i, phi_y_i):
+    b, n = psy_x_i.shape
+    x_mtx = phi_x_i - psy_x_i
+    y_mtx = phi_y_i - psy_y_i
+    matrix = tf.reshape(x_mtx[None, :, :] * y_mtx[:, None, :], [-1, n])
+    t_b = tf.reduce_sum(matrix, axis=1) / tf.cast(n, tf.float64)
+    t_b = tf.expand_dims(t_b, axis=1)
+
+    crit_matrix = matrix - t_b
+    std_b = tf.sqrt(tf.reduce_sum(crit_matrix**2, axis=1) / tf.cast(n-1, tf.float64))
+    return t_b, std_b
+
+
+def test_statistics(psy_x_i, psy_y_i, phi_x_i, phi_y_i, t_b, std_b, j):
+    b, n = psy_x_i.shape
+    x_mtx = phi_x_i - psy_x_i
+    y_mtx = phi_y_i - psy_y_i
+    matrix = tf.reshape(x_mtx[None, :, :] * y_mtx[:, None, :], [-1, n])
+    crit_matrix = matrix - t_b
+    test_stat = tf.reduce_max(tf.abs(tf.sqrt(tf.cast(n, tf.float64)) * tf.squeeze(t_b) / std_b))
+
+    sig = tf.reduce_sum(crit_matrix[None, :, :] * crit_matrix[:, None, :], axis=2)
+    coef = std_b[None, :] * std_b[:, None] * tf.cast(n-1, tf.float64)
+    sig_xy = sig / coef
+
+    eigenvalues, eigenvectors = tf.linalg.eigh(sig_xy)
+    base = tf.zeros_like(eigenvectors)
+    eig_vals = tf.sqrt(eigenvalues + 1e-12)
+    lamda = tf.linalg.set_diag(base, eig_vals)
+    sig_sqrt = tf.matmul(tf.matmul(eigenvectors, lamda), tf.linalg.inv(eigenvectors))
+
+    z_dist = tfp.distributions.Normal(0.0, scale=1.0)
+    z_samples = z_dist.sample([b*b, j])
+    z_samples = tf.cast(z_samples, tf.float64)
+    vals = tf.matmul(sig_sqrt, z_samples)
+    t_j = tf.reduce_max(vals, axis=0)
+    return test_stat, t_j
+
+
+def benchmark_loss(x, y, scaling_coef, sinkhorn_eps, sinkhorn_l, xp=None, yp=None):
+    '''
+    :param x: real data of shape [batch size, sequence length]
+    :param y: fake data of shape [batch size, sequence length]
+    :param scaling_coef: a scaling coefficient
+    :param sinkhorn_eps: Sinkhorn parameter - epsilon
+    :param sinkhorn_l: Sinkhorn parameter - the number of iterations
+    :return: final Sinkhorn loss(and several values for monitoring the training process)
+    '''
+    if yp is None:
+        yp = y
+    if xp is None:
+        xp = x
+    x = tf.reshape(x, [x.shape[0], -1])
+    y = tf.reshape(y, [y.shape[0], -1])
+    xp = tf.reshape(xp, [xp.shape[0], -1])
+    yp = tf.reshape(yp, [yp.shape[0], -1])
+    loss_xy = benchmark_sinkhorn(x, y, scaling_coef, sinkhorn_eps, sinkhorn_l)
+    loss_xx = benchmark_sinkhorn(x, xp, scaling_coef, sinkhorn_eps, sinkhorn_l)
+    loss_yy = benchmark_sinkhorn(y, yp, scaling_coef, sinkhorn_eps, sinkhorn_l)
+
+    loss = loss_xy - 0.5 * loss_xx - 0.5 * loss_yy
+
+    return loss
+
+
+def benchmark_sinkhorn(x, y, scaling_coef, epsilon=1.0, L=10):
+    '''
+    :param x: a tensor of shape [batch_size, sequence length]
+    :param y: a tensor of shape [batch_size, sequence length]
+    :param scaling_coef: a scaling coefficient for squared distance between x and y
+    :param epsilon: (float) entropic regularity constant
+    :param L: (int) number of iterations
+    :return: V: (float) value of regularized optimal transport
+    '''
+    n_data = x.shape[0]
+    # Note that batch size of x can be different from batch size of y
+    m = 1.0 / tf.cast(n_data, tf.float64) * tf.ones(n_data, dtype=tf.float64)
+    n = 1.0 / tf.cast(n_data, tf.float64) * tf.ones(n_data, dtype=tf.float64)
+    m = tf.expand_dims(m, axis=1)
+    n = tf.expand_dims(n, axis=1)
+
+    c_xy = cost_xy(x, y, scaling_coef)  # shape: [batch_size, batch_size]
+
+    k = tf.exp(-c_xy / epsilon) + 1e-09  # add 1e-09 to prevent numerical issues
+    k_t = tf.transpose(k)
+
+    a = tf.expand_dims(tf.ones(n_data, dtype=tf.float64), axis=1)
+    b = tf.expand_dims(tf.ones(n_data, dtype=tf.float64), axis=1)
+
+    for i in range(L):
+        b = m / tf.matmul(k_t, a)  # shape: [m,]
+        a = n / tf.matmul(k, b)  # shape: [m,]
+
+    return tf.reduce_sum(a * k * tf.reshape(b, (1, -1)) * c_xy)
+
+
+def cost_xy(x, y, scaling_coef):
+    '''
+    L2 distance between vectors, using expanding and hence is more memory intensive
+    :param x: x is tensor of shape [batch_size, x dims]
+    :param y: y is tensor of shape [batch_size, y dims]
+    :param scaling_coef: a scaling coefficient for distance between x and y
+    :return: cost matrix: a matrix of size [batch_size, batch_size] where
+    '''
+    x = tf.expand_dims(x, 1)
+    y = tf.expand_dims(y, 0)
+    return tf.reduce_sum((x - y)**2, -1) * scaling_coef
