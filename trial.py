@@ -1,4 +1,4 @@
-from functions import FCIT, KCI, PDC, CDC
+from functions import fcit_test, kci_test, pdc_test, cdc_test
 import multiprocessing
 from flow_functions import flow_test
 from functions import generate_data
