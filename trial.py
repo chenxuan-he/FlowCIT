@@ -1,6 +1,7 @@
 from functions import FCIT, KCI, PDC, CDC
 import multiprocessing
-from flow_functions import flow_test, generate_data
+from flow_functions import flow_test
+from functions import generate_data
 
 def sim(seed=0, p=10, q=10, d=3, n=1000, alpha=.1, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3, num_steps=1000):
     # generate data

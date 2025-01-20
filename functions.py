@@ -60,7 +60,7 @@ def permutation_test(X, Y, num_permutations=1000, seed=0):
     return observed_dcor.item(), p_value
 
 
-def FCIT(x, y, z, seed):
+def FCIT(x, y, z, seed=0):
     """Fast conditional independence test."""
     np.random.seed(seed)
     model = DecisionTreeRegressor()
@@ -69,21 +69,21 @@ def FCIT(x, y, z, seed):
     return stat, pvalue
 
 
-def KCI(x, y, z, seed):
+def KCI(x, y, z, seed=0):
     """Kernel-based conditional independence test."""
     np.random.seed(seed)
     stat, pvalue = KCI().test(x, y, z)
     return stat, pvalue
 
 
-def PDC(x, y, z, seed):
+def PDC(x, y, z, seed=0):
     """Partial distance correlation."""
     np.random.seed(seed)
     stat, pvalue = PartialDcorr().test(x, y, z)
     return stat, pvalue
 
 
-def CDC(x, y, z, seed):
+def CDC(x, y, z, seed=0):
     """Conditional distance correlation."""
     np.random.seed(seed)
     stat, pvalue = ConditionalDcorr().test(x, y, z)
