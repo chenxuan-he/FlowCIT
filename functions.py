@@ -7,7 +7,7 @@ from sklearn.tree import DecisionTreeRegressor
 import random
 
 
-def generate_data(type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
+def generate_data(sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
     np.random.seed(seed)
     torch.manual_seed(seed)
     random.seed(seed)
@@ -18,13 +18,13 @@ def generate_data(type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
     # Generate Z and X
     Z = torch.randn((n, d))
     X = Z @ beta_1 + torch.randn((n, p))
-    if (type == 0):
+    if (sim_type == 0):
         # Type 0: Under H_0, generate X and Y independently given Z
         Y = Z @ beta_2 + torch.randn((n, q))
-    elif (type == 1):
+    elif (sim_type == 1):
         # Type 1: Under H1, generate X is not independent of Y given Z
         Y = Z @ beta_2 + X @ beta_3 * alpha + torch.randn((n, q))
-    elif (type == 2):
+    elif (sim_type == 2):
         # Type 2: Under H1, generate X is not independent of Y given Z with nonlinear relationship
         Y = torch.sin(Z @ beta_2) + (X @ beta_3 * alpha) + torch.randn((n, q))
     return X, Y, Z

@@ -3,9 +3,9 @@ import multiprocessing
 from flow_functions import flow_test
 from functions import generate_data
 
-def sim(type=0, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3, num_steps=1000):
+def sim(sim_type=0, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3, num_steps=1000):
     # generate data
-    x, y, z = generate_data(type=type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
+    x, y, z = generate_data(sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
     # flow test
     dc, p_dc = flow_test(x=x.clone().detach(), y=y.clone().detach(), z=z.clone().detach(), batchsize=batchsize, iteration_flow=iteration_flow, seed=seed, hidden_num=hidden_num, lr=lr, num_steps=num_steps)
     fcit, p_fcit = fcit_test(x, y, z)
