@@ -1,5 +1,48 @@
 import torch
+import numpy as np
 import scipy.stats as stats
+from hyppo.conditional import FCIT, KCI, PartialDcorr, ConditionalDcorr
+from hyppo.tools import linear, correlated_normal
+from sklearn.tree import DecisionTreeRegressor
+
+
+def FCIT(x, y, z, seed):
+    """Fast conditional independence test."""
+    np.random.seed(seed)
+    dim = 2
+    n = 100000
+    z1 = np.random.multivariate_normal(mean=np.zeros(dim), cov=np.eye(dim), size=(n))
+    A1 = np.random.normal(loc=0, scale=1, size=dim * dim).reshape(dim, dim)
+    B1 = np.random.normal(loc=0, scale=1, size=dim * dim).reshape(dim, dim)
+    x1 = (A1 @ z1.T + np.random.multivariate_normal(mean=np.zeros(dim), cov=np.eye(dim), size=(n)).T)
+    y1 = (B1 @ z1.T + np.random.multivariate_normal(mean=np.zeros(dim), cov=np.eye(dim), size=(n)).T)
+    model = DecisionTreeRegressor()
+    cv_grid = {"min_samples_split": [2, 8, 64, 512, 1e-2, 0.2, 0.4]}
+    stat, pvalue = FCIT(model=model, cv_grid=cv_grid).test(x1.T, y1.T, z1)
+    stat, pvalue = FCIT(model=model, cv_grid=cv_grid).test(x.T, y.T, z)
+    return stat, pvalue
+
+
+def KCI(x, y, z, seed):
+    """Kernel-based conditional independence test."""
+    np.random.seed(seed)
+    stat, pvalue = KCI().test(x, y, z)
+    return stat, pvalue
+
+
+def PDC(x, y, z, seed):
+    """Partial distance correlation."""
+    np.random.seed(seed)
+    stat, pvalue = PartialDcorr().test(x, y, z)
+    return stat, pvalue
+
+
+def CDC(x, y, z, seed):
+    """Conditional distance correlation."""
+    np.random.seed(seed)
+    stat, pvalue = ConditionalDcorr().test(x, y, z)
+    return stat, pvalue
+
 
 def distance_correlation(eps1, eps2, alpha=.05):
     """Compute the distance correlation between two sets of samples."""
@@ -15,6 +58,7 @@ def distance_correlation(eps1, eps2, alpha=.05):
     test_stat = n*dcorr**2
     rej = (test_stat > (stats.norm.ppf(1-alpha/2))**2)
     return dcorr, test_stat, rej 
+
 
 def permutation_test(X, Y, num_permutations=1000, seed=0):
     """Perform a permutation test to assess the significance of the distance correlation."""
@@ -33,5 +77,3 @@ def permutation_test(X, Y, num_permutations=1000, seed=0):
     
     return observed_dcor.item(), p_value
 
-def conditional_distance_correlation():
-    return 0
