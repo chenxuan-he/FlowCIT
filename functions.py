@@ -7,7 +7,7 @@ from sklearn.tree import DecisionTreeRegressor
 import random
 
 
-def generate_data(n=1000, p=200, q=200, d=200, alpha=.1, seed=0):
+def generate_data(type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
     np.random.seed(seed)
     torch.manual_seed(seed)
     random.seed(seed)
@@ -18,12 +18,16 @@ def generate_data(n=1000, p=200, q=200, d=200, alpha=.1, seed=0):
     # Generate Z and X
     Z = torch.randn((n, d))
     X = Z @ beta_1 + torch.randn((n, p))
-    # Generate X and Y independently given Z
-    Y_H0 = Z @ beta_2 + torch.randn((n, q))
-    # Under H1: X is not independent of Y given Z
-    Y_H1 = Z @ beta_2 + X @ beta_3 * alpha + torch.randn((n, q))
-    Y_H1_nonlinear = torch.sin(Z @ beta_2) + (X @ beta_3 * alpha) + torch.randn((n, q))
-    return (X, Y_H0, Z), (X, Y_H1, Z), (X, Y_H1_nonlinear, Z)
+    if (type == 0):
+        # Type 0: Under H_0, generate X and Y independently given Z
+        Y = Z @ beta_2 + torch.randn((n, q))
+    elif (type == 1):
+        # Type 1: Under H1, generate X is not independent of Y given Z
+        Y = Z @ beta_2 + X @ beta_3 * alpha + torch.randn((n, q))
+    elif (type == 2):
+        # Type 2: Under H1, generate X is not independent of Y given Z with nonlinear relationship
+        Y = torch.sin(Z @ beta_2) + (X @ beta_3 * alpha) + torch.randn((n, q))
+    return X, Y, Z
 
 
 def distance_correlation(eps1, eps2, alpha=.05):
@@ -69,22 +73,21 @@ def fcit_test(x, y, z, seed=0):
     return stat, pvalue
 
 
-def kci_test(x, y, z, seed=0):
-    """Kernel-based conditional independence test."""
-    np.random.seed(seed)
-    stat, pvalue = KCI().test(x, y, z)
-    return stat, pvalue
-
-
 def pdc_test(x, y, z, seed=0):
     """Partial distance correlation."""
     np.random.seed(seed)
-    stat, pvalue = PartialDcorr().test(x, y, z)
+    x0 = x.cpu().numpy()
+    y0 = y.cpu().numpy()
+    z0 = z.cpu().numpy()
+    stat, pvalue = PartialDcorr().test(x0, y0, z0)
     return stat, pvalue
 
 
 def cdc_test(x, y, z, seed=0):
     """Conditional distance correlation."""
+    x0 = x.cpu().numpy()
+    y0 = y.cpu().numpy()
+    z0 = z.cpu().numpy()
     np.random.seed(seed)
-    stat, pvalue = ConditionalDcorr().test(x, y, z)
+    stat, pvalue = ConditionalDcorr().test(x0, y0, z0)
     return stat, pvalue

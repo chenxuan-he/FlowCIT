@@ -1,16 +1,17 @@
-from functions import fcit_test, kci_test, pdc_test, cdc_test
+from functions import fcit_test, pdc_test, cdc_test
 import multiprocessing
 from flow_functions import flow_test
 from functions import generate_data
 
-def sim(seed=0, p=10, q=10, d=3, n=1000, alpha=.1, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3, num_steps=1000):
+def sim(type=0, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3, num_steps=1000):
     # generate data
-    (X_H0, Y_H0, Z_H0), (X_H1, Y_H1, Z_H1), (X_H1_2, Y_H1_2, Z_H1_2) = generate_data(alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
+    x, y, z = generate_data(type=type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
     # flow test
-    dc_1, p_1 = flow_test(x=X_H0.clone().detach(), y=Y_H0.clone().detach(), z=Z_H0.clone().detach(), batchsize=batchsize, iteration_flow=iteration_flow, seed=seed, hidden_num=hidden_num, lr=lr, num_steps=num_steps)
-    dc_2, p_2 = flow_test(x=X_H1.clone().detach(), y=Y_H1.clone().detach(), z=Z_H1.clone().detach(), batchsize=batchsize, iteration_flow=iteration_flow, seed=seed, hidden_num=hidden_num, lr=lr, num_steps=num_steps)
-    dc_3, p_3 = flow_test(x=X_H1_2.clone().detach(), y=Y_H1_2.clone().detach(), z=Z_H1_2.clone().detach(), batchsize=batchsize, iteration_flow=iteration_flow, seed=seed, hidden_num=hidden_num, lr=lr, num_steps=num_steps)
-    return dc_1, p_1, dc_2, p_2, dc_3, p_3
+    dc, p_dc = flow_test(x=x.clone().detach(), y=y.clone().detach(), z=z.clone().detach(), batchsize=batchsize, iteration_flow=iteration_flow, seed=seed, hidden_num=hidden_num, lr=lr, num_steps=num_steps)
+    fcit, p_fcit = fcit_test(x, y, z)
+    pdc, p_pdc = pdc_test(x, y, z)
+    cdc, p_cdc = cdc_test(x, y, z)
+    return dc, p_dc, fcit, p_fcit, pdc, p_pdc, cdc, p_cdc
 
 
 cores = 5
