@@ -4,44 +4,26 @@ import scipy.stats as stats
 from hyppo.conditional import FCIT, KCI, PartialDcorr, ConditionalDcorr
 from hyppo.tools import linear, correlated_normal
 from sklearn.tree import DecisionTreeRegressor
+import random
 
 
-def FCIT(x, y, z, seed):
-    """Fast conditional independence test."""
+def generate_data(n=1000, p=200, q=200, d=200, alpha=.1, seed=0):
     np.random.seed(seed)
-    dim = 2
-    n = 100000
-    z1 = np.random.multivariate_normal(mean=np.zeros(dim), cov=np.eye(dim), size=(n))
-    A1 = np.random.normal(loc=0, scale=1, size=dim * dim).reshape(dim, dim)
-    B1 = np.random.normal(loc=0, scale=1, size=dim * dim).reshape(dim, dim)
-    x1 = (A1 @ z1.T + np.random.multivariate_normal(mean=np.zeros(dim), cov=np.eye(dim), size=(n)).T)
-    y1 = (B1 @ z1.T + np.random.multivariate_normal(mean=np.zeros(dim), cov=np.eye(dim), size=(n)).T)
-    model = DecisionTreeRegressor()
-    cv_grid = {"min_samples_split": [2, 8, 64, 512, 1e-2, 0.2, 0.4]}
-    stat, pvalue = FCIT(model=model, cv_grid=cv_grid).test(x1.T, y1.T, z1)
-    stat, pvalue = FCIT(model=model, cv_grid=cv_grid).test(x.T, y.T, z)
-    return stat, pvalue
-
-
-def KCI(x, y, z, seed):
-    """Kernel-based conditional independence test."""
-    np.random.seed(seed)
-    stat, pvalue = KCI().test(x, y, z)
-    return stat, pvalue
-
-
-def PDC(x, y, z, seed):
-    """Partial distance correlation."""
-    np.random.seed(seed)
-    stat, pvalue = PartialDcorr().test(x, y, z)
-    return stat, pvalue
-
-
-def CDC(x, y, z, seed):
-    """Conditional distance correlation."""
-    np.random.seed(seed)
-    stat, pvalue = ConditionalDcorr().test(x, y, z)
-    return stat, pvalue
+    torch.manual_seed(seed)
+    random.seed(seed)
+    # Under H0: X is independent of Y given Z
+    beta_1 = torch.randn((d, p))
+    beta_2 = torch.randn((d, q))
+    beta_3 = torch.randn((p, q))
+    # Generate Z and X
+    Z = torch.randn((n, d))
+    X = Z @ beta_1 + torch.randn((n, p))
+    # Generate X and Y independently given Z
+    Y_H0 = Z @ beta_2 + torch.randn((n, q))
+    # Under H1: X is not independent of Y given Z
+    Y_H1 = Z @ beta_2 + X @ beta_3 * alpha + torch.randn((n, q))
+    Y_H1_nonlinear = torch.sin(Z @ beta_2) + (X @ beta_3 * alpha) + torch.randn((n, q))
+    return (X, Y_H0, Z), (X, Y_H1, Z), (X, Y_H1_nonlinear, Z)
 
 
 def distance_correlation(eps1, eps2, alpha=.05):
@@ -77,3 +59,32 @@ def permutation_test(X, Y, num_permutations=1000, seed=0):
     
     return observed_dcor.item(), p_value
 
+
+def FCIT(x, y, z, seed):
+    """Fast conditional independence test."""
+    np.random.seed(seed)
+    model = DecisionTreeRegressor()
+    cv_grid = {"min_samples_split": [2, 8, 64, 512, 1e-2, 0.2, 0.4]}
+    stat, pvalue = FCIT(model=model, cv_grid=cv_grid).test(x.T, y.T, z)
+    return stat, pvalue
+
+
+def KCI(x, y, z, seed):
+    """Kernel-based conditional independence test."""
+    np.random.seed(seed)
+    stat, pvalue = KCI().test(x, y, z)
+    return stat, pvalue
+
+
+def PDC(x, y, z, seed):
+    """Partial distance correlation."""
+    np.random.seed(seed)
+    stat, pvalue = PartialDcorr().test(x, y, z)
+    return stat, pvalue
+
+
+def CDC(x, y, z, seed):
+    """Conditional distance correlation."""
+    np.random.seed(seed)
+    stat, pvalue = ConditionalDcorr().test(x, y, z)
+    return stat, pvalue
