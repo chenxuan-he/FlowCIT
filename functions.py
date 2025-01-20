@@ -4,11 +4,6 @@ import scipy.stats as stats
 from hyppo.conditional import FCIT, KCI, PartialDcorr, ConditionalDcorr
 from sklearn.tree import DecisionTreeRegressor
 import random
-import os
-
-# Set the environment variable to make only the first 4 GPUs visible
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
-
 
 def generate_data(sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
     np.random.seed(seed)
