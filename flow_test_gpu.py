@@ -1,6 +1,6 @@
 import numpy as np
 from functions import distance_correlation, permutation_test
-from rect_flow import ConditionalRectifiedFlow, train_conditional_rectified_flow, MLP
+from flow_functions import ConditionalRectifiedFlow, train_conditional_rectified_flow, MLP
 import torch
 import random
 import multiprocessing

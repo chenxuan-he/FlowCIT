@@ -1,1 +1,2 @@
-# Codes for conditional independence test by continuous normalizing flow
+# Codes for Conditional Independence Test by Conditional Flow Models
+

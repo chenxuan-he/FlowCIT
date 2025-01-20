@@ -3,13 +3,13 @@ import multiprocessing
 from flow_functions import flow_test
 from functions import generate_data
 
-# sim_type=1
-# seed=0
-# p=3
-# q=3
-# d=3
-# n=100
-# alpha=.1
+sim_type=1
+seed=0
+p=3
+q=3
+d=3
+n=100
+alpha=.1
 
 def sim(sim_type=0, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3, num_steps=1000):
     # generate data
