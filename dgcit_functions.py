@@ -40,10 +40,10 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=3
     sinkhorn_eps = 0.8
     sinkhorn_l = 30
 
-    gx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm) #, clipvalue=gen_clipping_val)
-    dx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm) #, clipvalue=w_clipping_val)
-    gy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm) #, clipvalue=gen_clipping_val)
-    dy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm) #, clipvalue=w_clipping_val)
+    gx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm) 
+    dx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm)
+    gy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm) 
+    dy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm)
 
     @tf.function
     def x_update_d(real_x, real_x_p, real_z, real_z_p, v, v_p):
