@@ -8,19 +8,15 @@ import os
 logging.getLogger('tensorflow').disabled = True
 tf.keras.backend.set_floatx('float64')
 
-# Set the environment variable to make only the first 4 GPUs visible
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
-
-
-def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, train_writer=None, current_iters=0, M=500, k=2, b=30, j=1000):
+def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=30, j=1000):
     tf.random.set_seed(seed)
     np.random.seed(seed)
-    x = x.cpu().numpy().astype(np.float64)
-    y = y.cpu().numpy().astype(np.float64)
-    z = z.cpu().numpy().astype(np.float64)
-    n, z_dim = z.shape
-    _, y_dims = y.shape
-    _, x_dims = x.shape
+    X = x.cpu().numpy().astype(np.float64)
+    Y = y.cpu().numpy().astype(np.float64)
+    Z = z.cpu().numpy().astype(np.float64)
+    n, z_dim = X.shape
+    _, y_dims = Y.shape
+    _, x_dims = Z.shape
     # no. of random and hidden dimensions
     if z_dim <= 20:
         v_dims = int(3)
@@ -45,10 +41,10 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, train_writer=None, curren
     sinkhorn_eps = 0.8
     sinkhorn_l = 30
 
-    gx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm, clipvalue=gen_clipping_val)
-    dx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm, clipvalue=w_clipping_val)
-    gy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm, clipvalue=gen_clipping_val)
-    dy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm, clipvalue=w_clipping_val)
+    gx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm) #, clipvalue=gen_clipping_val)
+    dx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm) #, clipvalue=w_clipping_val)
+    gy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm) #, clipvalue=gen_clipping_val)
+    dy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm) #, clipvalue=w_clipping_val)
 
     @tf.function
     def x_update_d(real_x, real_x_p, real_z, real_z_p, v, v_p):
@@ -155,19 +151,18 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, train_writer=None, curren
     test_size = int(n/k)
 
     # split the train-test sets to k folds
-    kf = KFold(n_splits=k, shuffle=True, random_state=42)
+    kf = KFold(n_splits=k, shuffle=True, random_state=seed)
     epochs = int(n_iter)
 
-    for train_idx, test_idx in kf.split(x):
-        x_train, y_train, z_train = x[train_idx], y[train_idx], z[train_idx]
+    for train_idx, test_idx in kf.split(X):
+        x_train, y_train, z_train = X[train_idx], Y[train_idx], Z[train_idx]
 
-        dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train,
-                                                      z_train))
+        dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train, z_train))
         # Repeat n epochs
         training = dataset.repeat(epochs)
         training_dataset = training.shuffle(100).batch(batch_size * 2)
         # test-set is the one left
-        testing_dataset = tf.data.Dataset.from_tensor_slices((x[test_idx], y[test_idx], z[test_idx]))
+        testing_dataset = tf.data.Dataset.from_tensor_slices((X[test_idx], Y[test_idx], Z[test_idx]))
 
         for x_batch, y_batch, z_batch in training_dataset.take(n_iter):
             if x_batch.shape[0] != batch_size * 2:
@@ -190,13 +185,6 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, train_writer=None, curren
             y_update_d(y_batch1, y_batch2, z_batch1, z_batch2, noise_v, noise_v_p)
             loss_y = y_update_g(y_batch1, y_batch2, z_batch1, z_batch2, noise_v, noise_v_p)
 
-            with train_writer.as_default():
-                # tf.summary.scalar('Wasserstein X Discriminator Loss', x_disc_loss, step=current_iters)
-                tf.summary.scalar('Wasserstein X GEN Loss', loss_x, step=current_iters)
-                # tf.summary.scalar('Wasserstein Y Discriminator Loss', y_disc_loss, step=current_iters)
-                tf.summary.scalar('Wasserstein Y GEN Loss', loss_y, step=current_iters)
-                train_writer.flush()
-
             current_iters += 1
 
         psy_x_b = []
@@ -212,8 +200,8 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, train_writer=None, curren
 
         # the following code generate x_1, ..., x_400 for all B and it takes 61 secs for one test
         for test_x, test_y, test_z in testing_dataset:
-            tiled_z = tf.tile(test_z, [M, 1])
-            noise_v = v_dist.sample([M, v_dims])
+            tiled_z = tf.tile(test_z[tf.newaxis,:], [n, 1])
+            noise_v = v_dist.sample([n, v_dims])
             noise_v = tf.cast(noise_v, tf.float64)
             g_inputs = tf.concat([tiled_z, noise_v], axis=1)
             # generator samples from G and evaluate from D
@@ -234,8 +222,8 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, train_writer=None, curren
             y = (y - tf.reduce_mean(y)) / tf.math.reduce_std(y)
             z = (z - tf.reduce_mean(z)) / tf.math.reduce_std(z)
 
-        f1 = CharacteristicFunction(M, x_dims, z_dim, test_size)
-        f2 = CharacteristicFunction(M, y_dims, z_dim, test_size)
+        f1 = CharacteristicFunction(n, x_dims, z_dim, test_size)
+        f2 = CharacteristicFunction(n, y_dims, z_dim, test_size)
         for i in range(test_samples):
             phi_x = tf.reduce_mean(f1.call(x_samples, z), axis=1)
             phi_y = tf.reduce_mean(f2.call(y_samples, z), axis=1)
