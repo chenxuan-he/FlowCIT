@@ -6,7 +6,7 @@ import tensorflow_probability as tfp
 from sklearn.model_selection import KFold
 import os
 logging.getLogger('tensorflow').disabled = True
-tf.keras.backend.set_floatx('float32')
+tf.keras.backend.set_floatx('float64')
 
 # Set the environment variable to make only the first 4 GPUs visible
 os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
@@ -15,9 +15,9 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
 def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, train_writer=None, current_iters=0, M=500, k=2, b=30, j=1000):
     tf.random.set_seed(seed)
     np.random.seed(seed)
-    x = x.cpu().numpy()
-    y = y.cpu().numpy()
-    z = z.cpu().numpy()
+    x = x.cpu().numpy().astype(np.float64)
+    y = y.cpu().numpy().astype(np.float64)
+    z = z.cpu().numpy().astype(np.float64)
     n, z_dim = z.shape
     _, y_dims = y.shape
     _, x_dims = x.shape
@@ -45,10 +45,10 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, train_writer=None, curren
     sinkhorn_eps = 0.8
     sinkhorn_l = 30
 
-    gx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm)#, clipvalue=gen_clipping_val)
-    dx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm)#, clipvalue=w_clipping_val)
-    gy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm)#, clipvalue=gen_clipping_val)
-    dy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm)#, clipvalue=w_clipping_val)
+    gx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm, clipvalue=gen_clipping_val)
+    dx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm, clipvalue=w_clipping_val)
+    gy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm, clipvalue=gen_clipping_val)
+    dy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm, clipvalue=w_clipping_val)
 
     @tf.function
     def x_update_d(real_x, real_x_p, real_z, real_z_p, v, v_p):
@@ -282,7 +282,7 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, train_writer=None, curren
     stat, critical_vals = test_statistics(psy_x_all, psy_y_all, phi_x_all, phi_y_all, t_b, std_b, j)
     comparison = [c > stat or c == stat for c in critical_vals]
     comparison = np.reshape(comparison, (-1,))
-    p_value = np.sum(comparison.astype(np.float32)) / j
+    p_value = np.sum(comparison.astype(np.float64)) / j
     return p_value
 
 
