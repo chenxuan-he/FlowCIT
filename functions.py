@@ -65,7 +65,7 @@ def fcit_test(x, y, z, seed=0):
     np.random.seed(seed)
     model = DecisionTreeRegressor()
     cv_grid = {"min_samples_split": [2, 8, 64, 512, 1e-2, 0.2, 0.4]}
-    stat, pvalue = FCIT(model=model, cv_grid=cv_grid).test(x.T, y.T, z)
+    stat, pvalue = FCIT(model=model, cv_grid=cv_grid).test(x, y, z)
     return stat, pvalue
 
 
