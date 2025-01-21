@@ -24,17 +24,22 @@ def parse_arguments():
     parser.add_argument('--alpha', type=float, default=0, help='Deviation under H_1.')
     parser.add_argument('--par_task', type=int, default=5, help='Numer of tasks for parallel computing.')
     parser.add_argument('--nsim', type=int, default=10, help='Numer of simulations.')
+    parser.add_argument('--hidden_num', type=int, default=64, help='Hidden dimensions of flow training.')
+    parser.add_argument('--lr', type=float, default=5e-3, help='Learning rate of flow training.')
+    parser.add_argument('--batchsize', type=int, default=50, help='Batchsize of flow training.')
+    parser.add_argument('--n_iter', type=int, default=500, help='Iteration of flow training.')
+    parser.add_argument('--num_steps', type=int, default=500, help='Number of steps when sampling ODE.')
     return parser.parse_args()
 
 
-def sim(sim_type=0, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3, num_steps=1000, device="cpu"):
+def sim(sim_type=0, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, device="cpu"):
     # generate data
     x, y, z = generate_data(sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
     
     # flow test
     print("\nExecuting flow test.")
     start_time = time.time()
-    _, p_dc = flow_test(x=x.clone().detach(), y=y.clone().detach(), z=z.clone().detach(), batchsize=batchsize, iteration_flow=iteration_flow, seed=seed, hidden_num=hidden_num, lr=lr, num_steps=num_steps, device=device)
+    _, p_dc = flow_test(x=x.clone().detach(), y=y.clone().detach(), z=z.clone().detach(), batchsize=batchsize, n_iter=n_iter, seed=seed, hidden_num=hidden_num, lr=lr, num_steps=num_steps, device=device)
     flow_test_time = time.time() - start_time
     print("P-value: "+str(round(p_dc, 2))+". Execution time: "+str(round(flow_test_time, 2)))
 
@@ -66,7 +71,7 @@ def sim(sim_type=0, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=50, iterat
 
 
 def run_simulation(seed, args, device):
-    return sim(seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device)
+    return sim(seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device, hidden_num=args.hidden_num, batchsize=args.batchsize, n_iter=args.n_iter, lr=args.lr, num_steps=args.num_steps)
 
 if __name__ == "__main__":
     args = parse_arguments()

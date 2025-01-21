@@ -6,7 +6,7 @@ import random
 from torch import nn
 
 
-def flow_test(x, y, z, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3, num_steps=1000, seed=0, device="cpu"):
+def flow_test(x, y, z, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, seed=0, device="cpu"):
     np.random.seed(seed)
     torch.manual_seed(seed)
     random.seed(seed)
@@ -17,13 +17,13 @@ def flow_test(x, y, z, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3
     x1_pairs = [x, eps1, z.detach().clone()]
     rectified_flow_1 = ConditionalRectifiedFlow(model=MLP(input_dim=p+d+1, output_dim=p, hidden_num=hidden_num), num_steps=num_steps, device=device)
     optimizer = torch.optim.Adam(rectified_flow_1.model.parameters(), lr=lr)
-    rectified_flow_1, loss_curve1 = train_conditional_rectified_flow(rectified_flow_1, optimizer, x1_pairs, batchsize, iteration_flow, device=device)
+    rectified_flow_1, loss_curve1 = train_conditional_rectified_flow(rectified_flow_1, optimizer, x1_pairs, batchsize, n_iter, device=device)
     eps1_pred = rectified_flow_1.sample_conditional_ode(x, z, device=device)[-1]
     eps2 = torch.randn(size=(n,q))
     y1_pairs = [y, eps2, z.detach().clone()]
     rectified_flow_2 = ConditionalRectifiedFlow(model=MLP(input_dim=q+d+1, output_dim=q, hidden_num=hidden_num), num_steps=num_steps, device=device)
     optimizer = torch.optim.Adam(rectified_flow_2.model.parameters(), lr=lr)
-    rectified_flow_2, loss_curve2 = train_conditional_rectified_flow(rectified_flow_2, optimizer, y1_pairs, batchsize, iteration_flow, device=device)
+    rectified_flow_2, loss_curve2 = train_conditional_rectified_flow(rectified_flow_2, optimizer, y1_pairs, batchsize, n_iter, device=device)
     eps2_pred = rectified_flow_2.sample_conditional_ode(y, z, device=device)[-1]
     # perform test
     print("Permutation to get p-value.")
@@ -31,7 +31,7 @@ def flow_test(x, y, z, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3
     return dc, dc_p
 
 
-def flow_test_split(x, y, z, prop_tr=.8, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3, num_steps=1000, seed=0, device="cpu"):
+def flow_test_split(x, y, z, prop_tr=.8, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, seed=0, device="cpu"):
     np.random.seed(seed)
     torch.manual_seed(seed)
     random.seed(seed)
@@ -46,13 +46,13 @@ def flow_test_split(x, y, z, prop_tr=.8, batchsize=50, iteration_flow=500, hidde
     x1_pairs = [x_train, eps1, z_train.detach().clone()]
     rectified_flow_1 = ConditionalRectifiedFlow(model=MLP(input_dim=p+d+1, output_dim=p, hidden_num=hidden_num), num_steps=num_steps, device=device)
     optimizer = torch.optim.Adam(rectified_flow_1.model.parameters(), lr=lr)
-    rectified_flow_1, loss_curve1 = train_conditional_rectified_flow(rectified_flow_1, optimizer, x1_pairs, batchsize, iteration_flow, device=device)
+    rectified_flow_1, loss_curve1 = train_conditional_rectified_flow(rectified_flow_1, optimizer, x1_pairs, batchsize, n_iter, device=device)
     eps1_pred = rectified_flow_1.sample_conditional_ode(x_test, z_test, device=device)[-1]
     eps2 = torch.randn(size=(n-n2,q))
     y1_pairs = [y_train, eps2, z_train.detach().clone()]
     rectified_flow_2 = ConditionalRectifiedFlow(model=MLP(input_dim=q+d+1, output_dim=q, hidden_num=hidden_num), num_steps=num_steps, device=device)
     optimizer = torch.optim.Adam(rectified_flow_2.model.parameters(), lr=lr)
-    rectified_flow_2, loss_curve2 = train_conditional_rectified_flow(rectified_flow_2, optimizer, y1_pairs, batchsize, iteration_flow, device=device)
+    rectified_flow_2, loss_curve2 = train_conditional_rectified_flow(rectified_flow_2, optimizer, y1_pairs, batchsize, n_iter, device=device)
     eps2_pred = rectified_flow_2.sample_conditional_ode(y_test, z_test, device=device)[-1]
     print("Permutation to get p-value.")
     dc, dc_p = permutation_test(eps1_pred.detach().clone(), eps2_pred.detach().clone())
