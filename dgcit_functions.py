@@ -36,9 +36,7 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=3
     discriminator_x = WGanDiscriminator(n, z_dim, h_dims, x_dims, batch_size)
     discriminator_y = WGanDiscriminator(n, z_dim, h_dims, y_dims, batch_size)
 
-    gen_clipping_val = 0.5
     gen_clipping_norm = 1.0
-    w_clipping_val = 0.5
     w_clipping_norm = 1.0
     scaling_coef = 1.0
     sinkhorn_eps = 0.8

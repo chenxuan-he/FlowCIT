@@ -15,6 +15,7 @@ import psutil
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process GPU indices.')
     parser.add_argument('--gpu', type=str, default="2", help='Comma-separated list of GPU indices to use.')
+    parser.add_argument('--cpu', type=str, default="0-10", help='Numer of maximum numer of cpus for parallel computing.')
     parser.add_argument('--sim_type', type=int, default=0, help='Simulation types, including H_0 and H_1.')
     parser.add_argument('--p', type=int, default=3, help='Dimension of X.')
     parser.add_argument('--q', type=int, default=3, help='Dimension of Y.')
@@ -22,7 +23,6 @@ def parse_arguments():
     parser.add_argument('--n', type=int, default=100, help='Sample size.')
     parser.add_argument('--alpha', type=float, default=0, help='Deviation under H_1.')
     parser.add_argument('--par_task', type=int, default=5, help='Numer of tasks for parallel computing.')
-    parser.add_argument('--cpu', type=int, default=80, help='Numer of maximum numer of cpus for parallel computing.')
     parser.add_argument('--nsim', type=int, default=10, help='Numer of simulations.')
     return parser.parse_args()
 
@@ -73,7 +73,8 @@ if __name__ == "__main__":
 
     multiprocessing.set_start_method('spawn')
     p = psutil.Process(os.getpid())
-    p.cpu_affinity(range(args.cpu))
+    start, end = map(int, args.cpu.split('-'))
+    p.cpu_affinity(range(start, end))
 
     if args.gpu:
         # Set the CUDA_VISIBLE_DEVICES environment variable
