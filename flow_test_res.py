@@ -1,10 +1,14 @@
 import pandas as pd
 
-# Load a DataFrame from a .pkl file
-df = pd.read_pickle('flow_test_res/sims_3_3_2simulation_results.pkl')
+# Specify the file name
+file_name = 'results/sim_type0-alpha-0.5-n-500-x-3-y-3-z-3.csv'
 
-sum(1 for value in df[1] if value > 0.05)
+# Read the CSV file into a DataFrame
+data = pd.read_csv(file_name, header=None)
 
-sum(1 for value in df[3] if value > 0.05)
+# Calculate the mean of each column
+column_means = (data>.05).mean()
 
-sum(1 for value in df[5] if value > 0.05)
+# Print the column means
+print("Column Means:")
+print(column_means)
