@@ -17,10 +17,7 @@ def generate_data(sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
     # Generate Z and X
     Z = torch.randn((n, d))
     X = Z @ beta_1 + torch.randn((n, p))
-    if (sim_type == 0):
-        # Type 0: Under H_0, generate X and Y independently given Z
-        Y = Z @ beta_2 + torch.randn((n, q))
-    elif (sim_type == 1):
+    if (sim_type == 1):
         # Type 1: Under H1, generate X is not independent of Y given Z
         Y = Z @ beta_2 + X @ beta_3 * alpha + torch.randn((n, q))
     elif (sim_type == 2):
