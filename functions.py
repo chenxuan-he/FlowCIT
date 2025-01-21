@@ -1,7 +1,8 @@
+# This is the code to perform various test for conditional independence test.
 import torch
 import numpy as np
 import scipy.stats as stats
-from hyppo.conditional import FCIT, KCI, PartialDcorr, ConditionalDcorr
+from hyppo.conditional import FCIT, PartialDcorr, ConditionalDcorr
 from sklearn.tree import DecisionTreeRegressor
 import random
 

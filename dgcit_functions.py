@@ -1,3 +1,7 @@
+# This is the code to implement Double GANs-based Conditional Independence Test.
+# Original paper: Shi, C., Xu, T., Bergsma, W. & Li, L. Double generative adversarial networks for conditional independence testing. Journal of Machine Learning Research 22, 1–32 (2021).
+# Originial code link: https://github.com/tianlinxu312/dgcit
+# The code has been slightly modified to accept the dataset (X, Y, Z) as an input, whereas the original version generated the data within the function itself.
 import tensorflow as tf
 import logging
 import numpy as np

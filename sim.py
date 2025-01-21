@@ -1,5 +1,5 @@
 from functions import fcit_test, pdc_test, cdc_test
-from flow_functions import flow_test
+from flow_functions import flow_test, flow_test_split
 from functions import generate_data
 from dgcit_functions import dgcit
 import argparse
@@ -9,6 +9,7 @@ import multiprocessing
 from torch.multiprocessing import Pool, set_start_method
 import concurrent.futures
 import numpy as np
+import time
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process GPU indices.')
@@ -28,12 +29,32 @@ def sim(sim_type=0, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=50, iterat
     # generate data
     x, y, z = generate_data(sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
     # flow test
-    dc, p_dc = flow_test(x=x.clone().detach(), y=y.clone().detach(), z=z.clone().detach(), batchsize=batchsize, iteration_flow=iteration_flow, seed=seed, hidden_num=hidden_num, lr=lr, num_steps=num_steps, device=device)
+    
+    start_time = time.time()
+    _, p_dc = flow_test(x=x.clone().detach(), y=y.clone().detach(), z=z.clone().detach(), batchsize=batchsize, iteration_flow=iteration_flow, seed=seed, hidden_num=hidden_num, lr=lr, num_steps=num_steps, device=device)
+    flow_test_time = time.time() - start_time
+
+    start_time = time.time()
+    _, p_dc_split = flow_test_split(x=x.clone().detach(), y=y.clone().detach(), z=z.clone().detach(), batchsize=batchsize, iteration_flow=iteration_flow, seed=seed, hidden_num=hidden_num, lr=lr, num_steps=num_steps, device=device)
+    flow_test_split_time = time.time() - start_time
+
+    start_time = time.time()
     _, p_fcit = fcit_test(x, y, z)
+    fcit_test_time = time.time() - start_time
+
+    start_time = time.time()
     _, p_pdc = pdc_test(x, y, z)
+    pdc_test_time = time.time() - start_time
+
+    start_time = time.time()
     _, p_cdc = cdc_test(x, y, z)
+    cdc_test_time = time.time() - start_time
+
+    start_time = time.time()
     p_dgcit = dgcit(x, y, z)
-    return dc, p_dc, p_fcit, p_pdc, p_cdc, p_dgcit
+    dgcit_time = time.time() - start_time
+    
+    return p_dc, p_dc_split, p_fcit, p_pdc, p_cdc, p_dgcit, flow_test_time, flow_test_split_time, fcit_test_time, pdc_test_time, cdc_test_time, dgcit_time
 
 
 def run_simulation(seed, args, device):
@@ -70,19 +91,5 @@ if __name__ == "__main__":
     result_matrix = np.array(results)
 
     # Write the matrix to a CSV file
-    np.savetxt("trial.csv", result_matrix, delimiter=",")
+    np.savetxt("sim_type" + str(args.sim_type) + "-alpha-" + str(args.alpha) + "-n-" + str(args.n) + "-x-" + str(args.p) + "-y-" + str(args.q) + "-z-" + str(args.d) + ".csv", result_matrix, delimiter=",")
 
-
-# if __name__=="__main__":
-#     args = parse_arguments()
-#     if args.gpu:
-#         # Set the CUDA_VISIBLE_DEVICES environment variable
-#         os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
-#     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-#     cores = args.cores
-#     nsim = args.nsim
-
-#     for seed in range(nsim):
-#         tmp = sim(seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device)
-#         print(tmp)

@@ -1,3 +1,4 @@
+# This is the code to train a rectified flow.
 import numpy as np
 from functions import permutation_test
 import torch
@@ -124,9 +125,6 @@ def train_conditional_rectified_flow(rectified_flow, optimizer, pairs, batchsize
 
 
 def flow_test(x, y, z, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3, num_steps=1000, seed=0, device="cpu"):
-    '''
-    num_steps: sampling ode steps (Euler's method).
-    '''
     np.random.seed(seed)
     torch.manual_seed(seed)
     random.seed(seed)
@@ -147,4 +145,31 @@ def flow_test(x, y, z, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3
     eps2_pred = rectified_flow_2.sample_conditional_ode(y, z, device=device)[-1]
     # perform test
     dc, dc_p = permutation_test(eps1_pred, eps2_pred)
+    return dc, dc_p
+
+
+def flow_test_split(x, y, z, prop_tr=.8, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3, num_steps=1000, seed=0, device="cpu"):
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    random.seed(seed)
+    n, p = x.shape
+    _, q = y.shape
+    _, d = z.shape
+    n2 = round(prop_tr*n)
+    x_train, x_test = x[:(n-n2)], x[-n2:]
+    z_train, z_test = z[:(n-n2)], z[-n2:]
+    y_train, y_test = y[:(n-n2)], y[-n2:]
+    eps1 = torch.randn((n-n2,p))
+    x1_pairs = [x_train, eps1, z_train.detach().clone()]
+    rectified_flow_1 = ConditionalRectifiedFlow(model=MLP(input_dim=p+d+1, output_dim=p, hidden_num=hidden_num), num_steps=num_steps, device=device)
+    optimizer = torch.optim.Adam(rectified_flow_1.model.parameters(), lr=lr)
+    rectified_flow_1, loss_curve1 = train_conditional_rectified_flow(rectified_flow_1, optimizer, x1_pairs, batchsize, iteration_flow, device=device)
+    eps1_pred = rectified_flow_1.sample_conditional_ode(x_test, z_test, device=device)[-1]
+    eps2 = torch.randn(size=(n-n2,q))
+    y1_pairs = [y_train, eps2, z_train.detach().clone()]
+    rectified_flow_2 = ConditionalRectifiedFlow(model=MLP(input_dim=q+d+1, output_dim=q, hidden_num=hidden_num), num_steps=num_steps, device=device)
+    optimizer = torch.optim.Adam(rectified_flow_2.model.parameters(), lr=lr)
+    rectified_flow_2, loss_curve2 = train_conditional_rectified_flow(rectified_flow_2, optimizer, y1_pairs, batchsize, iteration_flow, device=device)
+    eps2_pred = rectified_flow_2.sample_conditional_ode(y_test, z_test, device=device)[-1]
+    dc, dc_p = permutation_test(eps1_pred.detach().clone(), eps2_pred.detach().clone())
     return dc, dc_p
