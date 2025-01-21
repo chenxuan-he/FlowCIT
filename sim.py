@@ -10,6 +10,7 @@ from torch.multiprocessing import Pool, set_start_method
 import concurrent.futures
 import numpy as np
 import time
+import psutil
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process GPU indices.')
@@ -20,7 +21,8 @@ def parse_arguments():
     parser.add_argument('--d', type=int, default=3, help='Dimension of Z.')
     parser.add_argument('--n', type=int, default=100, help='Sample size.')
     parser.add_argument('--alpha', type=float, default=0, help='Deviation under H_1.')
-    parser.add_argument('--cores', type=int, default=5, help='Numer of cores for parallel computing.')
+    parser.add_argument('--par_task', type=int, default=5, help='Numer of tasks for parallel computing.')
+    parser.add_argument('--cpu', type=int, default=80, help='Numer of maximum numer of cpus for parallel computing.')
     parser.add_argument('--nsim', type=int, default=10, help='Numer of simulations.')
     return parser.parse_args()
 
@@ -28,42 +30,51 @@ def parse_arguments():
 def sim(sim_type=0, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=50, iteration_flow=500, hidden_num=256, lr=5e-3, num_steps=1000, device="cpu"):
     # generate data
     x, y, z = generate_data(sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
-    # flow test
     
+    # flow test
+    print("\nExecuting flow test.")
     start_time = time.time()
     _, p_dc = flow_test(x=x.clone().detach(), y=y.clone().detach(), z=z.clone().detach(), batchsize=batchsize, iteration_flow=iteration_flow, seed=seed, hidden_num=hidden_num, lr=lr, num_steps=num_steps, device=device)
     flow_test_time = time.time() - start_time
+    print("P-value: "+str(round(p_dc, 2))+". Execution time: "+str(round(flow_test_time, 2)))
 
-    start_time = time.time()
-    _, p_dc_split = flow_test_split(x=x.clone().detach(), y=y.clone().detach(), z=z.clone().detach(), batchsize=batchsize, iteration_flow=iteration_flow, seed=seed, hidden_num=hidden_num, lr=lr, num_steps=num_steps, device=device)
-    flow_test_split_time = time.time() - start_time
-
+    print("\nExecuting fcit test.")
     start_time = time.time()
     _, p_fcit = fcit_test(x, y, z)
     fcit_test_time = time.time() - start_time
+    print("P-value: "+str(round(p_fcit, 2))+". Execution time: "+str(round(fcit_test_time, 2)))
 
+    print("\nExecuting pdc test.")
     start_time = time.time()
     _, p_pdc = pdc_test(x, y, z)
     pdc_test_time = time.time() - start_time
+    print("P-value: "+str(round(p_pdc, 2))+". Execution time: "+str(round(pdc_test_time, 2)))
 
+    print("\nExecuting cdc test.")
     start_time = time.time()
     _, p_cdc = cdc_test(x, y, z)
     cdc_test_time = time.time() - start_time
+    print("P-value: "+str(round(p_cdc, 2))+". Execution time: "+str(round(cdc_test_time, 2)))
 
+    print("\nExecuting dgcit test.")
     start_time = time.time()
     p_dgcit = dgcit(x, y, z)
     dgcit_time = time.time() - start_time
-    
-    return p_dc, p_dc_split, p_fcit, p_pdc, p_cdc, p_dgcit, flow_test_time, flow_test_split_time, fcit_test_time, pdc_test_time, cdc_test_time, dgcit_time
+    print("P-value: "+str(round(p_dgcit, 2))+". Execution time: "+str(round(dgcit_time, 2)))
+
+    return p_dc, p_fcit, p_pdc, p_cdc, p_dgcit, flow_test_time, fcit_test_time, pdc_test_time, cdc_test_time, dgcit_time
 
 
 def run_simulation(seed, args, device):
     return sim(seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device)
 
 if __name__ == "__main__":
-    multiprocessing.set_start_method('spawn')
-
     args = parse_arguments()
+
+    multiprocessing.set_start_method('spawn')
+    p = psutil.Process(os.getpid())
+    p.cpu_affinity(range(args.cpu))
+
     if args.gpu:
         # Set the CUDA_VISIBLE_DEVICES environment variable
         os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
@@ -74,7 +85,7 @@ if __name__ == "__main__":
     results = []
 
     # Use ThreadPoolExecutor for I/O-bound tasks or ProcessPoolExecutor for CPU-bound tasks
-    with concurrent.futures.ProcessPoolExecutor(max_workers=args.cores) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=args.par_task) as executor:
         # Submit all tasks to the executor
         futures = {executor.submit(run_simulation, seed, args, device): seed for seed in range(nsim)}
         
@@ -91,5 +102,5 @@ if __name__ == "__main__":
     result_matrix = np.array(results)
 
     # Write the matrix to a CSV file
-    np.savetxt("sim_type" + str(args.sim_type) + "-alpha-" + str(args.alpha) + "-n-" + str(args.n) + "-x-" + str(args.p) + "-y-" + str(args.q) + "-z-" + str(args.d) + ".csv", result_matrix, delimiter=",")
+    np.savetxt("results/sim_type" + str(args.sim_type) + "-alpha-" + str(args.alpha) + "-n-" + str(args.n) + "-x-" + str(args.p) + "-y-" + str(args.q) + "-z-" + str(args.d) + ".csv", result_matrix, delimiter=",")
 

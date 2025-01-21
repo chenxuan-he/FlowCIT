@@ -45,7 +45,7 @@ def distance_correlation(eps1, eps2, alpha=.05):
     return dcorr, test_stat, rej 
 
 
-def permutation_test(X, Y, num_permutations=1000, seed=0):
+def permutation_test(X, Y, num_permutations=100, seed=0):
     """Perform a permutation test to assess the significance of the distance correlation."""
     torch.manual_seed(seed)
     observed_dcor, _, _ = distance_correlation(X, Y)
@@ -72,21 +72,21 @@ def fcit_test(x, y, z, seed=0):
     return stat, pvalue
 
 
-def pdc_test(x, y, z, seed=0):
+def pdc_test(x, y, z, seed=0, reps=100, workers=-1):
     """Partial distance correlation."""
     np.random.seed(seed)
     x0 = x.cpu().numpy()
     y0 = y.cpu().numpy()
     z0 = z.cpu().numpy()
-    stat, pvalue = PartialDcorr().test(x0, y0, z0)
+    stat, pvalue = PartialDcorr().test(x0, y0, z0, reps=reps, workers=workers, random_state=seed)
     return stat, pvalue
 
 
-def cdc_test(x, y, z, seed=0):
+def cdc_test(x, y, z, seed=0, reps=100, workers=-1):
     """Conditional distance correlation."""
     x0 = x.cpu().numpy()
     y0 = y.cpu().numpy()
     z0 = z.cpu().numpy()
     np.random.seed(seed)
-    stat, pvalue = ConditionalDcorr().test(x0, y0, z0)
+    stat, pvalue = ConditionalDcorr().test(x0, y0, z0, reps=reps, workers=workers, random_state=seed)
     return stat, pvalue
