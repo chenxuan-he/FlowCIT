@@ -4,6 +4,7 @@ __pycache__
 *.xls
 *.log
 *.out
+*.csv
 results/*
 !results/.gitkeep
 # plots/*
