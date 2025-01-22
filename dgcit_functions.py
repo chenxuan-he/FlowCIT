@@ -17,9 +17,9 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=3
     X = x.cpu().numpy().astype(np.float64)
     Y = y.cpu().numpy().astype(np.float64)
     Z = z.cpu().numpy().astype(np.float64)
-    n, z_dim = X.shape
+    n, z_dim = Z.shape
     _, y_dims = Y.shape
-    _, x_dims = Z.shape
+    _, x_dims = X.shape
     # no. of random and hidden dimensions
     if z_dim <= 20:
         v_dims = int(3)
