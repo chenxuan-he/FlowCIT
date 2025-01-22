@@ -108,5 +108,5 @@ if __name__ == "__main__":
     result_matrix = np.array(results)
 
     # Write the matrix to a CSV file
-    np.savetxt("results/sim_type" + str(args.sim_type) + "-alpha-" + str(args.alpha) + "-n-" + str(args.n) + "-x-" + str(args.p) + "-y-" + str(args.q) + "-z-" + str(args.d) + ".csv", result_matrix, delimiter=",")
+    np.savetxt(f"results/sim_type{args.sim_type}-alpha-{args.alpha}-n-{args.n}-x-{args.p}-y-{args.q}-z-{args.d}-hidden_num{args.hidden_num}.csv", result_matrix, delimiter=",")
 

@@ -6,3 +6,5 @@ __pycache__
 *.out
 results/*
 !results/.gitkeep
+# plots/*
+!plots/.gitkeep
