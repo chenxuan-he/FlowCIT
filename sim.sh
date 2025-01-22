@@ -31,6 +31,6 @@ nohup python -u sim.py --gpu=0 --cpu=0-100 --sim_type=2 --p=3 --q=3 --d=3 --n=10
 nohup python -u sim.py --gpu=1 --cpu=100-200 --sim_type=2 --p=3 --q=3 --d=3 --n=1000 --alpha=0 --par_task=5 --nsim=100 --hidden_num=128 &> sim_n1000_s2_0_2.txt &
 
 
-# seris of (d_x, d_y, d_z, n)=(3, 3, 100, 1000)
+# seris of (d_x, d_y, d_z, n)=(3, 3, 100, 1000) on server 19
 nohup python -u sim.py --gpu=2 --cpu=0-20 --sim_type=1 --p=3 --q=3 --d=100 --n=1000 --alpha=0 --par_task=5 --nsim=100 &> sim_n1000_s1_d100_0.txt &
 nohup python -u sim.py --gpu=3 --cpu=40-60 --sim_type=1 --p=3 --q=3 --d=100 --n=1000 --alpha=.05 --par_task=5 --nsim=100 &> sim_n1000_s1_d100_1.txt &
