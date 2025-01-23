@@ -6,23 +6,35 @@ from hyppo.conditional import FCIT, PartialDcorr, ConditionalDcorr
 from sklearn.tree import DecisionTreeRegressor
 import random
 
-def generate_data(sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
+def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
     np.random.seed(seed)
     torch.manual_seed(seed)
     random.seed(seed)
-    # Under H0: X is independent of Y given Z
-    beta_1 = torch.randn((d, p))
-    beta_2 = torch.randn((d, q))
-    beta_3 = torch.randn((p, q))
+    # model 1: dense matrix
+    if model==1:
+        beta_1 = torch.randn((d, p))
+        beta_2 = torch.randn((d, q))
+        beta_3 = torch.randn((p, q))
+    # model 2: sparse matrix
+    elif model==2:
+        beta_1 = torch.zeros((d, p))
+        beta_2 = torch.zeros((d, q))
+        beta_3 = torch.zeros((p, q))
+        # Set the first 3x3 block to random values
+        beta_1[0:3, 0:3] = torch.randn((3, 3))
+        beta_2[0:3, 0:3] = torch.randn((3, 3))
+        beta_3[0:3, 0:3] = torch.randn((3, 3))
+    else:
+        return 0
     # Generate Z and X
     Z = torch.randn((n, d))
     X = Z @ beta_1 + torch.randn((n, p))
-    if (sim_type == 1):
-        # Type 1: Under H1, generate X is not independent of Y given Z
+    if sim_type == 1:
         Y = Z @ beta_2 + X @ beta_3 * alpha + torch.randn((n, q))
-    elif (sim_type == 2):
-        # Type 2: Under H1, generate X is not independent of Y given Z with nonlinear relationship
+    elif sim_type == 2:
         Y = torch.sin(Z @ beta_2) + (X @ beta_3 * alpha) + torch.randn((n, q))
+    elif sim_type == 3:
+        Y = (Z @ beta_2) + torch.sin(X @ beta_3 * alpha) + torch.randn((n, q))
     return X, Y, Z
 
 

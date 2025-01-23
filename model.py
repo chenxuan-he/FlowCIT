@@ -15,8 +15,9 @@ import psutil
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process GPU indices.')
     parser.add_argument('--gpu', type=str, default="2", help='Comma-separated list of GPU indices to use.')
-    parser.add_argument('--cpu', type=str, default="0-10", help='Numer of maximum numer of cpus for parallel computing.')
-    parser.add_argument('--sim_type', type=int, default=0, help='Simulation types, including H_0 and H_1.')
+    parser.add_argument('--cpu', type=str, default="0-10", help='Indices of cpus for parallel computing.')
+    parser.add_argument('--model', type=int, default=1, help='Different models in the simulations.')
+    parser.add_argument('--sim_type', type=int, default=0, help='Simulation types, like linear or nonlinear.')
     parser.add_argument('--p', type=int, default=3, help='Dimension of X.')
     parser.add_argument('--q', type=int, default=3, help='Dimension of Y.')
     parser.add_argument('--d', type=int, default=3, help='Dimension of Z.')
@@ -32,9 +33,9 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def sim(sim_type=0, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, device="cpu"):
+def sim(model=1, sim_type=0, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, device="cpu"):
     # generate data
-    x, y, z = generate_data(sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
+    x, y, z = generate_data(model=model, sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
     
     # flow test
     print("\nExecuting flow test.")
@@ -71,7 +72,7 @@ def sim(sim_type=0, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=50, n_iter
 
 
 def run_simulation(seed, args, device):
-    return sim(seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device, hidden_num=args.hidden_num, batchsize=args.batchsize, n_iter=args.n_iter, lr=args.lr, num_steps=args.num_steps)
+    return sim(model=args.model, seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device, hidden_num=args.hidden_num, batchsize=args.batchsize, n_iter=args.n_iter, lr=args.lr, num_steps=args.num_steps)
 
 if __name__ == "__main__":
     args = parse_arguments()
@@ -87,7 +88,6 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     nsim = args.nsim
-
     results = []
 
     # Use ThreadPoolExecutor for I/O-bound tasks or ProcessPoolExecutor for CPU-bound tasks
@@ -108,5 +108,5 @@ if __name__ == "__main__":
     result_matrix = np.array(results)
 
     # Write the matrix to a CSV file
-    np.savetxt(f"results/sim_type{args.sim_type}-alpha-{args.alpha}-n-{args.n}-x-{args.p}-y-{args.q}-z-{args.d}-hidden_num{args.hidden_num}.csv", result_matrix, delimiter=",")
+    np.savetxt(f"results/model{args.model}_type{args.sim_type}-alpha-{args.alpha}-n-{args.n}-x-{args.p}-y-{args.q}-z-{args.d}-hidden_num{args.hidden_num}.csv", result_matrix, delimiter=",")
 

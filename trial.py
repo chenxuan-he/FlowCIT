@@ -1,4 +1,4 @@
-from sim import sim
+from model import sim
 from functions import fcit_test, pdc_test, cdc_test
 from flow_functions import flow_test, flow_test_split
 from functions import generate_data
