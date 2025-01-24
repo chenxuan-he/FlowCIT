@@ -3,18 +3,18 @@ import pandas as pd
 import matplotlib.pyplot as plt 
 
 sim_type = 1
-model = 1
-z = 3
-x = 3
-y = 3 
+model = 2
+z = 100
+x = 50
+y = 50
 
 # alphas = [-0.2, -0.1, 0.0, 0.1, 0.2]
 # n = 500
 
-alphas = [-0.1, -0.05, 0.0, 0.05, 0.1]
+alphas = [-.8, -.4, 0.0, 0.4, 0.8]
 n = 1000
 
-data = pd.read_csv(f'model{model}_type{sim_type}-n-{n}-x-3-y-3-z-{z}.csv')
+data = pd.read_csv(f'model{model}_type{sim_type}-n-{n}-x-{x}-y-{y}-z-{z}.csv')
 
 # Create the plot
 plt.figure(figsize=(4, 3))
