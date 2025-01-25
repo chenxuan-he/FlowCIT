@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt 
 
-sim_type = 1
+sim_type = 2
 model = 2
 z = 100
 x = 50
