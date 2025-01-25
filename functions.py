@@ -31,15 +31,18 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
     if sim_type == 1:
         X = Z @ beta_1 + torch.randn((n, p))
         Y = Z @ beta_2 + X @ beta_3 * alpha + torch.randn((n, q))
-    elif sim_type == 2:
+    elif model == 1 and sim_type == 2:
         X = Z @ beta_1 + torch.randn((n, p))
         Y = torch.sin(Z @ beta_2) + (X @ beta_3 * alpha) + torch.randn((n, q))
+    elif model == 2 and sim_type == 2:
+        X = torch.abs(Z @ beta_1) + torch.randn((n, p))
+        Y = (Z @ beta_2) + X @ beta_3 * alpha + torch.randn((n, q))
     elif sim_type == 3:
-        X = torch.sin(Z @ beta_1) + torch.randn((n, p))
-        Y = (Z @ beta_2) + torch.power(X @ beta_3 * alpha, 2) + torch.randn((n, q))
+        X = torch.pow(Z @ beta_1, 2) + torch.randn((n, p))
+        Y = torch.pow(Z @ beta_2, 2) + X @ beta_3 * alpha + torch.randn((n, q))
     elif sim_type == 4:
-        X = torch.power(Z @ beta_1, 2) + torch.randn((n, p))
-        Y = torch.power(Z @ beta_2, 2) + torch.sin(X @ beta_3 * alpha) + torch.randn((n, q))
+        X = Z @ beta_1 + torch.randn((n, p))
+        Y = Z @ beta_2 + torch.exp(X @ beta_3 * alpha) + torch.randn((n, q))
     return X, Y, Z
 
 
