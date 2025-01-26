@@ -1,7 +1,7 @@
 import pandas as pd
 
 model=2
-sim_type = 2
+sim_type = 4
 x = 50
 y = 50
 z = 100
