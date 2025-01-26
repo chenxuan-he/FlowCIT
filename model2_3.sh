@@ -4,7 +4,6 @@
 
 nohup python -u model.py --gpu=1 --cpu=0-50 --model=2 --sim_type=4 --p=50 --q=50 --d=100 --n=1000 --alpha=0.2 --par_task=5 --nsim=100 --hidden_num=32 &> model2_n1000_s4_2.txt & 
 nohup python -u model.py --gpu=2 --cpu=20-70 --model=2 --sim_type=4 --p=50 --q=50 --d=100 --n=1000 --alpha=-0.2 --par_task=5 --nsim=100 --hidden_num=32 &> model2_n1000_s4_-2.txt & 
-
 nohup python -u model.py --gpu=3 --cpu=50-100 --model=2 --sim_type=3 --p=50 --q=50 --d=100 --n=1000 --alpha=0 --par_task=5 --nsim=100 --hidden_num=32 &> model2_n1000_s3_0.txt &
 nohup python -u model.py --gpu=4 --cpu=80-130 --model=2 --sim_type=3 --p=50 --q=50 --d=100 --n=1000 --alpha=0.4 --par_task=5 --nsim=100 --hidden_num=32 &> model2_n1000_s3_4.txt & 
 nohup python -u model.py --gpu=5 --cpu=110-160 --model=2 --sim_type=3 --p=50 --q=50 --d=100 --n=1000 --alpha=-0.4 --par_task=5 --nsim=100 --hidden_num=32 &> model2_n1000_s3_-4.txt & 
