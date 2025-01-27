@@ -38,9 +38,9 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
         X = torch.abs(Z @ beta_1) + torch.randn((n, p))
         Y = (Z @ beta_2) + X @ beta_3 * alpha + torch.randn((n, q))
     elif sim_type == 3:
-        X = torch.sin(Z @ beta_1) + torch.randn((n, p))
-        # Y = torch.cos(Z @ beta_2) + torch.abs(X @ beta_3 * alpha) + torch.randn((n, q))
-        Y = (Z @ beta_2) + torch.abs(X @ beta_3 * alpha) + torch.randn((n, q))
+        X = (Z @ beta_1) + torch.randn((n, p))
+        # Y = torch.cos(Z @ beta_2) + (X @ beta_3 * alpha) + torch.randn((n, q))
+        Y = torch.cos(Z @ beta_2) + (X @ beta_3 * alpha) + torch.randn((n, q))
     elif sim_type == 4:
         X = Z @ beta_1 + torch.randn((n, p))
         Y = Z @ beta_2 + torch.exp(X @ beta_3 * alpha) + torch.randn((n, q))
