@@ -2,16 +2,17 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt 
 
-sim_type = 4
+sim_type = 3
 model = 2
 z = 100
 x = 50
 y = 50
 
 # alphas = [-0.2, -0.1, 0.0, 0.1, 0.2]
+alphas = [-.8, -.4, 0.0, .4, 0.8]
 # n = 500
 
-alphas = [-.8, -.4, 0.0, 0.4, 0.8]
+alphas = [-.4, -.2, 0.0, 0.2, 0.4]
 n = 1000
 
 data = pd.read_csv(f'model{model}_type{sim_type}-n-{n}-x-{x}-y-{y}-z-{z}.csv')

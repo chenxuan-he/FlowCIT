@@ -1,14 +1,15 @@
 import pandas as pd
 
 model=2
-sim_type = 4
+sim_type = 3
 x = 50
 y = 50
 z = 100
 
 hidden_num = 32
 
-alphas = [-.8, -.4, 0.0, 0.4, 0.8]
+alphas = [-.4, -.2, 0.0, .2, 0.4]
+alphas = [-.8, -.4, 0.0, .4, 0.8]
 n = 1000
 
 # alphas = [-0.2, -0.1, 0.0, 0.1, 0.2]
