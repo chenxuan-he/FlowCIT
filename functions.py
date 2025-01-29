@@ -5,6 +5,7 @@ import scipy.stats as stats
 from hyppo.conditional import FCIT, PartialDcorr, ConditionalDcorr
 from sklearn.tree import DecisionTreeRegressor
 import random
+from sklearn.datasets import make_swiss_roll
 
 def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
     np.random.seed(seed)
@@ -24,6 +25,24 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
         beta_1[0:3, 0:3] = torch.randn((3, 3))
         beta_2[0:3, 0:3] = torch.randn((3, 3))
         beta_3[0:3, 0:3] = torch.randn((3, 3))
+    elif model==3:
+        if sim_type==1:
+            Z = generate_swiss_roll(n, dim=d, seed=seed)
+        elif sim_type==2:
+            Z = generate_helix(n, dim=d, seed=seed)
+        # Independent case
+        if alpha == 0:
+            epsilon_X = np.random.normal(0, 0.1, Z.shape)
+            epsilon_Y = np.random.normal(0, 0.1, Z.shape)
+            X = Z + epsilon_X
+            Y = Z + epsilon_Y
+        # Dependent case
+        else:
+            epsilon_X = np.random.normal(0, 0.1, Z.shape)
+            epsilon_Y = np.random.normal(0, 0.1, Z.shape)
+            X = Z + epsilon_X
+            Y = alpha * X + (1 - alpha) * Z + epsilon_Y
+        return X, Y, Z
     else:
         return 0
     # Generate Z and X
@@ -108,3 +127,31 @@ def cdc_test(x, y, z, seed=0, reps=100, workers=-1):
     np.random.seed(seed)
     stat, pvalue = ConditionalDcorr().test(x0, y0, z0, reps=reps, workers=workers, random_state=seed)
     return stat, pvalue
+
+
+def generate_swiss_roll(n_samples, dim=3, noise=0.05, seed=0):
+    """
+    Generate data in the shape of a Swiss Roll.
+    """
+    np.random.seed(seed)
+    data, _ = make_swiss_roll(n_samples=n_samples, noise=noise, random_state=seed)
+    if dim > 3:
+        extra_dims = np.random.randn(n_samples, dim - 3)
+        return np.hstack((data, extra_dims))
+    return data
+
+
+def generate_helix(n_samples, dim=3, noise=0.1, seed=0):
+    """
+    Generate data in the shape of a 3D helix.
+    """
+    np.random.seed(seed)
+    t = np.linspace(0, 4 * np.pi, n_samples)
+    x = np.sin(t)
+    y = np.cos(t)
+    z = t
+    data = np.stack((x, y, z), axis=1)
+    if dim > 3:
+        extra_dims = np.random.randn(n_samples, dim - 3) * noise
+        return np.hstack((data, extra_dims))
+    return data + np.random.normal(scale=noise, size=data.shape)
