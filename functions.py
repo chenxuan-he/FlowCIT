@@ -30,17 +30,14 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
             Z = generate_swiss_roll(n, dim=d, seed=seed)
         elif sim_type==2:
             Z = generate_helix(n, dim=d, seed=seed)
+        epsilon_X = np.random.normal(0, 1, Z.shape)
+        epsilon_Y = np.random.normal(0, 1, Z.shape)
+        X = Z + epsilon_X
         # Independent case
         if alpha == 0:
-            epsilon_X = np.random.normal(0, 0.1, Z.shape)
-            epsilon_Y = np.random.normal(0, 0.1, Z.shape)
-            X = Z + epsilon_X
             Y = Z + epsilon_Y
         # Dependent case
         else:
-            epsilon_X = np.random.normal(0, 0.1, Z.shape)
-            epsilon_Y = np.random.normal(0, 0.1, Z.shape)
-            X = Z + epsilon_X
             Y = alpha * X + (1 - alpha) * Z + epsilon_Y
         return torch.from_numpy(np.array(X, dtype=np.float32)), torch.from_numpy(np.array(Y, dtype=np.float32)), torch.from_numpy(np.array(Z, dtype=np.float32))
     else:
