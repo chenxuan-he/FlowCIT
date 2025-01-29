@@ -12,7 +12,7 @@ y = 50
 alphas = [-.8, -.4, 0.0, .4, 0.8]
 # n = 500
 
-alphas = [-.4, -.2, 0.0, 0.2, 0.4]
+# alphas = [-.4, -.2, 0.0, 0.2, 0.4]
 n = 1000
 
 data = pd.read_csv(f'model{model}_type{sim_type}-n-{n}-x-{x}-y-{y}-z-{z}.csv')
