@@ -1,6 +1,6 @@
 # This is the code to train a rectified flow.
 import numpy as np
-from functions import permutation_test
+from functions_test import permutation_test
 import torch
 import random
 from torch import nn

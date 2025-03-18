@@ -1,7 +1,8 @@
-from functions import fcit_test, pdc_test, cdc_test
-from flow_functions import flow_test, flow_test_split
-from functions import generate_data
-from dgcit_functions import dgcit
+from functions_test import fcit_test, pdc_test, cdc_test
+from functions_flow import flow_test, flow_test_split
+from functions_dgcit import dgcit
+from functions_generate_data import generate_data
+
 import argparse
 import os
 import torch
