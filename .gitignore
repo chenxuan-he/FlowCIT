@@ -9,3 +9,4 @@ results/*
 !results/.gitkeep
 # plots/*
 !plots/.gitkeep
+*.rda
