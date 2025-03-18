@@ -7,6 +7,5 @@ __pycache__
 *.csv
 results/*
 !results/.gitkeep
-# plots/*
 !plots/.gitkeep
 *.rda

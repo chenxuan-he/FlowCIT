@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import torch
 import random
 from sklearn.datasets import make_swiss_roll
@@ -56,8 +57,23 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
     elif sim_type == 4:
         X = Z @ beta_1 + torch.randn((n, p))
         Y = Z @ beta_2 + torch.exp(X @ beta_3 * alpha) + torch.randn((n, q))
+
+    df = pd.DataFrame(
+        torch.cat([X, Y, Z], dim=1).numpy(),
+        columns=[f"X{i+1}" for i in range(p)] + [f"Y{i+1}" for i in range(q)] + [f"Z{i+1}" for i in range(d)]
+    )
+    df.to_csv(f"data/data_model{model}_seed{seed}.csv", index=False)
     return X, Y, Z
 
+
+def read_data(model, seed, p, q, d):
+    # Load CSV
+    df = pd.read_csv(f"data/data_model{model}_seed{seed}.csv")
+    # Convert back to PyTorch tensors
+    X = torch.tensor(df[[f"X{i+1}" for i in range(p)]].values)
+    Y = torch.tensor(df[[f"Y{i+1}" for i in range(q)]].values)
+    Z = torch.tensor(df[[f"Z{i+1}" for i in range(d)]].values)
+    return X, Y, Z
 
 
 def generate_swiss_roll(n_samples, dim=3, noise=0.05, seed=0):
