@@ -77,10 +77,9 @@ if(file.exists(filename)) {load(filename);print("Already have bootstrap file!")}
 
 
 ## ---- Independence Test ----
-pval1 <- pval2 <- pval3 <- pval4 <- pval5 <- rep(0, n_sim)
 
-for (i in 0:(n_sim-1)) {
-  cat(i, "\r")
+registerDoParallel(cl)
+foreach(i = 0:(n_sim-1), .combine = rbind, .packages = c("CondIndTests")) %dopar%{
   data_list <- read_data(model=model, sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=i)
   X <- data_list$X
   Y <- data_list$Y
@@ -90,26 +89,28 @@ for (i in 0:(n_sim-1)) {
   
   # pval1 corresponds to the proposed CIT of our paper
   test.stat =  CI.multiXYZ.test(X, Y, Z, h)
-  pval1[i] = mean(boots.stat>test.stat)
+  pval1 = mean(boots.stat>test.stat)
   
-  # pval3 corresponds to CDC 
-  hdc = 1*1.06*sd(Z[,1])*(4/(3*n))^{1/(1+4)}
-  pval2[i] = pdcor.test(X, Y, Z, R = 100)$p.value
-  pval3[i] = cdcov.test(X, Y, Z,width = hdc)$p.value
+  # # pval3 corresponds to CDC 
+  # hdc = 1*1.06*sd(Z[,1])*(4/(3*n))^{1/(1+4)}
+  # pval2 = pdcor.test(X, Y, Z, R = 100)$p.value
+  # pval3 = cdcov.test(X, Y, Z,width = hdc)$p.value
   
-  # pval4 corresponds to CMI
-  cmi = cmiScores(X, Y, Z)
-  boot.vec = rep(0, B)
-  for (jj in 1:B) {
-    #cat(jj, "\r")
-    Xnew = local.boots.index(Z, X)
-    boot.vec[jj] = cmiScores(Xnew, Y, Z)
-  }
-  pval4[i] = mean(boot.vec>cmi)
+  # # pval4 corresponds to CMI
+  # cmi = cmiScores(X, Y, Z)
+  # boot.vec = rep(0, B)
+  # for (jj in 1:B) {
+  #   #cat(jj, "\r")
+  #   Xnew = local.boots.index(Z, X)
+  #   boot.vec[jj] = cmiScores(Xnew, Y, Z)
+  # }
+  # pval4 = mean(boot.vec>cmi)
   
   # pval5 corresponds to KCI
-  pval5[i] = KCI(X, Y, Z)$pvalue
+  pval5 = KCI(X, Y, Z)$pvalue
+  return(c(pval1, pval5))
 }
+stopCluster(cl)
 
 ### Report size and power
 print("alpha is 0.05")
