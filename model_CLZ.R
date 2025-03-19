@@ -25,7 +25,7 @@ option_list <- list(
   make_option("--q", type = "integer", default = 1, help = "Dimension of Y."),
   make_option("--d", type = "integer", default = 3, help = "Dimension of Z."),
   make_option("--n_sim", type = "integer", default = 200, help = "Number of simulations."),
-  make_option("--n_cpu", type = "integer", default = 128, help = "Max number of cpu to be used in parallel computing.")
+  make_option("--n_cpu", type = "integer", default = 200, help = "Max number of cpu to be used in parallel computing.")
 )
 ## ---- Parse the command line arguments ----
 opt_parser <- OptionParser(option_list = option_list)
