@@ -24,7 +24,8 @@ option_list <- list(
   make_option("--p", type = "integer", default = 1, help = "Dimension of X."),
   make_option("--q", type = "integer", default = 1, help = "Dimension of Y."),
   make_option("--d", type = "integer", default = 3, help = "Dimension of Z."),
-  make_option("--n_sim", type = "integer", default = 200, help = "Number of simulations.")
+  make_option("--n_sim", type = "integer", default = 200, help = "Number of simulations."),
+  make_option("--n_cpu", type = "integer", default = 128, help = "Max number of cpu to be used in parallel computing.")
 )
 ## ---- Parse the command line arguments ----
 opt_parser <- OptionParser(option_list = option_list)
@@ -55,12 +56,12 @@ if(file.exists(filename)) {load(filename);print("Already have bootstrap file!")}
   boots.time = 1000
 
   # Set up parallel backend
-  num_cores <- min(detectCores() - 1, 128)
+  num_cores <- min(detectCores() - 1, opt$n_cpu)
   cl <- makeCluster(num_cores)
   registerDoParallel(cl)
   
   # Run bootstrap in parallel
-  boots.stat <- foreach(i = 1:boots.time, .combine = c, .packages = "your_package") %dopar% {
+  boots.stat <- foreach(i = 1:boots.time, .combine = c) %dopar% {
     if (i %% 100 == 0) print(i)
     X <- matrix(rnorm(n * p), n, p)
     Y <- matrix(rnorm(n * q), n, q)
@@ -70,8 +71,6 @@ if(file.exists(filename)) {load(filename);print("Already have bootstrap file!")}
   
   # Stop parallel cluster
   stopCluster(cl)
-  
-  
   save(boots.stat, file = filename)
   print("Finished bootstrap!")
 }
