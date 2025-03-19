@@ -73,13 +73,13 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
         torch.cat([X, Y, Z], dim=1).numpy(),
         columns=[f"X{i+1}" for i in range(p)] + [f"Y{i+1}" for i in range(q)] + [f"Z{i+1}" for i in range(d)]
     )
-    df.to_csv(f"data/data_model{model}_simtype{sim_type}_alpha{alpha}_p{p}_q{q}_d{d}_seed{seed}.csv", index=False)
+    df.to_csv(f"data/data_model{model}_simtype{sim_type}_alpha{alpha}_n{n}_p{p}_q{q}_d{d}_seed{seed}.csv", index=False)
     return X, Y, Z
 
 
-def read_data(model, seed, p, q, d):
+def read_data(model, sim_type, alpha, n, p, q, d, seed):
     # Load CSV
-    df = pd.read_csv(f"data/data_model{model}_seed{seed}.csv")
+    df = pd.read_csv(f"data/data_model{model}_simtype{sim_type}_alpha{alpha}_n{n}_p{p}_q{q}_d{d}_seed{seed}.csv")
     # Convert back to PyTorch tensors
     X = torch.tensor(df[[f"X{i+1}" for i in range(p)]].values)
     Y = torch.tensor(df[[f"Y{i+1}" for i in range(q)]].values)

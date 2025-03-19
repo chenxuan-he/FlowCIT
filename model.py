@@ -1,7 +1,7 @@
 from functions_test import fcit_test, pdc_test, cdc_test
 from functions_flow import flow_test, flow_test_split
 from functions_dgcit import dgcit
-from functions_generate_data import generate_data
+from functions_generate_data import read_data
 
 import argparse
 import os
@@ -18,7 +18,7 @@ def parse_arguments():
     parser.add_argument('--gpu', type=str, default="2", help='Comma-separated list of GPU indices to use.')
     parser.add_argument('--cpu', type=str, default="0-10", help='Indices of cpus for parallel computing.')
     parser.add_argument('--model', type=int, default=1, help='Different models in the simulations.')
-    parser.add_argument('--sim_type', type=int, default=0, help='Simulation types, like linear or nonlinear.')
+    parser.add_argument('--sim_type', type=int, default=1, help='Simulation types, like linear or nonlinear.')
     parser.add_argument('--p', type=int, default=3, help='Dimension of X.')
     parser.add_argument('--q', type=int, default=3, help='Dimension of Y.')
     parser.add_argument('--d', type=int, default=3, help='Dimension of Z.')
@@ -34,9 +34,10 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def sim(model=1, sim_type=0, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, device="cpu"):
+def sim(model=1, sim_type=1, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, device="cpu"):
     # generate data
-    x, y, z = generate_data(model=model, sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
+    
+    x, y, z = read_data(model=model, sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
     
     # flow test
     print("\nExecuting flow test.")
@@ -51,12 +52,6 @@ def sim(model=1, sim_type=0, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=5
     fcit_test_time = time.time() - start_time
     print("P-value: "+str(round(p_fcit, 2))+". Execution time: "+str(round(fcit_test_time, 2)))
 
-    print("\nExecuting pdc test.")
-    start_time = time.time()
-    _, p_pdc = pdc_test(x, y, z)
-    pdc_test_time = time.time() - start_time
-    print("P-value: "+str(round(p_pdc, 2))+". Execution time: "+str(round(pdc_test_time, 2)))
-
     print("\nExecuting cdc test.")
     start_time = time.time()
     _, p_cdc = cdc_test(x, y, z)
@@ -69,7 +64,7 @@ def sim(model=1, sim_type=0, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=5
     dgcit_time = time.time() - start_time
     print("P-value: "+str(round(p_dgcit, 2))+". Execution time: "+str(round(dgcit_time, 2)))
 
-    return p_dc, p_fcit, p_pdc, p_cdc, p_dgcit, flow_test_time, fcit_test_time, pdc_test_time, cdc_test_time, dgcit_time
+    return p_dc, p_fcit, p_cdc, p_dgcit, flow_test_time, fcit_test_time, cdc_test_time, dgcit_time
 
 
 def run_simulation(seed, args, device):
