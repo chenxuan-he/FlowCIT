@@ -1,13 +1,13 @@
 # ---- Preparation ----
 ## ---- Load packages and functions ----
 rm(list = ls())
-set.seed(1234)
 library(energy)
 library(bnlearn)
 library(Rcpp)
 library(cdcsis)
 library(CondIndTests)
 library(praznik)
+library(parallel)
 
 source("CLZ/MI_test_functions.R")
 source("functions_generate_data.R")
