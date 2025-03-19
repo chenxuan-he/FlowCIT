@@ -7,7 +7,8 @@ library(Rcpp)
 library(cdcsis)
 library(CondIndTests)
 library(praznik)
-library(parallel)
+library(doParallel)
+library(foreach)
 
 source("CLZ/MI_test_functions.R")
 source("functions_generate_data.R")
@@ -52,17 +53,29 @@ if(file.exists(filename)) {load(filename);print("Already have bootstrap file!")}
   print("Now start bootstrap!")
   h = 1.2*1.06*1*(4/(3*n))^{1/(1+4)}
   boots.time = 1000
-  boots.stat = rep(0, boots.time)
-  for (i in 1:boots.time) {
-    if(i%%100==0) {print(i)}
-    X = matrix(rnorm(n*p), n, p)
-    Y = matrix(rnorm(n*q), n, q)
-    Z = matrix(rnorm(n*d), n, d)
-    boots.stat[i] = CI.multiXYZ.test(X, Y, Z, h)
+
+  # Set up parallel backend
+  num_cores <- min(detectCores() - 1, 128)
+  cl <- makeCluster(num_cores)
+  registerDoParallel(cl)
+  
+  # Run bootstrap in parallel
+  boots.stat <- foreach(i = 1:boots.time, .combine = c, .packages = "your_package") %dopar% {
+    if (i %% 100 == 0) print(i)
+    X <- matrix(rnorm(n * p), n, p)
+    Y <- matrix(rnorm(n * q), n, q)
+    Z <- matrix(rnorm(n * d), n, d)
+    CI.multiXYZ.test(X, Y, Z, h)
   }
+  
+  # Stop parallel cluster
+  stopCluster(cl)
+  
+  
   save(boots.stat, file = filename)
   print("Finished bootstrap!")
 }
+
 
 ## ---- Independence Test ----
 pval1 <- pval2 <- pval3 <- pval4 <- pval5 <- rep(0, n_sim)
