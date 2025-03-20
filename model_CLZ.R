@@ -25,7 +25,8 @@ option_list <- list(
   make_option("--q", type = "integer", default = 1, help = "Dimension of Y."),
   make_option("--d", type = "integer", default = 3, help = "Dimension of Z."),
   make_option("--n_sim", type = "integer", default = 200, help = "Number of simulations."),
-  make_option("--n_cpu", type = "integer", default = 200, help = "Max number of cpu to be used in parallel computing.")
+  make_option("--n_cpu", type = "integer", default = 50, help = "Max number of cpu to be used in parallel computing."),
+  make_option("--bandwidth", type = "integer", default = 1.2, help = "A constant before the bandwidth to control $H_0$."),
 )
 ## ---- Parse the command line arguments ----
 opt_parser <- OptionParser(option_list = option_list)
@@ -44,15 +45,17 @@ n_sim <- opt$n_sim
 old <- Sys.time() # get start time
 
 B = 100
-rdaname = paste0("CLZ/test_results_model", model, "_simtype", sim_type, "_alpha", sprintf("%.1f", alpha), "_n", n, "_p", p, "_q", q, "_d", d, ".rda")
+rdaname = paste0("CLZ/test_results_model", model, "_simtype", sim_type, "_alpha", sprintf("%.1f", alpha), "_n", n, "_p", p, "_q", q, "_d", d, "_bandwidth", bandwidth, ".rda")
 
 ## ---- For CLZ: bootstrap null data ----
 # get the null distribution (generate x y z with the same sample size and dimensions as the original data)
-filename = paste0("CLZ/test_bootstrap_data_n", n, "_p", p, "_q", q, "_d", d, ".rda")
+filename = paste0("CLZ/test_bootstrap_data_n", n, "_p", p, "_q", q, "_d", d, "_bandwidth", bandwidth, ".rda")
 if(file.exists(filename)) {load(filename);print("Already have bootstrap file!")} else {
   #### Bootstrap the null distribution
   print("Now start bootstrap!")
-  h = 1.2*1.06*1*(4/(3*n))^{1/(1+4)}
+  
+  # CLZ theorem require that: $nh^{2(r+p+1)} \to \infty$; $nh^{2(r+q+1)} \to \infty$; we select $h \asymp \max(1/(2(r+p-1)-1))$
+  h = bandwidth*1.06*(4/(3*n))^{1/(2*(d+min(p,q)-1)-1)}
   boots.time = 1000
 
   # Set up parallel backend
@@ -87,7 +90,7 @@ pvalues <- foreach(i = 0:(n_sim-1), .combine = rbind, .packages = c("CondIndTest
   Y <- data_list$Y
   Z <- data_list$Z
   
-  h = 1.2*1.06*1*(4/(3*n))^{1/(1+4)}
+  h = bandwidth*1.06*(4/(3*n))^{1/(2*(d+min(p,q)-1)-1)}
   
   # pval1 corresponds to the proposed CIT of our paper
   test.stat =  CI.multiXYZ.test(X, Y, Z, h)
