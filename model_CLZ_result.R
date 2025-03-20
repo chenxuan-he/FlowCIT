@@ -18,8 +18,6 @@ option_list <- list(
   make_option("--p", type = "integer", default = 1, help = "Dimension of X."),
   make_option("--q", type = "integer", default = 1, help = "Dimension of Y."),
   make_option("--d", type = "integer", default = 3, help = "Dimension of Z."),
-  make_option("--n_sim", type = "integer", default = 200, help = "Number of simulations."),
-  make_option("--n_cpu", type = "integer", default = 50, help = "Max number of cpu to be used in parallel computing."),
   make_option("--bandwidth", type = "double", default = 1.2, help = "A constant before the bandwidth to control $H_0$.")
 )
 
@@ -40,7 +38,7 @@ bandwidth <- opt$bandwidth
 # ---- Start testing: CLZ, KCI ----
 old <- Sys.time() # get start time
 
-rdaname = paste0("CLZ/test_results_model", model, "_simtype", sim_type, "_alpha", sprintf("%.1f", alpha), "_n", n, "_p", p, "_q", q, "_d", d, "_bandwidth", bandwidth, ".rda")
+rdaname = paste0("CLZ/test_results_model", model, "_simtype", sim_type, "_alpha", format(alpha, nsmall = 1, trim = TRUE), "_n", n, "_p", p, "_q", q, "_d", d, "_bandwidth", bandwidth, ".rda")
 
 load(rdaname)
 print(colMeans(pvalues<.05))

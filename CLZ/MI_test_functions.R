@@ -1,6 +1,6 @@
 library(bnlearn)
 library(Rcpp)
-library(cdcsis)
+
 choose.h.size.CI = function(simutime, hrange, boots.stat, consider0.1 = TRUE)
 {
   l = length(hrange)

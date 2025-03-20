@@ -42,7 +42,7 @@ bandwidth <- opt$bandwidth
 old <- Sys.time() # get start time
 
 B = 100
-rdaname = paste0("CLZ/test_results_model", model, "_simtype", sim_type, "_alpha", sprintf("%.1f", alpha), "_n", n, "_p", p, "_q", q, "_d", d, "_bandwidth", bandwidth, ".rda")
+rdaname = paste0("CLZ/test_results_model", model, "_simtype", sim_type, "_alpha", format(alpha, nsmall = 1, trim = TRUE), "_n", n, "_p", p, "_q", q, "_d", d, "_bandwidth", bandwidth, ".rda")
 
 ## ---- For CLZ: bootstrap null data ----
 # get the null distribution (generate x y z with the same sample size and dimensions as the original data)

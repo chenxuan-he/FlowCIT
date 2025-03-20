@@ -5,6 +5,7 @@ __pycache__
 *.log
 *.out
 *.csv
+!*simtype*.csv
 results/*
 !results/.gitkeep
 data/*

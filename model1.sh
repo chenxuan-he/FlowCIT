@@ -1,11 +1,11 @@
 # Simulation type 1: linear case
 # # Rscript execute the CLZ test and the KCI test
-nohup Rscript model_CLZ.R --model=1 --sim_type=1 --alpha=.0 --n=500 --p=3 --q=3 --d=3 --n_cpu=42 --bandwidth=.1 &> model1_CLZ_s1_a0.txt &
-nohup Rscript model_CLZ.R --model=1 --sim_type=1 --alpha=.1 --n=500 --p=3 --q=3 --d=3 --n_cpu=42 --bandwidth=.1 &> model1_CLZ_s1_a1.txt &
-nohup Rscript model_CLZ.R --model=1 --sim_type=1 --alpha=.2 --n=500 --p=3 --q=3 --d=3 --n_cpu=42 --bandwidth=.1 &> model1_CLZ_s1_a2.txt &
-nohup Rscript model_CLZ.R --model=1 --sim_type=1 --alpha=.3 --n=500 --p=3 --q=3 --d=3 --n_cpu=42 --bandwidth=.1 &> model1_CLZ_s1_a3.txt &
-nohup Rscript model_CLZ.R --model=1 --sim_type=1 --alpha=.4 --n=500 --p=3 --q=3 --d=3 --n_cpu=42 --bandwidth=.1 &> model1_CLZ_s1_a4.txt &
-nohup Rscript model_CLZ.R --model=1 --sim_type=1 --alpha=.5 --n=500 --p=3 --q=3 --d=3 --n_cpu=42 --bandwidth=.1 &> model1_CLZ_s1_a5.txt &
+nohup Rscript model_CLZ.R --model=1 --sim_type=1 --alpha=.00 --n=500 --p=3 --q=3 --d=3 --n_cpu=50 --bandwidth=.2 &> model1_CLZ_s1_a00.txt &
+nohup Rscript model_CLZ.R --model=1 --sim_type=1 --alpha=.05 --n=500 --p=3 --q=3 --d=3 --n_cpu=50 --bandwidth=.2 &> model1_CLZ_s1_a05.txt &
+nohup Rscript model_CLZ.R --model=1 --sim_type=1 --alpha=.10 --n=500 --p=3 --q=3 --d=3 --n_cpu=50 --bandwidth=.2 &> model1_CLZ_s1_a10.txt &
+nohup Rscript model_CLZ.R --model=1 --sim_type=1 --alpha=.15 --n=500 --p=3 --q=3 --d=3 --n_cpu=50 --bandwidth=.2 &> model1_CLZ_s1_a15.txt &
+nohup Rscript model_CLZ.R --model=1 --sim_type=1 --alpha=.20 --n=500 --p=3 --q=3 --d=3 --n_cpu=50 --bandwidth=.2 &> model1_CLZ_s1_a20.txt &
+
 
 # # python execute our proposed test, CDC test, FCIT test, DGCIT
 # # conda activate py37
