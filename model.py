@@ -36,7 +36,6 @@ def parse_arguments():
 
 def sim(model=1, sim_type=1, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, device="cpu"):
     # generate data
-    
     x, y, z = read_data(model=model, sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
     
     # flow test

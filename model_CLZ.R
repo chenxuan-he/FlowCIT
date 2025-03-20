@@ -26,7 +26,7 @@ option_list <- list(
   make_option("--d", type = "integer", default = 3, help = "Dimension of Z."),
   make_option("--n_sim", type = "integer", default = 200, help = "Number of simulations."),
   make_option("--n_cpu", type = "integer", default = 50, help = "Max number of cpu to be used in parallel computing."),
-  make_option("--bandwidth", type = "integer", default = 1.2, help = "A constant before the bandwidth to control $H_0$."),
+  make_option("--bandwidth", type = "double", default = 1.2, help = "A constant before the bandwidth to control $H_0$.")
 )
 ## ---- Parse the command line arguments ----
 opt_parser <- OptionParser(option_list = option_list)
@@ -40,6 +40,8 @@ p <- opt$p
 q <- opt$q
 d <- opt$d
 n_sim <- opt$n_sim
+n_cpu <- opt$n_cpu
+bandwidth <- opt$bandwidth
 
 # ---- Start testing: CLZ, CDC, KCI, SW ----
 old <- Sys.time() # get start time
@@ -54,12 +56,12 @@ if(file.exists(filename)) {load(filename);print("Already have bootstrap file!")}
   #### Bootstrap the null distribution
   print("Now start bootstrap!")
   
-  # CLZ theorem require that: $nh^{2(r+p+1)} \to \infty$; $nh^{2(r+q+1)} \to \infty$; we select $h \asymp \max(1/(2(r+p-1)-1))$
+  # CLZ theorem require that: $nh^{2(d+p+1)} \to \infty$; $nh^{2(d+q+1)} \to \infty$; we select $h \asymp \max(1/(2(d+p-1)-1), 1/(2(d+q-1)-1))$
   h = bandwidth*1.06*(4/(3*n))^{1/(2*(d+min(p,q)-1)-1)}
   boots.time = 1000
 
   # Set up parallel backend
-  num_cores <- min(detectCores() - 1, opt$n_cpu)
+  num_cores <- min(detectCores() - 1, n_cpu)
   cl <- makeCluster(num_cores)
   registerDoParallel(cl)
   
@@ -80,7 +82,7 @@ if(file.exists(filename)) {load(filename);print("Already have bootstrap file!")}
 
 
 ## ---- Independence Test ----
-num_cores <- min(detectCores() - 1, opt$n_cpu)
+num_cores <- min(detectCores() - 1, n_cpu)
 cl <- makeCluster(num_cores)
 registerDoParallel(cl)
 
