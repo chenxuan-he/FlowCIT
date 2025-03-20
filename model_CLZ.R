@@ -1,12 +1,7 @@
 # ---- Preparation ----
 ## ---- Load packages and functions ----
 rm(list = ls())
-# library(energy)
-# library(bnlearn)
-# library(Rcpp)
-# library(cdcsis)
 library(CondIndTests)
-# library(praznik)
 library(doParallel)
 library(foreach)
 
@@ -43,7 +38,7 @@ n_sim <- opt$n_sim
 n_cpu <- opt$n_cpu
 bandwidth <- opt$bandwidth
 
-# ---- Start testing: CLZ, CDC, KCI, SW ----
+# ---- Start testing: CLZ, KCI ----
 old <- Sys.time() # get start time
 
 B = 100
