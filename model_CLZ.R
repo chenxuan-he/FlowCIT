@@ -77,9 +77,11 @@ if(file.exists(filename)) {load(filename);print("Already have bootstrap file!")}
 
 
 ## ---- Independence Test ----
-
+num_cores <- min(detectCores() - 1, opt$n_cpu)
+cl <- makeCluster(num_cores)
 registerDoParallel(cl)
-foreach(i = 0:(n_sim-1), .combine = rbind, .packages = c("CondIndTests")) %dopar%{
+
+pvalues <- foreach(i = 0:(n_sim-1), .combine = rbind, .packages = c("CondIndTests")) %dopar%{
   data_list <- read_data(model=model, sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=i)
   X <- data_list$X
   Y <- data_list$Y
@@ -112,27 +114,27 @@ foreach(i = 0:(n_sim-1), .combine = rbind, .packages = c("CondIndTests")) %dopar
 }
 stopCluster(cl)
 
-### Report size and power
-print("alpha is 0.05")
-mean(pval1<0.05)
-mean(pval2<0.05)
-mean(pval3<0.05)
-mean(pval4<0.05)
-mean(pval5<0.05)
+# ### Report size and power
+# print("alpha is 0.05")
+# mean(pval1<0.05)
+# mean(pval2<0.05)
+# mean(pval3<0.05)
+# mean(pval4<0.05)
+# mean(pval5<0.05)
 
-print("alpha is 0.1")
-mean(pval1<0.1)
-mean(pval2<0.1)
-mean(pval3<0.1)
-mean(pval4<0.1)
-mean(pval5<0.1)
+# print("alpha is 0.1")
+# mean(pval1<0.1)
+# mean(pval2<0.1)
+# mean(pval3<0.1)
+# mean(pval4<0.1)
+# mean(pval5<0.1)
 
-a1 = c(mean(pval1<0.05), mean(pval2<0.05), mean(pval3<0.05), mean(pval4<0.05), mean(pval5<0.05))
-a2 = c(mean(pval1<0.1), mean(pval2<0.1), mean(pval3<0.1), mean(pval4<0.1), mean(pval5<0.1))
+# a1 = c(mean(pval1<0.05), mean(pval2<0.05), mean(pval3<0.05), mean(pval4<0.05), mean(pval5<0.05))
+# a2 = c(mean(pval1<0.1), mean(pval2<0.1), mean(pval3<0.1), mean(pval4<0.1), mean(pval5<0.1))
 
-aa = rbind(a1, a2)
-save(aa, file = rdaname)
+# aa = rbind(a1, a2)
+save(pvalues, file = rdaname)
 
-# print elapsed time
-new <- Sys.time() - old # calculate difference
-print(new) # print in nice format
+# # print elapsed time
+# new <- Sys.time() - old # calculate difference
+# print(new) # print in nice format
