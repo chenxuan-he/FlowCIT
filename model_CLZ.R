@@ -1,12 +1,12 @@
 # ---- Preparation ----
 ## ---- Load packages and functions ----
 rm(list = ls())
-library(energy)
-library(bnlearn)
-library(Rcpp)
-library(cdcsis)
+# library(energy)
+# library(bnlearn)
+# library(Rcpp)
+# library(cdcsis)
 library(CondIndTests)
-library(praznik)
+# library(praznik)
 library(doParallel)
 library(foreach)
 
@@ -98,48 +98,13 @@ pvalues <- foreach(i = 0:(n_sim-1), .combine = rbind, .packages = c("CondIndTest
   test.stat =  CI.multiXYZ.test(X, Y, Z, h)
   pval1 = mean(boots.stat>test.stat)
   
-  # # pval3 corresponds to CDC 
-  # hdc = 1*1.06*sd(Z[,1])*(4/(3*n))^{1/(1+4)}
-  # pval2 = pdcor.test(X, Y, Z, R = 100)$p.value
-  # pval3 = cdcov.test(X, Y, Z,width = hdc)$p.value
-  
-  # # pval4 corresponds to CMI
-  # cmi = cmiScores(X, Y, Z)
-  # boot.vec = rep(0, B)
-  # for (jj in 1:B) {
-  #   #cat(jj, "\r")
-  #   Xnew = local.boots.index(Z, X)
-  #   boot.vec[jj] = cmiScores(Xnew, Y, Z)
-  # }
-  # pval4 = mean(boot.vec>cmi)
-  
   # pval5 corresponds to KCI
   pval5 = KCI(X, Y, Z)$pvalue
   return(c(pval1, pval5))
 }
 stopCluster(cl)
 
-# ### Report size and power
-# print("alpha is 0.05")
-# mean(pval1<0.05)
-# mean(pval2<0.05)
-# mean(pval3<0.05)
-# mean(pval4<0.05)
-# mean(pval5<0.05)
-
-# print("alpha is 0.1")
-# mean(pval1<0.1)
-# mean(pval2<0.1)
-# mean(pval3<0.1)
-# mean(pval4<0.1)
-# mean(pval5<0.1)
-
-# a1 = c(mean(pval1<0.05), mean(pval2<0.05), mean(pval3<0.05), mean(pval4<0.05), mean(pval5<0.05))
-# a2 = c(mean(pval1<0.1), mean(pval2<0.1), mean(pval3<0.1), mean(pval4<0.1), mean(pval5<0.1))
-
-# aa = rbind(a1, a2)
 save(pvalues, file = rdaname)
 
-# # print elapsed time
-# new <- Sys.time() - old # calculate difference
-# print(new) # print in nice format
+new <- Sys.time() - old # calculate difference
+print(new) # print in nice format
