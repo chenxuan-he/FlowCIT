@@ -22,8 +22,8 @@ def parse_arguments():
     parser.add_argument('--p', type=int, default=3, help='Dimension of X.')
     parser.add_argument('--q', type=int, default=3, help='Dimension of Y.')
     parser.add_argument('--d', type=int, default=3, help='Dimension of Z.')
-    parser.add_argument('--n', type=int, default=100, help='Sample size.')
-    parser.add_argument('--alpha', type=float, default=0, help='Deviation under H_1.')
+    parser.add_argument('--n', type=int, default=500, help='Sample size.')
+    parser.add_argument('--alpha', type=float, default=.0, help='Deviation under H_1.')
     parser.add_argument('--par_task', type=int, default=5, help='Numer of tasks for parallel computing.')
     parser.add_argument('--nsim', type=int, default=10, help='Numer of simulations.')
     parser.add_argument('--hidden_num', type=int, default=64, help='Hidden dimensions of flow training.')
@@ -31,10 +31,15 @@ def parse_arguments():
     parser.add_argument('--batchsize', type=int, default=50, help='Batchsize of flow training.')
     parser.add_argument('--n_iter', type=int, default=500, help='Iteration of flow training.')
     parser.add_argument('--num_steps', type=int, default=500, help='Number of steps when sampling ODE.')
+    parser.add_argument('--dgcit_batchsize', type=int, default=500, help='Batchsize of dgcit.')
+    parser.add_argument('--dgcit_n_iter', type=int, default=100, help='Iterations of dgcit.')
+    parser.add_argument('--dgcit_k', type=int, default=2, help='K-fold of dgcit.')
+    parser.add_argument('--dgcit_j', type=int, default=1000, help='Parameter j of dgcit.')
+    parser.add_argument('--dgcit_b', type=int, default=30, help='Parameter b of dgcit.')
     return parser.parse_args()
 
 
-def sim(model=1, sim_type=1, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, device="cpu"):
+def sim(model=1, sim_type=1, seed=0, p=3, q=3, d=3, n=500, alpha=.1, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, device="cpu"):
     # generate data
     x, y, z = read_data(model=model, sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
     
@@ -57,51 +62,67 @@ def sim(model=1, sim_type=1, seed=0, p=3, q=3, d=3, n=100, alpha=.1, batchsize=5
     cdc_test_time = time.time() - start_time
     print("P-value: "+str(round(p_cdc, 2))+". Execution time: "+str(round(cdc_test_time, 2)))
 
+    return p_dc, p_fcit, p_cdc, flow_test_time, fcit_test_time, cdc_test_time
+
+
+def sim_dgcit(model=1, sim_type=1, seed=0, p=3, q=3, d=3, n=500, alpha=.1, batch_size=64, n_iter=1000, k=2, b=30, j=1000):
+    x, y, z = read_data(model=model, sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
     print("\nExecuting dgcit test.")
     start_time = time.time()
-    p_dgcit = dgcit(x, y, z)
+    print(f"\nTesting with j={j}")
+    p_dgcit = dgcit(x, y, z, seed=seed, batch_size=batch_size, n_iter=n_iter, k=k, b=b, j=j)
     dgcit_time = time.time() - start_time
     print("P-value: "+str(round(p_dgcit, 2))+". Execution time: "+str(round(dgcit_time, 2)))
-
-    return p_dc, p_fcit, p_cdc, p_dgcit, flow_test_time, fcit_test_time, cdc_test_time, dgcit_time
-
+    return p_dgcit, dgcit_time
+  
 
 def run_simulation(seed, args, device):
-    return sim(model=args.model, seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device, hidden_num=args.hidden_num, batchsize=args.batchsize, n_iter=args.n_iter, lr=args.lr, num_steps=args.num_steps)
+    p_dc, p_fcit, p_cdc, _, _, _ = sim(model=args.model, seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device, hidden_num=args.hidden_num, batchsize=args.batchsize, n_iter=args.n_iter, lr=args.lr, num_steps=args.num_steps)
+    p_dgcit, _ = sim_dgcit(model=args.model, seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha,
+                           batch_size=args.dgcit_batchsize, n_iter=args.dgcit_n_iter, k=args.dgcit_k, b=args.dgcit_b, j=args.dgcit_j)
+    return p_dc, p_fcit, p_cdc, p_dgcit
+
 
 if __name__ == "__main__":
     args = parse_arguments()
+    p_dgcit, dgcit_time = sim_dgcit(model=args.model, seed=0, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha,
+                                    batch_size=args.dgcit_batchsize, n_iter=args.dgcit_n_iter, k=args.dgcit_k, b=args.dgcit_b, j=args.dgcit_j)
+    print(p_dgcit)
 
-    multiprocessing.set_start_method('spawn')
-    p = psutil.Process(os.getpid())
-    start, end = map(int, args.cpu.split('-'))
-    p.cpu_affinity(range(start, end))
 
-    if args.gpu:
-        # Set the CUDA_VISIBLE_DEVICES environment variable
-        os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# if __name__ == "__main__":
+#     args = parse_arguments()
 
-    nsim = args.nsim
-    results = []
+#     multiprocessing.set_start_method('spawn')
+#     p = psutil.Process(os.getpid())
+#     start, end = map(int, args.cpu.split('-'))
+#     p.cpu_affinity(range(start, end))
 
-    # Use ThreadPoolExecutor for I/O-bound tasks or ProcessPoolExecutor for CPU-bound tasks
-    with concurrent.futures.ProcessPoolExecutor(max_workers=args.par_task) as executor:
-        # Submit all tasks to the executor
-        futures = {executor.submit(run_simulation, seed, args, device): seed for seed in range(nsim)}
+#     if args.gpu:
+#         # Set the CUDA_VISIBLE_DEVICES environment variable
+#         os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
+#     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+#     nsim = args.nsim
+#     results = []
+
+#     # Use ThreadPoolExecutor for I/O-bound tasks or ProcessPoolExecutor for CPU-bound tasks
+#     with concurrent.futures.ProcessPoolExecutor(max_workers=args.par_task) as executor:
+#         # Submit all tasks to the executor
+#         futures = {executor.submit(run_simulation, seed, args, device): seed for seed in range(nsim)}
         
-        # As each task completes, print the result
-        for future in concurrent.futures.as_completed(futures):
-            seed = futures[future]
-            try:
-                result = future.result()
-                results.append(result)
-                print(f"Seed {seed}: {result}")
-            except Exception as exc:
-                print(f"Seed {seed} generated an exception: {exc}")
+#         # As each task completes, print the result
+#         for future in concurrent.futures.as_completed(futures):
+#             seed = futures[future]
+#             try:
+#                 result = future.result()
+#                 results.append(result)
+#                 print(f"Seed {seed}: {result}")
+#             except Exception as exc:
+#                 print(f"Seed {seed} generated an exception: {exc}")
 
-    result_matrix = np.array(results)
+#     result_matrix = np.array(results)
 
-    # Write the matrix to a CSV file
-    np.savetxt(f"results/model{args.model}_type{args.sim_type}-alpha-{args.alpha}-n-{args.n}-x-{args.p}-y-{args.q}-z-{args.d}-hidden_num{args.hidden_num}.csv", result_matrix, delimiter=",")
+#     # Write the matrix to a CSV file
+#     np.savetxt(f"results/model{args.model}_type{args.sim_type}-alpha-{args.alpha}-n-{args.n}-x-{args.p}-y-{args.q}-z-{args.d}-hidden_num{args.hidden_num}.csv", result_matrix, delimiter=",")
 

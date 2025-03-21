@@ -2,7 +2,6 @@
 # Original paper: Shi, C., Xu, T., Bergsma, W. & Li, L. Double generative adversarial networks for conditional independence testing. Journal of Machine Learning Research 22, 1–32 (2021).
 # Originial code link: https://github.com/tianlinxu312/dgcit
 # The code has been slightly modified to accept the dataset (X, Y, Z) as an input, whereas the original version generated the data within the function itself.
-import tensorflow as tf
 import logging
 import numpy as np
 import tensorflow as tf
@@ -11,19 +10,25 @@ from sklearn.model_selection import KFold
 logging.getLogger('tensorflow').disabled = True
 tf.keras.backend.set_floatx('float64')
 
-def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=30, j=1000):
+def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=30, j=1000, normalize=True):
     tf.random.set_seed(seed)
     np.random.seed(seed)
     X = x.cpu().numpy().astype(np.float64)
     Y = y.cpu().numpy().astype(np.float64)
     Z = z.cpu().numpy().astype(np.float64)
+
+    if normalize:
+        Z = (Z - Z.min()) / (Z.max() - Z.min())
+        X = (X - X.min()) / (X.max() - X.min())
+        Y = (Y - Y.min()) / (Y.max() - Y.min())
+
     n, z_dim = Z.shape
     _, y_dims = Y.shape
     _, x_dims = X.shape
     # no. of random and hidden dimensions
     if z_dim <= 20:
-        v_dims = int(3)
-        h_dims = int(3)
+        v_dims = int(1)
+        h_dims = int(1)
     else:
         v_dims = int(50)
         h_dims = int(512)

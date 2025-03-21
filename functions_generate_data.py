@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import torch
 import random
+import os
 from sklearn.datasets import make_swiss_roll
 
 def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
@@ -79,8 +80,7 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
 
 
 def read_data(model, sim_type, alpha, n, p, q, d, seed):
-    # Load CSV
-    df = pd.read_csv(f"data/data_model{model}_simtype{sim_type}_alpha{alpha}_n{n}_p{p}_q{q}_d{d}_seed{seed}.csv")
+    df = pd.read_csv(f"/home/chenxhe/flow_test/data/data_model{model}_simtype{sim_type}_alpha{alpha}_n{n}_p{p}_q{q}_d{d}_seed{seed}.csv")
     # Convert back to PyTorch tensors
     X = torch.tensor(df[[f"X{i+1}" for i in range(p)]].values)
     Y = torch.tensor(df[[f"Y{i+1}" for i in range(q)]].values)
