@@ -1,10 +1,10 @@
 # Codes for Conditional Independence Test by Conditional Flow Models
 
-## Reproduction guide
+## Reproduction Guide
 
 -   Each bash file contains command lines to reproduce results of one scenario.
-    -   For instance: **model1_1_n500.sh** reproduce the results of model 1, scenario 1, with sample size $n=500$. We take it as example.
-    -   First, it generates data and store at the *data/* folder, e.g.,
+    -   For instance: **model1_1_n500.sh** reproduces the results of model 1, scenario 1, with sample size $n=500$. We take it as an example.
+    -   First, it generates data and stores at the *data/* folder, e.g.,
         ```bash
         nohup python model_generate_data.py --model=1 --sim_type=1 --alpha=.00 --nsim=200 --d=3 --p=3 --q=3 --n=500
     -   Second, it runs `Rscript model_CLZ.R` to perform the CLZ and KCI test by R, e.g.,
@@ -14,18 +14,18 @@
         ```bash
         Rscript model_CLZ_result.R --model=1 --sim_type=1 --n=500 --p=3 --q=3 --d=3 --bandwidth=.2 --alpha=.00
     -   We then manually collect the results outputed by `Rscript model_CLZ_result.R` to **model1_simtype1-n-500.csv**.
-    -   Fourth, it runs `python -u model.py` to perform FlowCIT, FCIT, and CDC test by python, e.g.,
+    -   Fourth, it runs `python model.py` to perform FlowCIT, FCIT, and CDC tests by python, e.g.,
         ```bash
         nohup python -u model.py --model=1 --sim_type=1 --alpha=.00 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=1 --cpu=000-040 --nsim=200 &> model1_s1_a00.txt &
-    -   Fifth, it runs `python model_result.py` to get the results and store it at **model1_simtype1-n-500-x-3-y-3-z-3.csv**, e.g.,
+    -   Fifth, it runs `python model_result.py` to get the results and stores them at **model1_simtype1-n-500-x-3-y-3-z-3.csv**, e.g.,
         ```bash
         python model_result.py --model=1 --sim_type=1 --alphas="0.0,0.05,0.1,0.15,0.2" --n=500 --p=3 --q=3 --d=3 --hidden_num=64 
     -   We then manually copy the results from **model1_simtype1-n-500-x-3-y-3-z-3.csv** to **model1_simtype1-n-500.csv**.
     -   Sixth, it runs `python model_GCIT.py` to perform GCIT test by python, e.g.,
         ```bash
         nohup python -u model_GCIT.py --model=1 --sim_type=1 --alpha=.00 --n=500 --p=3 --q=3 --d=3 --par_task=50 --cpu=000-050 --nsim=200 --test_prop=.02 &> model1_s1_GCIT_a00.txt &
-    -   Note that the GCIT test requires tensorflow version at 1.13.1, and python>=3.6, other versions are not sensitive.
-    -   Seventh, it runs `python model_result.py` to get the results and store it at **model1_simtype1-n-500-x-3-y-3-z-3-GCIT.csv**, e.g.,
+    -   Note that the GCIT test requires tensorflow version at 1.13.1, and python>=3.6. Other versions are not sensitive.
+    -   Seventh, it runs `python model_result.py` to get the results and stores them at **model1_simtype1-n-500-x-3-y-3-z-3-GCIT.csv**, e.g.,
         ```bash
         python model_result.py --model=1 --sim_type=1 --alphas="0.0,0.05,0.1,0.15,0.2" --n=500 --p=3 --q=3 --d=3 --hidden_num=64 --GCIT=True --GCIT_test_prop=.02
     -   We then manually copy the results from **model1_simtype1-n-500-x-3-y-3-z-3-GCIT.csv** to **model1_simtype1-n-500.csv**.
@@ -33,7 +33,7 @@
         ```bash
         python model_plot.py --model=1 --sim_type=1 --n=500 --alphas="0.0,0.05,0.1,0.15,0.2" --legend=True
 
-## Explanations for the files
+## Explanations for the Files
 
 -   Files with prefix *functions_*
     -   **functions_generate_data.py**
