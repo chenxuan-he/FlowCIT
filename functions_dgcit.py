@@ -10,7 +10,7 @@ from sklearn.model_selection import KFold
 logging.getLogger('tensorflow').disabled = True
 tf.keras.backend.set_floatx('float64')
 
-def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=30, j=1000, normalize=True):
+def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=30, M=500, j=1000, normalize=True):
     tf.random.set_seed(seed)
     np.random.seed(seed)
     X = x.cpu().numpy().astype(np.float64)
@@ -25,10 +25,13 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=3
     n, z_dim = Z.shape
     _, y_dims = Y.shape
     _, x_dims = X.shape
+
+
     # no. of random and hidden dimensions
     if z_dim <= 20:
-        v_dims = int(1)
-        h_dims = int(1)
+        v_dims = int(3)
+        h_dims = int(3)
+
     else:
         v_dims = int(50)
         h_dims = int(512)
@@ -41,16 +44,18 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=3
     discriminator_x = WGanDiscriminator(n, z_dim, h_dims, x_dims, batch_size)
     discriminator_y = WGanDiscriminator(n, z_dim, h_dims, y_dims, batch_size)
 
+    gen_clipping_val = 0.5
     gen_clipping_norm = 1.0
+    w_clipping_val = 0.5
     w_clipping_norm = 1.0
     scaling_coef = 1.0
     sinkhorn_eps = 0.8
     sinkhorn_l = 30
 
-    gx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm) 
-    dx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm)
-    gy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm) 
-    dy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm)
+    gx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm, clipvalue=gen_clipping_val)
+    dx_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm, clipvalue=w_clipping_val)
+    gy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=gen_clipping_norm, clipvalue=gen_clipping_val)
+    dy_optimiser = tf.keras.optimizers.Adam(lr, beta_1=0.5, clipnorm=w_clipping_norm, clipvalue=w_clipping_val)
 
     @tf.function
     def x_update_d(real_x, real_x_p, real_z, real_z_p, v, v_p):
@@ -71,7 +76,8 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=3
             f_fake_p = discriminator_x.call(d_fake_p)
             # call compute loss using @tf.function + autograph
 
-            loss1 = benchmark_loss(f_real, f_fake, scaling_coef, sinkhorn_eps, sinkhorn_l, f_real_p, f_fake_p)
+            loss1 = benchmark_loss(f_real, f_fake, scaling_coef, sinkhorn_eps, sinkhorn_l,
+                                             f_real_p, f_fake_p)
             # disc_loss = - tf.math.minimum(loss1, 1)
             disc_loss = - loss1
         # update discriminator parameters
@@ -95,7 +101,8 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=3
             f_real_p = discriminator_x.call(d_real_p)
             f_fake_p = discriminator_x.call(d_fake_p)
             # call compute loss using @tf.function + autograph
-            gen_loss = benchmark_loss(f_real, f_fake, scaling_coef, sinkhorn_eps, sinkhorn_l, f_real_p, f_fake_p)
+            gen_loss = benchmark_loss(f_real, f_fake, scaling_coef, sinkhorn_eps,
+                                                                           sinkhorn_l, f_real_p, f_fake_p)
         # update generator parameters
         generator_grads = gen_tape.gradient(gen_loss, generator_x.trainable_variables)
         gx_optimiser.apply_gradients(zip(generator_grads, generator_x.trainable_variables))
@@ -120,7 +127,8 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=3
             f_fake_p = discriminator_y.call(d_fake_p)
             # call compute loss using @tf.function + autograph
 
-            loss1 = benchmark_loss(f_real, f_fake, scaling_coef, sinkhorn_eps, sinkhorn_l, f_real_p, f_fake_p)
+            loss1 = benchmark_loss(f_real, f_fake, scaling_coef, sinkhorn_eps, sinkhorn_l,
+                                             f_real_p, f_fake_p)
             disc_loss = - loss1
         # update discriminator parameters
         d_grads = disc_tape.gradient(disc_loss, discriminator_y.trainable_variables)
@@ -143,7 +151,8 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=3
             f_real_p = discriminator_y.call(d_real_p)
             f_fake_p = discriminator_y.call(d_fake_p)
             # call compute loss using @tf.function + autograph
-            gen_loss = benchmark_loss(f_real, f_fake, scaling_coef, sinkhorn_eps, sinkhorn_l, f_real_p, f_fake_p)
+            gen_loss = benchmark_loss(f_real, f_fake, scaling_coef, sinkhorn_eps,
+                                                                           sinkhorn_l, f_real_p, f_fake_p)
         # update generator parameters
         generator_grads = gen_tape.gradient(gen_loss, generator_y.trainable_variables)
         gy_optimiser.apply_gradients(zip(generator_grads, generator_y.trainable_variables))
@@ -157,7 +166,7 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=3
     test_size = int(n/k)
 
     # split the train-test sets to k folds
-    kf = KFold(n_splits=k, shuffle=True, random_state=seed)
+    kf = KFold(n_splits=k, shuffle=True, random_state=42)
     epochs = int(n_iter)
 
     for train_idx, test_idx in kf.split(X):
@@ -191,6 +200,13 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=3
             y_update_d(y_batch1, y_batch2, z_batch1, z_batch2, noise_v, noise_v_p)
             loss_y = y_update_g(y_batch1, y_batch2, z_batch1, z_batch2, noise_v, noise_v_p)
 
+            # with train_writer.as_default():
+            #     # tf.summary.scalar('Wasserstein X Discriminator Loss', x_disc_loss, step=current_iters)
+            #     tf.summary.scalar('Wasserstein X GEN Loss', loss_x, step=current_iters)
+            #     # tf.summary.scalar('Wasserstein Y Discriminator Loss', y_disc_loss, step=current_iters)
+            #     tf.summary.scalar('Wasserstein Y GEN Loss', loss_y, step=current_iters)
+            #     train_writer.flush()
+
             current_iters += 1
 
         psy_x_b = []
@@ -206,8 +222,8 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=3
 
         # the following code generate x_1, ..., x_400 for all B and it takes 61 secs for one test
         for test_x, test_y, test_z in testing_dataset:
-            tiled_z = tf.tile(test_z[tf.newaxis,:], [n, 1])
-            noise_v = v_dist.sample([n, v_dims])
+            tiled_z = tf.tile(test_z[tf.newaxis,:], [M, 1])
+            noise_v = v_dist.sample([M, v_dims])
             noise_v = tf.cast(noise_v, tf.float64)
             g_inputs = tf.concat([tiled_z, noise_v], axis=1)
             # generator samples from G and evaluate from D
@@ -228,8 +244,8 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=3
             y = (y - tf.reduce_mean(y)) / tf.math.reduce_std(y)
             z = (z - tf.reduce_mean(z)) / tf.math.reduce_std(z)
 
-        f1 = CharacteristicFunction(n, x_dims, z_dim, test_size)
-        f2 = CharacteristicFunction(n, y_dims, z_dim, test_size)
+        f1 = CharacteristicFunction(M, x_dims, z_dim, test_size)
+        f2 = CharacteristicFunction(M, y_dims, z_dim, test_size)
         for i in range(test_samples):
             phi_x = tf.reduce_mean(f1.call(x_samples, z), axis=1)
             phi_y = tf.reduce_mean(f2.call(y_samples, z), axis=1)
@@ -276,9 +292,8 @@ def dgcit(x, y, z, seed=0, batch_size=64, n_iter=1000, current_iters=0, k=2, b=3
     stat, critical_vals = test_statistics(psy_x_all, psy_y_all, phi_x_all, phi_y_all, t_b, std_b, j)
     comparison = [c > stat or c == stat for c in critical_vals]
     comparison = np.reshape(comparison, (-1,))
-    p_value = np.sum(comparison.astype(np.float64)) / j
+    p_value = np.sum(comparison.astype(np.float32)) / j
     return p_value
-
 
 class WGanGenerator(tf.keras.Model):
     '''
