@@ -4,10 +4,10 @@
 
 -   Each bash file contains command lines to reproduce results of one scenario.
     -   For instance: **model1_1_n500.sh** reproduce the results of model 1, scenario 1, with sample size $n=500$.
-    -   It first generate data and store at the *data/* folder:
+    -   It first generates data and store at the *data/* folder, e.g.,
         ```bash
         nohup python model_generate_data.py --model=1 --sim_type=1 --alpha=.00 --nsim=200 --d=3 --p=3 --q=3 --n=500
-
+    -   It then run `Rscript model_CLZ.R`
 
 ## Explanations for the files
 
