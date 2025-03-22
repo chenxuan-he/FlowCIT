@@ -31,31 +31,46 @@ def parse_arguments():
     parser.add_argument('--batchsize', type=int, default=50, help='Batchsize of flow training.')
     parser.add_argument('--n_iter', type=int, default=500, help='Iteration of flow training.')
     parser.add_argument('--num_steps', type=int, default=500, help='Number of steps when sampling ODE.')
+    parser.add_argument('--FlowCIT', type=int, default=1, help='Implement FlowCIT or not.')
+    parser.add_argument('--FCIT', type=int, default=500, help='Implement FCIT or not.')
+    parser.add_argument('--CDC', type=int, default=500, help='Implement CDC or not.')
     return parser.parse_args()
 
 
-def sim(model=1, sim_type=1, seed=0, p=3, q=3, d=3, n=500, alpha=.1, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, device="cpu"):
+def sim(model=1, sim_type=1, seed=0, p=3, q=3, d=3, n=500, alpha=.1, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, device="cpu", FlowCIT=1, FCIT=1, CDC=1):
     # generate data
     x, y, z = read_data(model=model, sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
     
-    # flow test
-    print("\nExecuting flow test.")
-    start_time = time.time()
-    _, p_dc = flow_test(x=x.clone().detach(), y=y.clone().detach(), z=z.clone().detach(), batchsize=batchsize, n_iter=n_iter, seed=seed, hidden_num=hidden_num, lr=lr, num_steps=num_steps, device=device)
-    flow_test_time = time.time() - start_time
-    print("P-value: "+str(round(p_dc, 2))+". Execution time: "+str(round(flow_test_time, 2)))
+    if FlowCIT:
+        # flow test
+        print("\nExecuting flow test.")
+        start_time = time.time()
+        _, p_dc = flow_test(x=x.clone().detach(), y=y.clone().detach(), z=z.clone().detach(), batchsize=batchsize, n_iter=n_iter, seed=seed, hidden_num=hidden_num, lr=lr, num_steps=num_steps, device=device)
+        flow_test_time = time.time() - start_time
+        print("P-value: "+str(round(p_dc, 2))+". Execution time: "+str(round(flow_test_time, 2)))
+    else:
+        flow_test_time = 0
+        p_dc = 0
+    
+    if FCIT:
+        print("\nExecuting fcit test.")
+        start_time = time.time()
+        _, p_fcit = fcit_test(x, y, z)
+        fcit_test_time = time.time() - start_time
+        print("P-value: "+str(round(p_fcit, 2))+". Execution time: "+str(round(fcit_test_time, 2)))
+    else:
+        fcit_test_time = 0
+        p_fcit = 0
 
-    print("\nExecuting fcit test.")
-    start_time = time.time()
-    _, p_fcit = fcit_test(x, y, z)
-    fcit_test_time = time.time() - start_time
-    print("P-value: "+str(round(p_fcit, 2))+". Execution time: "+str(round(fcit_test_time, 2)))
-
-    print("\nExecuting cdc test.")
-    start_time = time.time()
-    _, p_cdc = cdc_test(x, y, z)
-    cdc_test_time = time.time() - start_time
-    print("P-value: "+str(round(p_cdc, 2))+". Execution time: "+str(round(cdc_test_time, 2)))
+    if CDC:
+        print("\nExecuting cdc test.")
+        start_time = time.time()
+        _, p_cdc = cdc_test(x, y, z)
+        cdc_test_time = time.time() - start_time
+        print("P-value: "+str(round(p_cdc, 2))+". Execution time: "+str(round(cdc_test_time, 2)))
+    else:
+        cdc_test_time = 0
+        p_cdc = 0
 
     return p_dc, p_fcit, p_cdc, flow_test_time, fcit_test_time, cdc_test_time
 
@@ -66,7 +81,7 @@ def run_simulation(seed, args, device):
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
-    p_dc, p_fcit, p_cdc, _, _, _ = sim(model=args.model, seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device, hidden_num=args.hidden_num, batchsize=args.batchsize, n_iter=args.n_iter, lr=args.lr, num_steps=args.num_steps)
+    p_dc, p_fcit, p_cdc, _, _, _ = sim(model=args.model, seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device, hidden_num=args.hidden_num, batchsize=args.batchsize, n_iter=args.n_iter, lr=args.lr, num_steps=args.num_steps, FlowCIT=args.FlowCIT, FCIT=args.FCIT, CDC=args.CDC)
     return p_dc, p_fcit, p_cdc
 
 # # A demo

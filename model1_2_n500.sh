@@ -20,11 +20,11 @@ Rscript model_CLZ_result.R --model=1 --sim_type=2 --n=500 --p=3 --q=3 --d=3 --ba
 Rscript model_CLZ_result.R --model=1 --sim_type=2 --n=500 --p=3 --q=3 --d=3 --bandwidth=.2 --alpha=.20
 
 # # python to execute our proposed test, CDC test, FCIT test
-nohup python -u model.py --model=1 --sim_type=2 --alpha=.00 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=1 --cpu=000-040 --nsim=200 &> model1_s2_a00.txt &
-nohup python -u model.py --model=1 --sim_type=2 --alpha=.05 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=2 --cpu=040-080 --nsim=200 &> model1_s2_a05.txt &
-nohup python -u model.py --model=1 --sim_type=2 --alpha=.10 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=3 --cpu=080-120 --nsim=200 &> model1_s2_a10.txt &
-nohup python -u model.py --model=1 --sim_type=2 --alpha=.15 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=4 --cpu=120-160 --nsim=200 &> model1_s2_a15.txt &
-nohup python -u model.py --model=1 --sim_type=2 --alpha=.20 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=5 --cpu=160-200 --nsim=200 &> model1_s2_a20.txt &
+nohup python -u model.py --model=1 --sim_type=2 --alpha=.00 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=1 --cpu=000-040 --nsim=200 --hidden_num=32 &> model1_s2_a00.txt &
+nohup python -u model.py --model=1 --sim_type=2 --alpha=.05 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=2 --cpu=040-080 --nsim=200 --hidden_num=32 &> model1_s2_a05.txt &
+nohup python -u model.py --model=1 --sim_type=2 --alpha=.10 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=3 --cpu=080-120 --nsim=200 --hidden_num=32 &> model1_s2_a10.txt &
+nohup python -u model.py --model=1 --sim_type=2 --alpha=.15 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=4 --cpu=120-160 --nsim=200 --hidden_num=32 &> model1_s2_a15.txt &
+nohup python -u model.py --model=1 --sim_type=2 --alpha=.20 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=5 --cpu=160-200 --nsim=200 --hidden_num=32 &> model1_s2_a20.txt &
 
 python model_result.py --model=1 --sim_type=2 --alphas="0.0,0.05,0.1,0.15,0.2" --n=500 --p=3 --q=3 --d=3 --hidden_num=64 
 
