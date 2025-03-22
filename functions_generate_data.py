@@ -9,18 +9,6 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
     np.random.seed(seed)
     torch.manual_seed(seed)
     random.seed(seed)
-    # model 0: univariate X and Y
-    if model==0:
-        Z = torch.randn((n, d))
-        Z1 = Z[:,0].unsqueeze(1)
-        Z2 = Z[:,1].unsqueeze(1)
-        tilde_X = torch.randn((n, 1))
-        if sim_type==1:
-            X = tilde_X + Z1 + Z2
-            Y = .1 * alpha * tilde_X + Z1
-        elif sim_type==2:
-            X = torch.log(tilde_X * Z1 + 10) + Z2
-            Y = alpha * torch.exp(tilde_X * Z1) + Z2
     # model 1: dense matrix
     if model==1:
         beta_1 = torch.randn((d, p))
@@ -35,24 +23,24 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
         beta_1[0:3, 0:3] = torch.randn((3, 3))
         beta_2[0:3, 0:3] = torch.randn((3, 3))
         beta_3[0:3, 0:3] = torch.randn((3, 3))
-    elif model==3:
-        if sim_type==1:
-            Z = generate_swiss_roll(n, dim=d, seed=seed)
-        elif sim_type==2:
-            Z = generate_helix(n, dim=d, seed=seed)
-        epsilon_X = np.random.normal(0, 1, Z.shape)
-        epsilon_Y = np.random.normal(0, 1, Z.shape)
-        X = Z + epsilon_X
-        # Independent case
-        if alpha == 0:
-            Y = Z + epsilon_Y
-        # Dependent case
-        else:
-            Y = alpha * X + (1 - alpha) * Z + epsilon_Y
-        return torch.from_numpy(np.array(X, dtype=np.float32)), torch.from_numpy(np.array(Y, dtype=np.float32)), torch.from_numpy(np.array(Z, dtype=np.float32))
-    else:
-        return 0
-    # Generate Z and X
+    # elif model==3:
+    #     if sim_type==1:
+    #         Z = generate_swiss_roll(n, dim=d, seed=seed)
+    #     elif sim_type==2:
+    #         Z = generate_helix(n, dim=d, seed=seed)
+    #     epsilon_X = np.random.normal(0, 1, Z.shape)
+    #     epsilon_Y = np.random.normal(0, 1, Z.shape)
+    #     X = Z + epsilon_X
+    #     # Independent case
+    #     if alpha == 0:
+    #         Y = Z + epsilon_Y
+    #     # Dependent case
+    #     else:
+    #         Y = alpha * X + (1 - alpha) * Z + epsilon_Y
+    #     return torch.from_numpy(np.array(X, dtype=np.float32)), torch.from_numpy(np.array(Y, dtype=np.float32)), torch.from_numpy(np.array(Z, dtype=np.float32))
+    # else:
+    #     return 0
+    # # Generate Z and X
     Z = torch.randn((n, d))
     if sim_type == 1:
         X = Z @ beta_1 + torch.randn((n, p))
