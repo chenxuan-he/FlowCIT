@@ -39,4 +39,4 @@ nohup python -u model_GCIT.py --model=1 --sim_type=2 --alpha=.20 --n=500 --p=3 -
 python model_result.py --model=1 --sim_type=2 --alphas="0.0,0.05,0.1,0.15,0.2" --n=500 --p=3 --q=3 --d=3 --hidden_num=64 --GCIT=True --GCIT_test_prop=.01
 
 # Generate plots
-python model_plot.py --model=1 --sim_type=2 --n=500 --alphas="0.0,0.05,0.1,0.15,0.2" --legend=True
+python model_plot.py --model=1 --sim_type=2 --n=500 --alphas="0.0,0.05,0.1,0.15,0.2" --legend=0

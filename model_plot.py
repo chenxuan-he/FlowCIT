@@ -12,7 +12,7 @@ def parse_arguments():
     parser.add_argument('--alphas', type=parse_alpha, default="0,0.05,0.1,0.15,0.2", help='List of alphas.')
     parser.add_argument('--model', type=int, default=1, help='Different models in the simulations.')
     parser.add_argument('--sim_type', type=int, default=1, help='Different simulation types.')
-    parser.add_argument('--legend', type=bool, default=True, help='Show legend or not.')
+    parser.add_argument('--legend', type=int, default=1, help='Show legend or not.')
     return parser.parse_args()
 
 
@@ -22,7 +22,8 @@ if __name__ == "__main__":
     model = args.model
     alphas = args.alphas
     n = args.n
-
+    legend = args.legend
+    print(legend)
     data = pd.read_csv(f'model{model}_simtype{sim_type}-n-{n}.csv')
 
     # Create the plot
@@ -41,7 +42,7 @@ if __name__ == "__main__":
     # plt.xlabel('Alpha')
     # plt.ylabel('Power/Size')
     # plt.title('Power/Size Comparison Plot')
-    if args.legend:
+    if legend:
         plt.legend()
         plt.legend(loc='upper right', bbox_to_anchor=(0.4, 1))
     plt.grid(True)
