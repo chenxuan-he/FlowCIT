@@ -18,39 +18,39 @@ def parse_arguments():
     parser.add_argument('--GCIT_test_prop', type=float, default=0.1, help='Testing proportions of GCIT.')
     return parser.parse_args()
 
-args = parse_arguments()
-n = args.n
-p = args.p
-q = args.q
-d = args.d
-alphas = args.alphas
-model = args.model
-sim_type = args.sim_type
-hidden_num = args.hidden_num
-GCIT = args.GCIT
-GCIT_test_prop = args.GCIT_test_prop
-
-# Create an empty list to store the means
-means_list = []
-
-for alpha in alphas:
-    # Specify the file name
-    if not GCIT:
-        file_name = f'results/model{model}_type{sim_type}-alpha-{alpha}-n-{n}-x-{p}-y-{q}-z-{d}-hidden_num{hidden_num}.csv'
-    else:
-        file_name = f'results/model{model}_type{sim_type}-alpha-{alpha}-n-{n}-x-{p}-y-{q}-z-{d}-GCIT-test_prop{GCIT_test_prop}.csv'
-
-    # Read the CSV file into a DataFrame
-    data = pd.read_csv(file_name, header=None)
-
-    # Calculate the mean of each column
-    column_means = (data < 0.05).mean()
-
-    # Append the means to the list along with the alpha value
-    means_list.append(column_means)
-
 
 if __name__ == "__main__":
+    args = parse_arguments()
+    n = args.n
+    p = args.p
+    q = args.q
+    d = args.d
+    alphas = args.alphas
+    model = args.model
+    sim_type = args.sim_type
+    hidden_num = args.hidden_num
+    GCIT = args.GCIT
+    GCIT_test_prop = args.GCIT_test_prop
+
+    # Create an empty list to store the means
+    means_list = []
+
+    for alpha in alphas:
+        # Specify the file name
+        if not GCIT:
+            file_name = f'results/model{model}_type{sim_type}-alpha-{alpha}-n-{n}-x-{p}-y-{q}-z-{d}-hidden_num{hidden_num}.csv'
+        else:
+            file_name = f'results/model{model}_type{sim_type}-alpha-{alpha}-n-{n}-x-{p}-y-{q}-z-{d}-GCIT-test_prop{GCIT_test_prop}.csv'
+
+        # Read the CSV file into a DataFrame
+        data = pd.read_csv(file_name, header=None)
+
+        # Calculate the mean of each column
+        column_means = (data < 0.05).mean()
+
+        # Append the means to the list along with the alpha value
+        means_list.append(column_means)
+
     # Convert the list of means into a DataFrame
     means_df = pd.DataFrame(means_list, index=alphas)
 
