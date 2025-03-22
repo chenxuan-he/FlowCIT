@@ -23,24 +23,7 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
         beta_1[0:3, 0:3] = torch.randn((3, 3))
         beta_2[0:3, 0:3] = torch.randn((3, 3))
         beta_3[0:3, 0:3] = torch.randn((3, 3))
-    # elif model==3:
-    #     if sim_type==1:
-    #         Z = generate_swiss_roll(n, dim=d, seed=seed)
-    #     elif sim_type==2:
-    #         Z = generate_helix(n, dim=d, seed=seed)
-    #     epsilon_X = np.random.normal(0, 1, Z.shape)
-    #     epsilon_Y = np.random.normal(0, 1, Z.shape)
-    #     X = Z + epsilon_X
-    #     # Independent case
-    #     if alpha == 0:
-    #         Y = Z + epsilon_Y
-    #     # Dependent case
-    #     else:
-    #         Y = alpha * X + (1 - alpha) * Z + epsilon_Y
-    #     return torch.from_numpy(np.array(X, dtype=np.float32)), torch.from_numpy(np.array(Y, dtype=np.float32)), torch.from_numpy(np.array(Z, dtype=np.float32))
-    # else:
-    #     return 0
-    # # Generate Z and X
+    # Now start generate X, Y, and Z.
     Z = torch.randn((n, d))
     if sim_type == 1:
         X = Z @ beta_1 + torch.randn((n, p))
@@ -48,6 +31,12 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
     elif model == 1 and sim_type == 2:
         X = Z @ beta_1 + torch.randn((n, p))
         Y = torch.sin(Z @ beta_2) + (X @ beta_3 * alpha) + torch.randn((n, q))
+    elif model == 1 and sim_type == 3:
+        X = torch.pow(Z @ beta_1, 2) + torch.randn((n, p))
+        Y = Z @ beta_2 + X @ beta_3 * alpha + torch.randn((n, q))
+    elif model == 1 and sim_type == 4:
+        X = Z @ beta_1 + torch.randn((n, p))
+        Y = Z @ beta_2 + torch.exp(X @ beta_3) * alpha + torch.randn((n, q))
     elif model == 2 and sim_type == 2:
         X = torch.abs(Z @ beta_1) + torch.randn((n, p))
         Y = (Z @ beta_2) + X @ beta_3 * alpha + torch.randn((n, q))
