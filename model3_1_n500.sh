@@ -36,7 +36,7 @@ nohup python -u model_GCIT.py --model=3 --sim_type=1 --alpha=.20 --n=500 --p=1 -
 nohup python -u model_GCIT.py --model=3 --sim_type=1 --alpha=.30 --n=500 --p=1 --q=1 --d=2 --par_task=50 --cpu=120-160 --nsim=200 --test_prop=.01 &> model3_s1_GCIT_a30.txt &
 nohup python -u model_GCIT.py --model=3 --sim_type=1 --alpha=.40 --n=500 --p=1 --q=1 --d=2 --par_task=50 --cpu=160-200 --nsim=200 --test_prop=.01 &> model3_s1_GCIT_a40.txt &
 
-python model_result.py --model=3 --sim_type=1 --alphas="0.0,0.1,0.2,0.3,0.4" --n=500 --p=1 --q=1 --d=2 --hidden_num=64 --GCIT=True --GCIT_test_prop=.01
+python model_result.py --model=3 --sim_type=1 --alphas="0.0,0.1,0.2,0.3,0.4" --n=500 --p=1 --q=1 --d=2 --GCIT=True --GCIT_test_prop=.01
 
 # Generate plots
 python model_plot.py --model=3 --sim_type=1 --n=500 --alphas="0.0,0.1,0.2,0.3,0.4" --legend=0
