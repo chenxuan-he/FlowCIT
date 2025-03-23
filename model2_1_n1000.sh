@@ -1,10 +1,3 @@
-# delete later: code to generate bootstrap data
-nohup Rscript model_CLZ.R --n=1000 --p=50 --q=50 --d=100 --n_cpu=10 --bandwidth=.2 &> model2_CLZ_b02.txt &
-nohup Rscript model_CLZ.R --n=1000 --p=50 --q=50 --d=100 --n_cpu=10 --bandwidth=.5 &> model2_CLZ_b05.txt &
-nohup Rscript model_CLZ.R --n=1000 --p=50 --q=50 --d=100 --n_cpu=10 --bandwidth=1. &> model2_CLZ_b10.txt &
-nohup Rscript model_CLZ.R --n=1000 --p=50 --q=50 --d=100 --n_cpu=10 --bandwidth=2. &> model2_CLZ_b20.txt &
-
-
 # First: generate data
 nohup python model_generate_data.py --model=2 --sim_type=1 --alpha=.00 --nsim=200 --d=100 --p=50 --q=50 --n=1000
 nohup python model_generate_data.py --model=2 --sim_type=1 --alpha=.05 --nsim=200 --d=100 --p=50 --q=50 --n=1000
