@@ -26,7 +26,7 @@ nohup python -u model.py --model=1 --sim_type=2 --alpha=.10 --n=500 --p=3 --q=3 
 nohup python -u model.py --model=1 --sim_type=2 --alpha=.15 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=4 --cpu=120-160 --nsim=200 --hidden_num=32 &> model1_s2_a15.txt &
 nohup python -u model.py --model=1 --sim_type=2 --alpha=.20 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=5 --cpu=160-200 --nsim=200 --hidden_num=32 &> model1_s2_a20.txt &
 
-python model_result.py --model=1 --sim_type=2 --alphas="0.0,0.05,0.1,0.15,0.2" --n=500 --p=3 --q=3 --d=3 --hidden_num=64 
+python model_result.py --model=1 --sim_type=2 --alphas="0.0,0.05,0.1,0.15,0.2" --n=500 --p=3 --q=3 --d=3 --hidden_num=32 
 
 # # conda activate py37
 # # python code to execute GCIT
@@ -36,7 +36,7 @@ nohup python -u model_GCIT.py --model=1 --sim_type=2 --alpha=.10 --n=500 --p=3 -
 nohup python -u model_GCIT.py --model=1 --sim_type=2 --alpha=.15 --n=500 --p=3 --q=3 --d=3 --par_task=50 --cpu=120-160 --nsim=200 --test_prop=.01 &> model1_s2_GCIT_a15.txt &
 nohup python -u model_GCIT.py --model=1 --sim_type=2 --alpha=.20 --n=500 --p=3 --q=3 --d=3 --par_task=50 --cpu=160-200 --nsim=200 --test_prop=.01 &> model1_s2_GCIT_a20.txt &
 
-python model_result.py --model=1 --sim_type=2 --alphas="0.0,0.05,0.1,0.15,0.2" --n=500 --p=3 --q=3 --d=3 --hidden_num=64 --GCIT=True --GCIT_test_prop=.01
+python model_result.py --model=1 --sim_type=2 --alphas="0.0,0.05,0.1,0.15,0.2" --n=500 --p=3 --q=3 --d=3 --hidden_num=32 --GCIT=True --GCIT_test_prop=.01
 
 # Generate plots
 python model_plot.py --model=1 --sim_type=2 --n=500 --alphas="0.0,0.05,0.1,0.15,0.2" --legend=0
