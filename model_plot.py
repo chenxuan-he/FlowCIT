@@ -23,7 +23,6 @@ if __name__ == "__main__":
     alphas = args.alphas
     n = args.n
     legend = args.legend
-    print(legend)
     data = pd.read_csv(f'model{model}_simtype{sim_type}-n-{n}.csv')
 
     # Create the plot
