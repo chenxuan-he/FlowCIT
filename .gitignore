@@ -11,4 +11,3 @@ results/*
 data/*
 !data/.gitkeep
 *.rda
-functions_dgcit.py
