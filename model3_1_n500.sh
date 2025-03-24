@@ -26,7 +26,7 @@ nohup python -u model.py --model=3 --sim_type=1 --alpha=.20 --n=500 --p=1 --q=1 
 nohup python -u model.py --model=3 --sim_type=1 --alpha=.30 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=4 --cpu=120-160 --nsim=200 &> model3_s1_a30.txt &
 nohup python -u model.py --model=3 --sim_type=1 --alpha=.40 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=5 --cpu=160-200 --nsim=200 &> model3_s1_a40.txt &
 
-python model_result.py --model=3 --sim_type=1 --alphas="0.0,0.1,0.2,0.3,0.4" --n=500 --p=1 --q=1 --d=2 --hidden_num=64 
+python model_result.py --model=3 --sim_type=1 --alphas="0.0,0.1,0.2,0.3,0.4" --n=500 --p=1 --q=1 --d=2
 
 # # # conda activate py37
 # # # python code to execute GCIT

@@ -41,7 +41,7 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def sim(model=1, sim_type=1, seed=0, p=3, q=3, d=3, n=500, alpha=.1, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, device="cpu", FlowCIT=1, FCIT=1, CDC=1):
+def sim(model=1, sim_type=1, seed=0, p=3, q=3, d=3, n=500, alpha=.1, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, device="cpu", FlowCIT=1, FCIT=1, CDC=1, CCIT_exe=1):
     # generate data
     x, y, z = read_data(model=model, sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
     
@@ -76,7 +76,7 @@ def sim(model=1, sim_type=1, seed=0, p=3, q=3, d=3, n=500, alpha=.1, batchsize=5
         cdc_test_time = 0
         p_cdc = 0
 
-    if CCIT:
+    if CCIT_exe:
         print("\nExecuting ccit test.")
         start_time = time.time()
         p_ccit = CCIT.CCIT(x.numpy(), y.numpy(), z.numpy())
@@ -95,7 +95,7 @@ def run_simulation(seed, args, device):
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
-    p_dc, p_fcit, p_cdc, p_ccit, _, _, _, _ = sim(model=args.model, seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device, hidden_num=args.hidden_num, batchsize=args.batchsize, n_iter=args.n_iter, lr=args.lr, num_steps=args.num_steps, FlowCIT=args.FlowCIT, FCIT=args.FCIT, CDC=args.CDC)
+    p_dc, p_fcit, p_cdc, p_ccit, _, _, _, _ = sim(model=args.model, seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device, hidden_num=args.hidden_num, batchsize=args.batchsize, n_iter=args.n_iter, lr=args.lr, num_steps=args.num_steps, FlowCIT=args.FlowCIT, FCIT=args.FCIT, CDC=args.CDC, CCIT_exe=args.CCIT)
     return p_dc, p_fcit, p_cdc, p_ccit
 
 
