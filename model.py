@@ -36,6 +36,8 @@ def parse_arguments():
     parser.add_argument('--FCIT', type=int, default=1, help='Implement FCIT or not.')
     parser.add_argument('--CDC', type=int, default=1, help='Implement CDC or not.')
     parser.add_argument('--CCIT', type=int, default=1, help='Implement CCIT or not.')
+    parser.add_argument('--demo', type=int, default=0, help='Run once for demonstration.')
+    parser.add_argument('--seed', type=int, default=0, help='Seed for demo.')
     return parser.parse_args()
 
 
@@ -96,46 +98,47 @@ def run_simulation(seed, args, device):
     p_dc, p_fcit, p_cdc, p_ccit, _, _, _, _ = sim(model=args.model, seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device, hidden_num=args.hidden_num, batchsize=args.batchsize, n_iter=args.n_iter, lr=args.lr, num_steps=args.num_steps, FlowCIT=args.FlowCIT, FCIT=args.FCIT, CDC=args.CDC)
     return p_dc, p_fcit, p_cdc, p_ccit
 
-# # A demo
-# if __name__ == "__main__":
-#     args = parse_arguments()
-#     run_simulation(seed=0, args=args, device="cpu")
-
 
 # A parallel version
 if __name__ == "__main__":
     args = parse_arguments()
+    if args.demo:
+        if args.gpu:
+            # Set the CUDA_VISIBLE_DEVICES environment variable
+            os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        run_simulation(seed=args.seed, args=args, device=device)
+    elif not args.demo:
+        multiprocessing.set_start_method('spawn')
+        p = psutil.Process(os.getpid())
+        start, end = map(int, args.cpu.split('-'))
+        p.cpu_affinity(range(start, end))
 
-    multiprocessing.set_start_method('spawn')
-    p = psutil.Process(os.getpid())
-    start, end = map(int, args.cpu.split('-'))
-    p.cpu_affinity(range(start, end))
+        if args.gpu:
+            # Set the CUDA_VISIBLE_DEVICES environment variable
+            os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    if args.gpu:
-        # Set the CUDA_VISIBLE_DEVICES environment variable
-        os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        nsim = args.nsim
+        results = []
 
-    nsim = args.nsim
-    results = []
+        # Use ThreadPoolExecutor for I/O-bound tasks or ProcessPoolExecutor for CPU-bound tasks
+        with concurrent.futures.ProcessPoolExecutor(max_workers=args.par_task) as executor:
+            # Submit all tasks to the executor
+            futures = {executor.submit(run_simulation, seed, args, device): seed for seed in range(nsim)}
+            
+            # As each task completes, print the result
+            for future in concurrent.futures.as_completed(futures):
+                seed = futures[future]
+                try:
+                    result = future.result()
+                    results.append(result)
+                    print(f"Seed {seed}: {result}")
+                except Exception as exc:
+                    print(f"Seed {seed} generated an exception: {exc}")
 
-    # Use ThreadPoolExecutor for I/O-bound tasks or ProcessPoolExecutor for CPU-bound tasks
-    with concurrent.futures.ProcessPoolExecutor(max_workers=args.par_task) as executor:
-        # Submit all tasks to the executor
-        futures = {executor.submit(run_simulation, seed, args, device): seed for seed in range(nsim)}
-        
-        # As each task completes, print the result
-        for future in concurrent.futures.as_completed(futures):
-            seed = futures[future]
-            try:
-                result = future.result()
-                results.append(result)
-                print(f"Seed {seed}: {result}")
-            except Exception as exc:
-                print(f"Seed {seed} generated an exception: {exc}")
+        result_matrix = np.array(results)
 
-    result_matrix = np.array(results)
-
-    # Write the matrix to a CSV file
-    np.savetxt(f"results/model{args.model}_type{args.sim_type}-alpha-{args.alpha}-n-{args.n}-x-{args.p}-y-{args.q}-z-{args.d}-hidden_num{args.hidden_num}.csv", result_matrix, delimiter=",")
+        # Write the matrix to a CSV file
+        np.savetxt(f"results/model{args.model}_type{args.sim_type}-alpha-{args.alpha}-n-{args.n}-x-{args.p}-y-{args.q}-z-{args.d}-hidden_num{args.hidden_num}.csv", result_matrix, delimiter=",")
 

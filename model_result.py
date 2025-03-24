@@ -59,8 +59,8 @@ if __name__ == "__main__":
     means_df.rename(columns={'index': 'alpha'}, inplace=True)
 
     if not GCIT:
-        means_df.columns = ['alpha', 'FlowCIT', 'FCIT', 'CDC'] + list(means_df.columns[4:])
-        means_df_truncated = means_df.iloc[:, :4]
+        means_df.columns = ['alpha', 'FlowCIT', 'FCIT', 'CDC', 'CCIT'] + list(means_df.columns[5:])
+        means_df_truncated = means_df.iloc[:, :5]
 
         means_df_truncated.to_csv(f'model{model}_simtype{sim_type}-n-{n}-x-{p}-y-{q}-z-{d}.csv', index=False)
 

@@ -4,6 +4,19 @@ python model_generate_data.py --model=4 --sim_type=1 --alpha=.10 --nsim=200 --d=
 python model_generate_data.py --model=4 --sim_type=1 --alpha=.20 --nsim=200 --d=100 --p=1 --q=1 --n=1000
 python model_generate_data.py --model=4 --sim_type=1 --alpha=.30 --nsim=200 --d=100 --p=1 --q=1 --n=1000
 python model_generate_data.py --model=4 --sim_type=1 --alpha=.40 --nsim=200 --d=100 --p=1 --q=1 --n=1000
+python model_generate_data.py --model=4 --sim_type=1 --alpha=.60 --nsim=200 --d=100 --p=1 --q=1 --n=1000
+python model_generate_data.py --model=4 --sim_type=1 --alpha=.80 --nsim=200 --d=100 --p=1 --q=1 --n=1000
+python model_generate_data.py --model=4 --sim_type=1 --alpha=1.0 --nsim=200 --d=100 --p=1 --q=1 --n=1000
+
+# Run demos
+nohup Rscript model_CLZ.R --model=4 --sim_type=1 --alpha=.00 --n=1000 --p=1 --q=1 --d=100 --n_cpu=1 --bandwidth=.5 --demo=1 --KCI=1 --CLZ=0 &> model4_CLZ_s1_a00.txt &
+nohup Rscript model_CLZ.R --model=4 --sim_type=1 --alpha=.40 --n=1000 --p=1 --q=1 --d=100 --n_cpu=1 --bandwidth=.5 --demo=1 --KCI=1 --CLZ=0 &> model4_CLZ_s1_a40.txt &
+nohup Rscript model_CLZ.R --model=4 --sim_type=1 --alpha=1.0 --n=1000 --p=1 --q=1 --d=100 --n_cpu=1 --bandwidth=.5 --demo=1 --KCI=1 --CLZ=0 &> model4_CLZ_s1_a100.txt &
+
+nohup python -u model.py --model=4 --sim_type=1 --alpha=.00 --n=1000 --p=1 --q=1 --d=100 --gpu=0 --cpu=200-220 --nsim=200 --demo=1 --seed=3 --hidden_num=8 --CDC=0 &> model4_s1_a00.txt &
+nohup python -u model.py --model=4 --sim_type=1 --alpha=.40 --n=1000 --p=1 --q=1 --d=100 --gpu=0 --cpu=200-220 --nsim=200 --demo=1 --seed=3 --hidden_num=8 --CDC=0 &> model4_s1_a40.txt &
+nohup python -u model.py --model=4 --sim_type=1 --alpha=1.0 --n=1000 --p=1 --q=1 --d=100 --gpu=0 --cpu=200-220 --nsim=200 --demo=1 --seed=3 --hidden_num=8 --CDC=0 &> model4_s1_a100.txt &
+
 
 # # python to execute our proposed test, CDC test, FCIT test
 nohup python -u model.py --model=4 --sim_type=1 --alpha=.00 --n=1000 --p=1 --q=1 --d=100 --par_task=5 --gpu=1 --cpu=000-040 --nsim=200 &> model4_s1_a00.txt &
