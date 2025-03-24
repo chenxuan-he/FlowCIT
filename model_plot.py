@@ -13,6 +13,13 @@ def parse_arguments():
     parser.add_argument('--model', type=int, default=1, help='Different models in the simulations.')
     parser.add_argument('--sim_type', type=int, default=1, help='Different simulation types.')
     parser.add_argument('--legend', type=int, default=1, help='Show legend or not.')
+    parser.add_argument('--FlowCIT', type=int, default=1)
+    parser.add_argument('--KCI', type=int, default=1)
+    parser.add_argument('--CDC', type=int, default=1)
+    parser.add_argument('--CCIT', type=int, default=1)
+    parser.add_argument('--FCIT', type=int, default=1)
+    parser.add_argument('--CLZ', type=int, default=1)
+
     return parser.parse_args()
 
 
@@ -27,12 +34,18 @@ if __name__ == "__main__":
 
     # Create the plot
     plt.figure(figsize=(4, 3))
-    plt.plot(data['alpha'], data['FlowCIT'], label='FlowCIT', marker='o', linestyle='-', color='b')
-    plt.plot(data['alpha'], data['KCI'], label='KCI', marker='D', linestyle='-.', color='c')
-    plt.plot(data['alpha'], data['CDC'], label='CDC', marker='*', linestyle='-', color='m')
-    plt.plot(data['alpha'], data['CCIT'], label='CCIT', marker='x', linestyle='--', color='y')
-    plt.plot(data['alpha'], data['FCIT'], label='FCIT', marker='s', linestyle='--', color='g')
-    plt.plot(data['alpha'], data['CLZ'], label='CLZ', marker='^', linestyle=':', color='r')
+    if args.FlowCIT:
+        plt.plot(data['alpha'], data['FlowCIT'], label='FlowCIT', marker='o', linestyle='-', color='b')
+    if args.KCI:
+        plt.plot(data['alpha'], data['KCI'], label='KCI', marker='D', linestyle='-.', color='c')
+    if args.CDC:
+        plt.plot(data['alpha'], data['CDC'], label='CDC', marker='*', linestyle='-', color='m')
+    if args.CCIT:
+        plt.plot(data['alpha'], data['CCIT'], label='CCIT', marker='x', linestyle='--', color='y')
+    if args.FCIT:
+        plt.plot(data['alpha'], data['FCIT'], label='FCIT', marker='s', linestyle='--', color='g')
+    if args.CLZ:
+        plt.plot(data['alpha'], data['CLZ'], label='CLZ', marker='^', linestyle=':', color='r')
 
     # Add a horizontal line at 0.05
     plt.axhline(y=0.05, color='black', linestyle='-')
