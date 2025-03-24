@@ -30,8 +30,8 @@ if __name__ == "__main__":
     plt.plot(data['alpha'], data['FlowCIT'], label='FlowCIT', marker='o', linestyle='-', color='b')
     plt.plot(data['alpha'], data['KCI'], label='KCI', marker='D', linestyle='-.', color='c')
     plt.plot(data['alpha'], data['CDC'], label='CDC', marker='*', linestyle='-', color='m')
+    plt.plot(data['alpha'], data['CCIT'], label='CCIT', marker='x', linestyle='--', color='y')
     plt.plot(data['alpha'], data['FCIT'], label='FCIT', marker='s', linestyle='--', color='g')
-    plt.plot(data['alpha'], data['GCIT'], label='GCIT', marker='x', linestyle='--', color='y')
     plt.plot(data['alpha'], data['CLZ'], label='CLZ', marker='^', linestyle=':', color='r')
 
     # Add a horizontal line at 0.05
