@@ -24,6 +24,14 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
         beta_1[0:3, 0:3] = torch.randn((3, 3))
         beta_2[0:3, 0:3] = torch.randn((3, 3))
         beta_3[0:3, 0:3] = torch.randn((3, 3))
+    # model 4: only Z is high-dimensional and sparse
+    elif model==4: 
+        beta_1 = torch.zeros((d, p))
+        beta_2 = torch.zeros((d, q))
+        beta_3 = torch.zeros((p, q))
+        # Set the first 3 elements of Z is influencing X and Y
+        beta_1[0:3, 0:1] = torch.randn((3, 1))
+        beta_2[0:3, 0:1] = torch.randn((3, 1))
     # Now start generate X, Y, and Z.
     Z = torch.randn((n, d))
     if sim_type == 1:

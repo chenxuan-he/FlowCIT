@@ -359,7 +359,7 @@ def GCIT(x, y, z, statistic = "rdc", lamda = 10, normalize=True, verbose=False, 
 
     # define training and testing subsets, training for learning the sampler and 
     # testing for computing test statistic. Set 2/3 and 1/3 as default
-    # change it to control the size in our test
+    # change it to control the size
     training_prop = 1-test_prop
     x_train, y_train, z_train = x[:int(n*training_prop),], y[:int(n*training_prop),], z[:int(n*training_prop),] 
     x_test, y_test, z_test = x[int(training_prop*n):,], y[int(training_prop*n):,], z[int(training_prop*n):,] 

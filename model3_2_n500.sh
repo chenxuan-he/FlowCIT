@@ -28,15 +28,15 @@ nohup python -u model.py --model=3 --sim_type=2 --alpha=.40 --n=500 --p=1 --q=1 
 
 python model_result.py --model=3 --sim_type=2 --alphas="0.0,0.1,0.2,0.3,0.4" --n=500 --p=1 --q=1 --d=2 --hidden_num=32
 
-# # conda activate py37
-# # python code to execute GCIT
-nohup python -u model_GCIT.py --model=3 --sim_type=2 --alpha=.00 --n=500 --p=1 --q=1 --d=2 --par_task=50 --cpu=000-040 --nsim=200 --test_prop=.01 &> model3_s2_GCIT_a00.txt &
-nohup python -u model_GCIT.py --model=3 --sim_type=2 --alpha=.10 --n=500 --p=1 --q=1 --d=2 --par_task=50 --cpu=040-080 --nsim=200 --test_prop=.01 &> model3_s2_GCIT_a10.txt &
-nohup python -u model_GCIT.py --model=3 --sim_type=2 --alpha=.20 --n=500 --p=1 --q=1 --d=2 --par_task=50 --cpu=080-120 --nsim=200 --test_prop=.01 &> model3_s2_GCIT_a20.txt &
-nohup python -u model_GCIT.py --model=3 --sim_type=2 --alpha=.30 --n=500 --p=1 --q=1 --d=2 --par_task=50 --cpu=120-160 --nsim=200 --test_prop=.01 &> model3_s2_GCIT_a30.txt &
-nohup python -u model_GCIT.py --model=3 --sim_type=2 --alpha=.40 --n=500 --p=1 --q=1 --d=2 --par_task=50 --cpu=160-200 --nsim=200 --test_prop=.01 &> model3_s2_GCIT_a40.txt &
+# # # conda activate py37
+# # # python code to execute GCIT
+# nohup python -u model_GCIT.py --model=3 --sim_type=2 --alpha=.00 --n=500 --p=1 --q=1 --d=2 --par_task=50 --cpu=000-040 --nsim=200 --test_prop=.1 &> model3_s2_GCIT_a00.txt &
+# nohup python -u model_GCIT.py --model=3 --sim_type=2 --alpha=.10 --n=500 --p=1 --q=1 --d=2 --par_task=50 --cpu=040-080 --nsim=200 --test_prop=.1 &> model3_s2_GCIT_a10.txt &
+# nohup python -u model_GCIT.py --model=3 --sim_type=2 --alpha=.20 --n=500 --p=1 --q=1 --d=2 --par_task=50 --cpu=080-120 --nsim=200 --test_prop=.1 &> model3_s2_GCIT_a20.txt &
+# nohup python -u model_GCIT.py --model=3 --sim_type=2 --alpha=.30 --n=500 --p=1 --q=1 --d=2 --par_task=50 --cpu=120-160 --nsim=200 --test_prop=.1 &> model3_s2_GCIT_a30.txt &
+# nohup python -u model_GCIT.py --model=3 --sim_type=2 --alpha=.40 --n=500 --p=1 --q=1 --d=2 --par_task=50 --cpu=160-200 --nsim=200 --test_prop=.1 &> model3_s2_GCIT_a40.txt &
 
-python model_result.py --model=3 --sim_type=2 --alphas="0.0,0.1,0.2,0.3,0.4" --n=500 --p=1 --q=1 --d=2 --GCIT=True --GCIT_test_prop=.01
+# python model_result.py --model=3 --sim_type=2 --alphas="0.0,0.1,0.2,0.3,0.4" --n=500 --p=1 --q=1 --d=2 --GCIT=True --GCIT_test_prop=.1
 
 # Generate plots
 python model_plot.py --model=3 --sim_type=2 --n=500 --alphas="0.0,0.1,0.2,0.3,0.4" --legend=0

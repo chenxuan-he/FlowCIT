@@ -50,7 +50,10 @@ def sim_gcit(model=1, sim_type=1, seed=0, p=3, q=3, d=3, n=500, alpha=.1, test_p
     x, y, z = read_data(model=model, sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
     print("\nExecuting gcit test.")
     start_time = time.time()
-    p_gcit = GCIT(x=x, y=y, z=z, statistic = "rdc", lamda = 10, normalize=True, verbose=False, n_iter=1000, debug=False, test_prop=test_prop)
+    if p==1 and q==1:
+        p_gcit = GCIT(x=x, y=y, z=z, statistic = "mmd", lamda = 0, normalize=True, verbose=False, n_iter=20, debug=False, test_prop=test_prop)
+    else:
+        p_gcit = GCIT(x=x, y=y, z=z, statistic = "rdc", lamda = 10, normalize=True, verbose=False, n_iter=100, debug=False, test_prop=test_prop)
     gcit_time = time.time() - start_time
     print("P-value: "+str(round(p_gcit, 2))+". Execution time: "+str(round(gcit_time, 2)))
     return p_gcit, gcit_time
@@ -70,7 +73,7 @@ def run_simulation(seed, args):
 # # A demo
 # if __name__ == "__main__":
 #     args = parse_arguments()
-#     run_simulation(seed=0, args=args, device="cpu")
+#     run_simulation(seed=0, args=args)
 
 
 # A parallel version

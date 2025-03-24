@@ -12,6 +12,7 @@ import concurrent.futures
 import numpy as np
 import time
 import psutil
+from CCIT import CCIT
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process GPU indices.')
@@ -32,8 +33,9 @@ def parse_arguments():
     parser.add_argument('--n_iter', type=int, default=500, help='Iteration of flow training.')
     parser.add_argument('--num_steps', type=int, default=500, help='Number of steps when sampling ODE.')
     parser.add_argument('--FlowCIT', type=int, default=1, help='Implement FlowCIT or not.')
-    parser.add_argument('--FCIT', type=int, default=500, help='Implement FCIT or not.')
-    parser.add_argument('--CDC', type=int, default=500, help='Implement CDC or not.')
+    parser.add_argument('--FCIT', type=int, default=1, help='Implement FCIT or not.')
+    parser.add_argument('--CDC', type=int, default=1, help='Implement CDC or not.')
+    parser.add_argument('--CCIT', type=int, default=1, help='Implement CCIT or not.')
     return parser.parse_args()
 
 
@@ -72,7 +74,17 @@ def sim(model=1, sim_type=1, seed=0, p=3, q=3, d=3, n=500, alpha=.1, batchsize=5
         cdc_test_time = 0
         p_cdc = 0
 
-    return p_dc, p_fcit, p_cdc, flow_test_time, fcit_test_time, cdc_test_time
+    if CCIT:
+        print("\nExecuting ccit test.")
+        start_time = time.time()
+        p_ccit = CCIT.CCIT(x.numpy(), y.numpy(), z.numpy())
+        ccit_test_time = time.time() - start_time
+        print("P-value: "+str(round(p_ccit, 2))+". Execution time: "+str(round(ccit_test_time, 2)))
+    else:
+        ccit_test_time = 0
+        p_ccit = 0
+
+    return p_dc, p_fcit, p_cdc, p_ccit, flow_test_time, fcit_test_time, cdc_test_time, ccit_test_time
 
 def run_simulation(seed, args, device):
     random.seed(seed)
@@ -81,8 +93,8 @@ def run_simulation(seed, args, device):
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
-    p_dc, p_fcit, p_cdc, _, _, _ = sim(model=args.model, seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device, hidden_num=args.hidden_num, batchsize=args.batchsize, n_iter=args.n_iter, lr=args.lr, num_steps=args.num_steps, FlowCIT=args.FlowCIT, FCIT=args.FCIT, CDC=args.CDC)
-    return p_dc, p_fcit, p_cdc
+    p_dc, p_fcit, p_cdc, p_ccit, _, _, _, _ = sim(model=args.model, seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device, hidden_num=args.hidden_num, batchsize=args.batchsize, n_iter=args.n_iter, lr=args.lr, num_steps=args.num_steps, FlowCIT=args.FlowCIT, FCIT=args.FCIT, CDC=args.CDC)
+    return p_dc, p_fcit, p_cdc, p_ccit
 
 # # A demo
 # if __name__ == "__main__":
