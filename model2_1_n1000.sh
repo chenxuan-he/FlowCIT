@@ -15,6 +15,7 @@ nohup python -u model.py --model=2 --sim_type=1 --alpha=.80 --n=1000 --p=50 --q=
 python model_result.py --model=2 --sim_type=1 --alphas="0.0,0.2,0.4,0.6,0.8" --n=1000 --p=50 --q=50 --d=100 --hidden_num=32
 
 # # python: add CCIT test
+# Running on the 15 machine
 nohup python -u model.py --model=2 --sim_type=1 --alpha=.00 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --FlowCIT=0 --CDC=0 --FCIT=0 --CCIT=1 --cpu=040-255 --nsim=200 &> model2_CCIT_s1_a00.txt &
 nohup python -u model.py --model=2 --sim_type=1 --alpha=.20 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --FlowCIT=0 --CDC=0 --FCIT=0 --CCIT=1 --cpu=040-255 --nsim=200 &> model2_CCIT_s1_a20.txt &
 nohup python -u model.py --model=2 --sim_type=1 --alpha=.40 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --FlowCIT=0 --CDC=0 --FCIT=0 --CCIT=1 --cpu=040-255 --nsim=200 &> model2_CCIT_s1_a40.txt &
