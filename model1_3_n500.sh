@@ -1,9 +1,9 @@
 # First: generate data
-nohup python model_generate_data.py --model=1 --sim_type=3 --alpha=.00 --nsim=200 --d=3 --p=3 --q=3 --n=500
-nohup python model_generate_data.py --model=1 --sim_type=3 --alpha=.05 --nsim=200 --d=3 --p=3 --q=3 --n=500
-nohup python model_generate_data.py --model=1 --sim_type=3 --alpha=.10 --nsim=200 --d=3 --p=3 --q=3 --n=500
-nohup python model_generate_data.py --model=1 --sim_type=3 --alpha=.15 --nsim=200 --d=3 --p=3 --q=3 --n=500
-nohup python model_generate_data.py --model=1 --sim_type=3 --alpha=.20 --nsim=200 --d=3 --p=3 --q=3 --n=500
+python model_generate_data.py --model=1 --sim_type=3 --alpha=.00 --nsim=200 --d=3 --p=3 --q=3 --n=500
+python model_generate_data.py --model=1 --sim_type=3 --alpha=.05 --nsim=200 --d=3 --p=3 --q=3 --n=500
+python model_generate_data.py --model=1 --sim_type=3 --alpha=.10 --nsim=200 --d=3 --p=3 --q=3 --n=500
+python model_generate_data.py --model=1 --sim_type=3 --alpha=.15 --nsim=200 --d=3 --p=3 --q=3 --n=500
+python model_generate_data.py --model=1 --sim_type=3 --alpha=.20 --nsim=200 --d=3 --p=3 --q=3 --n=500
 
 # # use Rscript to execute the CLZ test and the KCI test
 nohup Rscript model_CLZ.R --model=1 --sim_type=3 --alpha=.00 --n=500 --p=3 --q=3 --d=3 --n_cpu=40 --bandwidth=.2 &> model1_CLZ_s3_a00.txt &
@@ -27,6 +27,15 @@ nohup python -u model.py --model=1 --sim_type=3 --alpha=.15 --n=500 --p=3 --q=3 
 nohup python -u model.py --model=1 --sim_type=3 --alpha=.20 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=5 --cpu=160-200 --nsim=200 --hidden_num=16 &> model1_s3_a20.txt &
 
 python model_result.py --model=1 --sim_type=3 --alphas="0.0,0.05,0.1,0.15,0.2" --n=500 --p=3 --q=3 --d=3 --hidden_num=16
+
+# # python: add CCIT test
+nohup python -u model.py --model=1 --sim_type=3 --alpha=.00 --n=500 --p=3 --q=3 --d=3 --par_task=5 --FlowCIT=0 --CDC=0 --FCIT=0 --CCIT=1 --cpu=040-255 --FlowCIT=1 --CDC=1 --FCIT=1 --CCIT=0 --nsim=200 &> model1_CCIT_s3_a00.txt &
+nohup python -u model.py --model=1 --sim_type=3 --alpha=.05 --n=500 --p=3 --q=3 --d=3 --par_task=5 --FlowCIT=0 --CDC=0 --FCIT=0 --CCIT=1 --cpu=040-255 --FlowCIT=1 --CDC=1 --FCIT=1 --CCIT=0 --nsim=200 &> model1_CCIT_s3_a05.txt &
+nohup python -u model.py --model=1 --sim_type=3 --alpha=.10 --n=500 --p=3 --q=3 --d=3 --par_task=5 --FlowCIT=0 --CDC=0 --FCIT=0 --CCIT=1 --cpu=040-255 --FlowCIT=1 --CDC=1 --FCIT=1 --CCIT=0 --nsim=200 &> model1_CCIT_s3_a10.txt &
+nohup python -u model.py --model=1 --sim_type=3 --alpha=.15 --n=500 --p=3 --q=3 --d=3 --par_task=5 --FlowCIT=0 --CDC=0 --FCIT=0 --CCIT=1 --cpu=040-255 --FlowCIT=1 --CDC=1 --FCIT=1 --CCIT=0 --nsim=200 &> model1_CCIT_s3_a15.txt &
+nohup python -u model.py --model=1 --sim_type=3 --alpha=.20 --n=500 --p=3 --q=3 --d=3 --par_task=5 --FlowCIT=0 --CDC=0 --FCIT=0 --CCIT=1 --cpu=040-255 --FlowCIT=1 --CDC=1 --FCIT=1 --CCIT=0 --nsim=200 &> model1_CCIT_s3_a20.txt &
+
+python model_result.py --model=1 --sim_type=4 --alphas="0.0,0.05,0.1,0.15,0.2" --n=500 --p=3 --q=3 --d=3
 
 # # # conda activate py37
 # # # python code to execute GCIT
