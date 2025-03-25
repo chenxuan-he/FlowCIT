@@ -21,17 +21,17 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
         beta_2 = torch.zeros((d, q))
         beta_3 = torch.zeros((p, q))
         # Set the first 3x3 block to random values
-        beta_1[0:3, 0:3] = torch.randn((3, 3))
-        beta_2[0:3, 0:3] = torch.randn((3, 3))
-        beta_3[0:3, 0:3] = torch.randn((3, 3))
+        beta_1[0:3, 0:p] = torch.randn((3, p))
+        beta_2[0:3, 0:q] = torch.randn((3, q))
+        beta_3[0:p, 0:q] = torch.randn((p, q))
     # model 4: only Z is high-dimensional and sparse
     elif model==4: 
         beta_1 = torch.zeros((d, p))
         beta_2 = torch.zeros((d, q))
         beta_3 = torch.randn((p, q))
         # Set the first 3 elements of Z is influencing X and Y
-        beta_1[0:3, 0:1] = torch.randn((3, 1))
-        beta_2[0:3, 0:1] = torch.randn((3, 1))
+        beta_1[0:3, 0:p] = torch.randn((3, p))
+        beta_2[0:3, 0:q] = torch.randn((3, q))
     # Now start generate X, Y, and Z.
     Z = torch.randn((n, d))
     if sim_type == 1:
@@ -56,6 +56,10 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
     elif model == 2 and sim_type == 4:
         X = Z @ beta_1 + torch.randn((n, p))
         Y = Z @ beta_2 + torch.exp(X @ beta_3 * alpha) + torch.randn((n, q))
+    elif model == 3 and sim_type == 3:
+        t_dist = torch.distributions.StudentT(1)
+        X = Z @ beta_1 + t_dist.sample((n, p))
+        Y = Z @ beta_2 + X @ beta_3 * alpha + torch.randn((n, q))
     df = pd.DataFrame(
         torch.cat([X, Y, Z], dim=1).numpy(),
         columns=[f"X{i+1}" for i in range(p)] + [f"Y{i+1}" for i in range(q)] + [f"Z{i+1}" for i in range(d)]

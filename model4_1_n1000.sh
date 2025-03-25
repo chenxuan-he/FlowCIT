@@ -9,6 +9,13 @@ python model_generate_data.py --model=4 --sim_type=1 --alpha=.80 --nsim=200 --d=
 python model_generate_data.py --model=4 --sim_type=1 --alpha=1.0 --nsim=200 --d=100 --p=1 --q=1 --n=1000
 
 # # python to execute our proposed test, CDC test, FCIT test
+
+# trial code
+nohup python -u model.py --model=4 --sim_type=1 --alpha=.00 --n=1000 --p=1 --q=1 --d=100 --par_task=5 --gpu=2 --cpu=210-220 --nsim=20 --CCIT=0 &> model4_s1_a00.txt &
+nohup python -u model.py --model=4 --sim_type=1 --alpha=.40 --n=1000 --p=1 --q=1 --d=100 --par_task=5 --gpu=2 --cpu=200-210 --nsim=20 --CCIT=0 &> model4_s1_a40.txt &
+
+
+
 nohup python -u model.py --model=4 --sim_type=1 --alpha=.00 --n=1000 --p=1 --q=1 --d=100 --par_task=5 --gpu=1 --cpu=000-040 --nsim=200 &> model4_s1_a00.txt &
 nohup python -u model.py --model=4 --sim_type=1 --alpha=.10 --n=1000 --p=1 --q=1 --d=100 --par_task=5 --gpu=2 --cpu=040-080 --nsim=200 &> model4_s1_a10.txt &
 nohup python -u model.py --model=4 --sim_type=1 --alpha=.20 --n=1000 --p=1 --q=1 --d=100 --par_task=5 --gpu=3 --cpu=080-120 --nsim=200 &> model4_s1_a20.txt &
