@@ -19,23 +19,15 @@ Rscript model_CLZ_result.R --model=1 --sim_type=4 --n=500 --p=3 --q=3 --d=3 --ba
 Rscript model_CLZ_result.R --model=1 --sim_type=4 --n=500 --p=3 --q=3 --d=3 --bandwidth=.2 --alpha=.15
 Rscript model_CLZ_result.R --model=1 --sim_type=4 --n=500 --p=3 --q=3 --d=3 --bandwidth=.2 --alpha=.20
 
-# # python to execute our proposed test, CDC test, FCIT test
-nohup python -u model.py --model=1 --sim_type=4 --alpha=.00 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=1 --cpu=000-040 --FlowCIT=1 --CDC=1 --FCIT=1 --CCIT=0 --nsim=200 --hidden_num=32 &> model1_s4_a00.txt &
-nohup python -u model.py --model=1 --sim_type=4 --alpha=.05 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=2 --cpu=040-080 --FlowCIT=1 --CDC=1 --FCIT=1 --CCIT=0 --nsim=200 --hidden_num=32 &> model1_s4_a05.txt &
-nohup python -u model.py --model=1 --sim_type=4 --alpha=.10 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=3 --cpu=080-120 --FlowCIT=1 --CDC=1 --FCIT=1 --CCIT=0 --nsim=200 --hidden_num=32 &> model1_s4_a10.txt &
-nohup python -u model.py --model=1 --sim_type=4 --alpha=.15 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=4 --cpu=120-160 --FlowCIT=1 --CDC=1 --FCIT=1 --CCIT=0 --nsim=200 --hidden_num=32 &> model1_s4_a15.txt &
-nohup python -u model.py --model=1 --sim_type=4 --alpha=.20 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=5 --cpu=160-200 --FlowCIT=1 --CDC=1 --FCIT=1 --CCIT=0 --nsim=200 --hidden_num=32 &> model1_s4_a20.txt &
+# # python to execute our proposed test, CDC test, FCIT test, and CCIT test
+nohup python -u model.py --model=1 --sim_type=4 --alpha=.00 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=1 --cpu=000-040 --nsim=200 --hidden_num=32 &> model1_s4_a00.txt &
+nohup python -u model.py --model=1 --sim_type=4 --alpha=.05 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=2 --cpu=040-080 --nsim=200 --hidden_num=32 &> model1_s4_a05.txt &
+nohup python -u model.py --model=1 --sim_type=4 --alpha=.10 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=3 --cpu=080-120 --nsim=200 --hidden_num=32 &> model1_s4_a10.txt &
+nohup python -u model.py --model=1 --sim_type=4 --alpha=.15 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=4 --cpu=120-160 --nsim=200 --hidden_num=32 &> model1_s4_a15.txt &
+nohup python -u model.py --model=1 --sim_type=4 --alpha=.20 --n=500 --p=3 --q=3 --d=3 --par_task=5 --gpu=5 --cpu=160-200 --nsim=200 --hidden_num=32 &> model1_s4_a20.txt &
 
 python model_result.py --model=1 --sim_type=4 --alphas="0.0,0.05,0.1,0.15,0.2" --n=500 --p=3 --q=3 --d=3 --hidden_num=32
 
-# # python: add CCIT test
-nohup python -u model.py --model=1 --sim_type=4 --alpha=.00 --n=500 --p=3 --q=3 --d=3 --par_task=5 --FlowCIT=0 --CDC=0 --FCIT=0 --CCIT=1 --cpu=040-255 --nsim=200 &> model1_CCIT_s4_a00.txt &
-nohup python -u model.py --model=1 --sim_type=4 --alpha=.05 --n=500 --p=3 --q=3 --d=3 --par_task=5 --FlowCIT=0 --CDC=0 --FCIT=0 --CCIT=1 --cpu=040-255 --nsim=200 &> model1_CCIT_s4_a05.txt &
-nohup python -u model.py --model=1 --sim_type=4 --alpha=.10 --n=500 --p=3 --q=3 --d=3 --par_task=5 --FlowCIT=0 --CDC=0 --FCIT=0 --CCIT=1 --cpu=040-255 --nsim=200 &> model1_CCIT_s4_a10.txt &
-nohup python -u model.py --model=1 --sim_type=4 --alpha=.15 --n=500 --p=3 --q=3 --d=3 --par_task=5 --FlowCIT=0 --CDC=0 --FCIT=0 --CCIT=1 --cpu=040-255 --nsim=200 &> model1_CCIT_s4_a15.txt &
-nohup python -u model.py --model=1 --sim_type=4 --alpha=.20 --n=500 --p=3 --q=3 --d=3 --par_task=5 --FlowCIT=0 --CDC=0 --FCIT=0 --CCIT=1 --cpu=040-255 --nsim=200 &> model1_CCIT_s4_a20.txt &
-
-python model_result.py --model=1 --sim_type=4 --alphas="0.0,0.05,0.1,0.15,0.2" --n=500 --p=3 --q=3 --d=3
 
 # # # conda activate py37
 # # # python code to execute GCIT
