@@ -57,8 +57,12 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
         X = Z @ beta_1 + torch.randn((n, p))
         Y = Z @ beta_2 + torch.exp(X @ beta_3 * alpha) + torch.randn((n, q))
     elif model == 3 and sim_type == 3:
-        t_dist = torch.distributions.StudentT(1)
+        t_dist = torch.distributions.StudentT(3)
         X = Z @ beta_1 + t_dist.sample((n, p))
+        Y = Z @ beta_2 + X @ beta_3 * alpha + torch.randn((n, q))
+    elif model == 3 and sim_type == 4:
+        t_dist = torch.distributions.StudentT(3)
+        X = torch.cos(Z @ beta_1) + t_dist.sample((n, p))
         Y = Z @ beta_2 + X @ beta_3 * alpha + torch.randn((n, q))
     elif model == 4 and sim_type == 2:
         X = Z @ beta_1 + torch.randn((n, p))
