@@ -60,6 +60,9 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
         t_dist = torch.distributions.StudentT(1)
         X = Z @ beta_1 + t_dist.sample((n, p))
         Y = Z @ beta_2 + X @ beta_3 * alpha + torch.randn((n, q))
+    elif model == 4 and sim_type == 2:
+        X = Z @ beta_1 + torch.randn((n, p))
+        Y = torch.pow(Z @ beta_2, 2)+ X @ beta_3 * alpha + torch.randn((n, q))
     df = pd.DataFrame(
         torch.cat([X, Y, Z], dim=1).numpy(),
         columns=[f"X{i+1}" for i in range(p)] + [f"Y{i+1}" for i in range(q)] + [f"Z{i+1}" for i in range(d)]
