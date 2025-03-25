@@ -37,4 +37,4 @@ python model_result.py --model=2 --sim_type=1 --alphas="0.0,0.2,0.4,0.6,0.8" --n
 # python model_result.py --model=2 --sim_type=1 --alphas="0.0,0.2,0.4,0.6,0.8" --n=1000 --p=50 --q=50 --d=100 --GCIT=True --GCIT_test_prop=.02
 
 # Generate plots
-python model_plot.py --model=2 --sim_type=1 --n=1000 --FlowCIT=1 --FCIT=1 --CDC=1 --CCIT=0 --CLZ=0 --KCI=0 --alphas="0.0,0.2,0.4,0.6,0.8" --legend=1
+python model_plot.py --model=2 --sim_type=1 --n=1000 --FlowCIT=1 --FCIT=1 --CDC=1 --CCIT=1 --CLZ=0 --KCI=0 --alphas="0.0,0.2,0.4,0.6,0.8" --legend=1
