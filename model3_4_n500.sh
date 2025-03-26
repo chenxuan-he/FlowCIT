@@ -20,17 +20,17 @@ Rscript model_CLZ_result.R --model=3 --sim_type=4 --n=500 --p=1 --q=1 --d=2 --ba
 Rscript model_CLZ_result.R --model=3 --sim_type=4 --n=500 --p=1 --q=1 --d=2 --bandwidth=.5 --alpha=.40
 
 # # python to execute our proposed test, CDC test, FCIT test, and CCIT test
-nohup python -u model.py --model=3 --CCIT=0 --sim_type=4 --alpha=.00 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=1 --cpu=000-200 --nsim=200 --hidden_num=32 &> model3_noCCIT_s4_a00.txt &
-nohup python -u model.py --model=3 --CCIT=0 --sim_type=4 --alpha=.10 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=4 --cpu=040-080 --nsim=200 --hidden_num=32 &> model3_noCCIT_s4_a10.txt &
-nohup python -u model.py --model=3 --CCIT=0 --sim_type=4 --alpha=.20 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=5 --cpu=080-120 --nsim=200 --hidden_num=32 &> model3_noCCIT_s4_a20.txt &
-nohup python -u model.py --model=3 --CCIT=0 --sim_type=4 --alpha=.30 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=0 --cpu=000-200 --nsim=200 --hidden_num=32 &> model3_noCCIT_s4_a30.txt &
-nohup python -u model.py --model=3 --CCIT=0 --sim_type=4 --alpha=.40 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=7 --cpu=160-200 --nsim=200 --hidden_num=32 &> model3_noCCIT_s4_a40.txt 
+nohup python -u model.py --model=3 --CCIT=0 --sim_type=4 --alpha=.00 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=1 --cpu=000-040 --nsim=200 --hidden_num=32 &> model3_s4_a00.txt &
+nohup python -u model.py --model=3 --CCIT=0 --sim_type=4 --alpha=.10 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=4 --cpu=040-080 --nsim=200 --hidden_num=32 &> model3_s4_a10.txt &
+nohup python -u model.py --model=3 --CCIT=0 --sim_type=4 --alpha=.20 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=5 --cpu=080-120 --nsim=200 --hidden_num=32 &> model3_s4_a20.txt &
+nohup python -u model.py --model=3 --CCIT=0 --sim_type=4 --alpha=.30 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=0 --cpu=120-160 --nsim=200 --hidden_num=32 &> model3_s4_a30.txt &
+nohup python -u model.py --model=3 --CCIT=0 --sim_type=4 --alpha=.40 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=7 --cpu=160-200 --nsim=200 --hidden_num=32 &> model3_s4_a40.txt 
 
-nohup python -u model.py --model=3 --FlowCIT=0 --CDC=0 --FCIT=0 --sim_type=4 --alpha=.00 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=3 --cpu=000-040 --nsim=200 --hidden_num=32 &> model3_s4_a00.txt &
-nohup python -u model.py --model=3 --FlowCIT=0 --CDC=0 --FCIT=0 --sim_type=4 --alpha=.10 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=4 --cpu=040-080 --nsim=200 --hidden_num=32 &> model3_s4_a10.txt &
-nohup python -u model.py --model=3 --FlowCIT=0 --CDC=0 --FCIT=0 --sim_type=4 --alpha=.20 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=5 --cpu=080-120 --nsim=200 --hidden_num=32 &> model3_s4_a20.txt &
-nohup python -u model.py --model=3 --FlowCIT=0 --CDC=0 --FCIT=0 --sim_type=4 --alpha=.30 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=6 --cpu=120-160 --nsim=200 --hidden_num=32 &> model3_s4_a30.txt &
-nohup python -u model.py --model=3 --FlowCIT=0 --CDC=0 --FCIT=0 --sim_type=4 --alpha=.40 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=7 --cpu=160-200 --nsim=200 --hidden_num=32 &> model3_s4_a40.txt 
+nohup python -u model.py --model=3 --FlowCIT=0 --CDC=0 --FCIT=0 --sim_type=4 --alpha=.00 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=3 --cpu=000-040 --nsim=200 --hidden_num=32 &> model3_CCIT_s4_a00.txt &
+nohup python -u model.py --model=3 --FlowCIT=0 --CDC=0 --FCIT=0 --sim_type=4 --alpha=.10 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=4 --cpu=040-080 --nsim=200 --hidden_num=32 &> model3_CCIT_s4_a10.txt &
+nohup python -u model.py --model=3 --FlowCIT=0 --CDC=0 --FCIT=0 --sim_type=4 --alpha=.20 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=5 --cpu=080-120 --nsim=200 --hidden_num=32 &> model3_CCIT_s4_a20.txt &
+nohup python -u model.py --model=3 --FlowCIT=0 --CDC=0 --FCIT=0 --sim_type=4 --alpha=.30 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=6 --cpu=120-160 --nsim=200 --hidden_num=32 &> model3_CCIT_s4_a30.txt &
+nohup python -u model.py --model=3 --FlowCIT=0 --CDC=0 --FCIT=0 --sim_type=4 --alpha=.40 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=7 --cpu=160-200 --nsim=200 --hidden_num=32 &> model3_CCIT_s4_a40.txt 
 
 python model_result.py --model=3 --sim_type=4 --alphas="0.0,0.1,0.2,0.3,0.4" --n=500 --p=1 --q=1 --d=2 --hidden_num=32
 
