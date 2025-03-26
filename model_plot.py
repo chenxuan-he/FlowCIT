@@ -35,17 +35,17 @@ if __name__ == "__main__":
     # Create the plot
     plt.figure(figsize=(4, 3))
     if args.FlowCIT:
-        plt.plot(data['alpha'], data['FlowCIT'], label='FlowCIT', marker='o', linestyle='-', color='b')
+        plt.plot(data['alpha'], data['FlowCIT'], label='FlowCIT', marker='o', linestyle='-', color='#4C72B0')
     if args.KCI:
-        plt.plot(data['alpha'], data['KCI'], label='KCI', marker='D', linestyle='-.', color='c')
+        plt.plot(data['alpha'], data['KCI'], label='KCI', marker='D', linestyle='-.', color='#55A868')
     if args.CDC:
-        plt.plot(data['alpha'], data['CDC'], label='CDC', marker='*', linestyle='-', color='m')
+        plt.plot(data['alpha'], data['CDC'], label='CDC', marker='*', linestyle='-', color='#C44E52')
     if args.CCIT:
-        plt.plot(data['alpha'], data['CCIT'], label='CCIT', marker='x', linestyle='--', color='y')
+        plt.plot(data['alpha'], data['CCIT'], label='CCIT', marker='x', linestyle='--', color='#8172B3')
     if args.FCIT:
-        plt.plot(data['alpha'], data['FCIT'], label='FCIT', marker='s', linestyle='--', color='g')
+        plt.plot(data['alpha'], data['FCIT'], label='FCIT', marker='s', linestyle='--', color='#17BECF')
     if args.CLZ:
-        plt.plot(data['alpha'], data['CLZ'], label='CLZ', marker='^', linestyle=':', color='r')
+        plt.plot(data['alpha'], data['CLZ'], label='CLZ', marker='^', linestyle=':', color='#E377C2')
 
     # Add a horizontal line at 0.05
     plt.axhline(y=0.05, color='black', linestyle='-')
