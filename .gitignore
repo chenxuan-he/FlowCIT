@@ -11,3 +11,5 @@ results/*
 data/*
 !data/.gitkeep
 *.rda
+.RData
+.Rhistory

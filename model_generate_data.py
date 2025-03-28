@@ -12,6 +12,7 @@ def parse_arguments():
     parser.add_argument('--n', type=int, default=100, help='Sample size.')
     parser.add_argument('--alpha', type=float, default=0, help='Deviation under H_1.')
     parser.add_argument('--nsim', type=int, default=10, help='Numer of simulations.')
+    parser.add_argument('--seed', type=int, default=0, help='Numer of seed.')
     return parser.parse_args()
 
 
@@ -20,4 +21,4 @@ if __name__ == "__main__":
     for i in range(args.nsim):
         generate_data(model=args.model, sim_type=args.sim_type, 
                       n=args.n, p=args.p, q=args.q, d=args.d, 
-                      alpha=args.alpha, seed=i)
+                      alpha=args.alpha, seed=i+args.seed)
