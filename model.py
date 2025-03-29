@@ -37,7 +37,7 @@ def parse_arguments():
     parser.add_argument('--CDC', type=int, default=1, help='Implement CDC or not.')
     parser.add_argument('--CCIT', type=int, default=1, help='Implement CCIT or not.')
     parser.add_argument('--demo', type=int, default=0, help='Run once for demonstration.')
-    parser.add_argument('--seed', type=int, default=0, help='Seed for demo.')
+    parser.add_argument('--seed', type=int, default=0, help='Seed for implementation.')
     return parser.parse_args()
 
 
@@ -125,7 +125,7 @@ if __name__ == "__main__":
         # Use ThreadPoolExecutor for I/O-bound tasks or ProcessPoolExecutor for CPU-bound tasks
         with concurrent.futures.ProcessPoolExecutor(max_workers=args.par_task) as executor:
             # Submit all tasks to the executor
-            futures = {executor.submit(run_simulation, seed, args, device): seed for seed in range(nsim)}
+            futures = {executor.submit(run_simulation, seed+args.seed, args, device): seed for seed in range(nsim)}
             
             # As each task completes, print the result
             for future in concurrent.futures.as_completed(futures):

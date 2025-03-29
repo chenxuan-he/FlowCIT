@@ -8,22 +8,26 @@ python model_generate_data.py --model=2 --sim_type=1 --alpha=.80 --nsim=200 --d=
 # # python to execute our proposed test, CDC test, FCIT test
 nohup python -u model.py --model=2 --sim_type=1 --alpha=.00 --n=1000 --p=50 --q=50 --d=100 --par_task=10 --gpu=3 --cpu=000-215 --nsim=200 --hidden_num=24 --n_iter=800 --FlowCIT=1 --CDC=0 --FCIT=0 --CCIT=0 --lr=5e-3 &> model2_s1_a00_neuron24_iter800.txt &
 
+nohup python -u model.py --model=2 --sim_type=1 --alpha=.00 --n=1000 --p=50 --q=50 --d=100 --par_task=10 --gpu=1 --cpu=000-210 --nsim=200 --hidden_num=16 --FlowCIT=1 --CDC=0 --FCIT=0 --CCIT=0 --seed=200 &> model2_s1_a00_neuron16_iter500_seed200.txt &
+
 # hidden_num 8, n_iter 1000, lr=1e-3
 # hidden_num 16, n_iter 400, 0.19
 # hidden_num 16, n_iter 800, 0.095
 
 # hidden_num 20, n_iter 500, 0.115
 # hidden_num 20, n_iter 800, 0.08
+# hidden_num 20, n_iter 800, seed 200, 0.145
 # hidden_num 20, n_iter 1000, 0.08
 # hidden_num 20, n_iter 1000, lr=1e-3, xxx
 
-# hidden_num 24, n_iter 800, 
+# hidden_num 24, n_iter 800, xxx
 
 # hidden_num 25, n_iter 800, 0.105
 
 # hidden_num 32, n_iter 400, 0.11
 # hidden_num 32, n_iter 600, 0.105
 # hidden_num 32, n_iter 800, 0.08
+# hidden_num 32, n_iter 800, seed 200, 0.185
 # hidden_num 32, n_iter 1000, 0.105
 
 # hidden_num 40, n_iter 800, 0.13

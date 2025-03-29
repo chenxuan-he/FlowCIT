@@ -21,8 +21,8 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
         beta_2 = torch.zeros((d, q))
         beta_3 = torch.zeros((p, q))
         # Set the first 3x3 block to random values
-        beta_1[0:3, 0:p] = torch.randn((3, p))
-        beta_2[0:3, 0:q] = torch.randn((3, q))
+        beta_1[0:2, 0:p] = torch.randn((2, p))
+        beta_2[0:2, 0:q] = torch.randn((2, q))
         beta_3[0:p, 0:q] = torch.randn((p, q))
     # model 4: only Z is high-dimensional and sparse
     elif model==4: 
