@@ -48,7 +48,7 @@ if __name__ == "__main__":
         plt.plot(data['alpha'], data['CLZ'], label='CLZ', marker='|', linestyle='-', color='#8172B3', markersize=6, linewidth=1.2, alpha=1)
 
     # Add a horizontal line at 0.05
-    # plt.axhline(y=0.05, color='black', linestyle='-')
+    plt.axhline(y=0.05, color='grey', linestyle='--', alpha=.5, linewidth=.6)
 
     # Customize the plot
     # plt.xlabel('Alpha')
