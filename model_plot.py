@@ -35,29 +35,33 @@ if __name__ == "__main__":
     # Create the plot
     plt.figure(figsize=(4, 3))
     if args.FlowCIT:
-        plt.plot(data['alpha'], data['FlowCIT'], label='FlowCIT', marker='o', linestyle='-', color='#4C72B0')
+        plt.plot(data['alpha'], data['FlowCIT'], label='FlowCIT', marker='o', linestyle='-', color='#C44E52', markersize=4, linewidth=1.2, alpha=1)
     if args.KCI:
-        plt.plot(data['alpha'], data['KCI'], label='KCI', marker='D', linestyle='-.', color='#55A868')
+        plt.plot(data['alpha'], data['KCI'], label='KCI', marker='D', linestyle='-', color='#4C72B0', markersize=4, linewidth=1.2, alpha=1)
     if args.CDC:
-        plt.plot(data['alpha'], data['CDC'], label='CDC', marker='*', linestyle='-', color='#C44E52')
+        plt.plot(data['alpha'], data['CDC'], label='CDC', marker='^', linestyle='-', color='#EEB021', markersize=4, linewidth=1.2, alpha=1)
     if args.CCIT:
-        plt.plot(data['alpha'], data['CCIT'], label='CCIT', marker='x', linestyle='--', color='#8172B3')
+        plt.plot(data['alpha'], data['CCIT'], label='CCIT', marker='x', linestyle='-', color='#55A868', markersize=4, linewidth=1.2, alpha=1)
     if args.FCIT:
-        plt.plot(data['alpha'], data['FCIT'], label='FCIT', marker='s', linestyle='--', color='#17BECF')
+        plt.plot(data['alpha'], data['FCIT'], label='FCIT', marker='1', linestyle='-', color='#7A7C7E', markersize=6, linewidth=1.2, alpha=0.6)
     if args.CLZ:
-        plt.plot(data['alpha'], data['CLZ'], label='CLZ', marker='^', linestyle=':', color='#E377C2')
+        plt.plot(data['alpha'], data['CLZ'], label='CLZ', marker='|', linestyle='-', color='#8172B3', markersize=6, linewidth=1.2, alpha=1)
 
     # Add a horizontal line at 0.05
-    plt.axhline(y=0.05, color='black', linestyle='-')
+    # plt.axhline(y=0.05, color='black', linestyle='-')
 
     # Customize the plot
     # plt.xlabel('Alpha')
     # plt.ylabel('Power/Size')
     # plt.title('Power/Size Comparison Plot')
     if legend:
-        plt.legend()
-        plt.legend(loc='upper right', bbox_to_anchor=(0.4, 1))
-    plt.grid(True)
+        plt.legend(loc='upper right', 
+                   bbox_to_anchor=(0.3, 1),
+                   fontsize=7.5,        # Legend text size
+                   markerscale=1,     # Scale legend markers
+        )
+
+    plt.grid(False)
 
     # Adjust the x-axis labels
     plt.xticks(alphas)
