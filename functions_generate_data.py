@@ -5,7 +5,7 @@ import random
 import os
 from sklearn.datasets import make_swiss_roll
 
-def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
+def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, s=2, alpha=.1, seed=0):
     np.random.seed(seed)
     torch.manual_seed(seed)
     random.seed(seed)
@@ -21,8 +21,8 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
         beta_2 = torch.zeros((d, q))
         beta_3 = torch.zeros((p, q))
         # Set the first 3x3 block to random values
-        beta_1[0:2, 0:p] = torch.randn((2, p))
-        beta_2[0:2, 0:q] = torch.randn((2, q))
+        beta_1[0:s, 0:p] = torch.randn((s, p))
+        beta_2[0:s, 0:q] = torch.randn((s, q))
         beta_3[0:p, 0:q] = torch.randn((p, q))
     # model 4: only Z is high-dimensional and sparse
     elif model==4: 
@@ -30,8 +30,8 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
         beta_2 = torch.zeros((d, q))
         beta_3 = torch.randn((p, q))
         # Set the first 3 elements of Z is influencing X and Y
-        beta_1[0:3, 0:p] = torch.randn((3, p))
-        beta_2[0:3, 0:q] = torch.randn((3, q))
+        beta_1[0:s, 0:p] = torch.randn((s, p))
+        beta_2[0:s, 0:q] = torch.randn((s, q))
     # Now start generate X, Y, and Z.
     Z = torch.randn((n, d))
     if sim_type == 1:
@@ -51,8 +51,8 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, alpha=.1, seed=0):
         Y = (Z @ beta_2) + X @ beta_3 * alpha + torch.randn((n, q))
     elif model == 2 and sim_type == 3:
         X = (Z @ beta_1) + torch.randn((n, p))
-        # Y = torch.cos(Z @ beta_2) + (X @ beta_3 * alpha) + torch.randn((n, q))
-        Y = torch.pow(torch.abs(Z @ beta_2), 3/2) + (X @ beta_3 * alpha) + torch.randn((n, q))
+        Y = torch.cos(Z @ beta_2) + (X @ beta_3 * alpha) + torch.randn((n, q))
+        # Y = torch.pow(torch.abs(Z @ beta_2), 3/2) + (X @ beta_3 * alpha) + torch.randn((n, q))
     elif model == 2 and sim_type == 4:
         X = Z @ beta_1 + torch.randn((n, p))
         Y = Z @ beta_2 + torch.exp(X @ beta_3 * alpha) + torch.randn((n, q))
