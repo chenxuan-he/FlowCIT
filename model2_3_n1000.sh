@@ -14,7 +14,7 @@ nohup python -u model.py --model=2 --sim_type=3 --alpha=.60 --n=1000 --p=50 --q=
 nohup python -u model.py --model=2 --sim_type=3 --alpha=.80 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --gpu=7 --cpu=160-200 --nsim=200 --FlowCIT=1 --CDC=0 --FCIT=1 --CCIT=1 --hidden_num=16 &> model2_s3_a80.txt &
 
 
-python model_result.py --model=2 --sim_type=3 --alphas="0.0" --n=1000 --p=50 --q=50 --d=100 --hidden_num=16
+python model_result.py --model=2 --sim_type=3 --alphas="0.0,0.2,0.4,0.6,0.8" --n=1000 --p=50 --q=50 --d=100 --hidden_num=16
 
 
 # Generate plots

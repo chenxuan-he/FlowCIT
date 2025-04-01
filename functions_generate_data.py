@@ -55,7 +55,7 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, s=2, alpha=.1, see
         # Y = torch.pow(torch.abs(Z @ beta_2), 3/2) + (X @ beta_3 * alpha) + torch.randn((n, q))
     elif model == 2 and sim_type == 4:
         X = Z @ beta_1 + torch.randn((n, p))
-        Y = Z @ beta_2 + torch.exp(X @ beta_3 * alpha) + torch.randn((n, q))
+        Y = torch.cos(Z @ beta_2) + torch.sin(X @ beta_3 * alpha) + torch.randn((n, q))
     elif model == 3 and sim_type == 3:
         t_dist = torch.distributions.StudentT(3)
         X = Z @ beta_1 + t_dist.sample((n, p))
