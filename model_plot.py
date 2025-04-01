@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
     # Adjust the x-axis labels
     plt.xticks(alphas)
-    plt.yticks([0, 0.05, 0.2, 0.4, 0.6, 0.8, 1.0])
+    # plt.yticks([0, 0.05, 0.2, 0.4, 0.6, 0.8, 1.0])
 
     # Show the plot
     plt.savefig(f"plots/model{model}_type{sim_type}-n-{n}.pdf", bbox_inches='tight')
