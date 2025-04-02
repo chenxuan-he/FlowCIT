@@ -21,9 +21,18 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, s=2, alpha=.1, see
         beta_2 = torch.zeros((d, q))
         beta_3 = torch.zeros((p, q))
         # Set the first 3x3 block to random values
-        beta_1[0:s, 0:p] = torch.randn((s, p))
-        beta_2[0:s, 0:q] = torch.randn((s, q))
-        beta_3[0:p, 0:q] = torch.randn((p, q))
+        if sim_type==2:
+            beta_1[0:s, 0:s] = torch.randn((s, s))
+            beta_2[0:s, 0:s] = torch.randn((s, s))
+            beta_3[0:s, 0:s] = torch.randn((s, s))
+        elif sim_type==1:
+            beta_1[0:s, 0:p] = torch.randn((s, p))
+            beta_2[0:s, 0:q] = torch.randn((s, q))
+            beta_3[0:p, 0:q] = torch.randn((p, q))
+        elif sim_type==4:
+            beta_1 = torch.randn((d, p))
+            beta_2 = torch.randn((d, q))
+            beta_3 = torch.randn((p, q))
     # model 4: only Z is high-dimensional and sparse
     elif model==4: 
         beta_1 = torch.zeros((d, p))
@@ -54,8 +63,8 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, s=2, alpha=.1, see
         Y = torch.cos(Z @ beta_2) + (X @ beta_3 * alpha) + torch.randn((n, q))
         # Y = torch.pow(torch.abs(Z @ beta_2), 3/2) + (X @ beta_3 * alpha) + torch.randn((n, q))
     elif model == 2 and sim_type == 4:
-        X = Z @ beta_1 + torch.randn((n, p))
-        Y = torch.cos(Z @ beta_2) + torch.sin(X @ beta_3 * alpha) + torch.randn((n, q))
+        X = torch.cos(Z @ beta_1) + torch.randn((n, p))
+        Y = (Z @ beta_2) + torch.sin(X @ beta_3 * alpha) + torch.randn((n, q))
     elif model == 3 and sim_type == 3:
         t_dist = torch.distributions.StudentT(3)
         X = Z @ beta_1 + t_dist.sample((n, p))
