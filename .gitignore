@@ -13,3 +13,4 @@ data/*
 *.rda
 .RData
 .Rhistory
+IPC/

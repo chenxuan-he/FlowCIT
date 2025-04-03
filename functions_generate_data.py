@@ -30,9 +30,13 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, s=2, alpha=.1, see
             beta_2[0:s, 0:q] = torch.randn((s, q))
             beta_3[0:p, 0:q] = torch.randn((p, q))
         elif sim_type==4:
-            beta_1 = torch.randn((d, p))
-            beta_2 = torch.randn((d, q))
-            beta_3 = torch.randn((p, q))
+            # beta_1 = torch.randn((d, p))
+            # beta_2 = torch.randn((d, q))
+            # beta_3 = torch.randn((p, q))
+            beta_1 = torch.where(torch.bernoulli(torch.full((d, p), 0.1)).to(torch.bool), .1*torch.randn((d, p)), torch.zeros_like(torch.randn((d, p))))
+            beta_2 = torch.where(torch.bernoulli(torch.full((d, q), 0.1)).to(torch.bool), .1*torch.randn((d, q)), torch.zeros_like(torch.randn((d, q))))
+            beta_3 = torch.where(torch.bernoulli(torch.full((p, q), 0.1)).to(torch.bool), .1*torch.randn((p, q)), torch.zeros_like(torch.randn((p, q))))
+
     # model 4: only Z is high-dimensional and sparse
     elif model==4: 
         beta_1 = torch.zeros((d, p))
