@@ -6,7 +6,7 @@ import random
 from torch import nn
 
 
-def flow_test(x, y, z, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, seed=0, device="cpu"):
+def flow_test(x, y, z, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, seed=0, method='DC', permutation=1, device="cpu"):
     np.random.seed(seed)
     torch.manual_seed(seed)
     random.seed(seed)
@@ -27,7 +27,7 @@ def flow_test(x, y, z, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_st
     eps2_pred = rectified_flow_2.sample_conditional_ode(y, z, device=device)[-1]
     # perform test
     print("Permutation to get p-value.")
-    dc, dc_p = permutation_test(eps1_pred.detach().clone(), eps2_pred.detach().clone())
+    dc, dc_p = permutation_test(eps1_pred.detach().clone(), eps2_pred.detach().clone(), method=method, permutation=permutation)
     return dc, dc_p
 
 

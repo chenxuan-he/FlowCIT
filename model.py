@@ -38,10 +38,12 @@ def parse_arguments():
     parser.add_argument('--CCIT', type=int, default=1, help='Implement CCIT or not.')
     parser.add_argument('--demo', type=int, default=0, help='Run once for demonstration.')
     parser.add_argument('--seed', type=int, default=0, help='Seed for implementation.')
+    parser.add_argument('--FlowCIT_method', type=str, default="DC", help="Method to compute transformed pair's correlation. Can be DC (distance correlation) or IPC (Improved projection correlation).")
+    parser.add_argument('--FlowCIT_permutation', type=int, default=1, help="For FlowCIT: permutation or not.")
     return parser.parse_args()
 
 
-def sim(model=1, sim_type=1, seed=0, p=3, q=3, d=3, n=500, alpha=.1, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, device="cpu", FlowCIT=1, FCIT=1, CDC=1, CCIT_exe=1):
+def sim(permutation=1, method="DC", model=1, sim_type=1, seed=0, p=3, q=3, d=3, n=500, alpha=.1, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_steps=1000, device="cpu", FlowCIT=1, FCIT=1, CDC=1, CCIT_exe=1):
     # generate data
     x, y, z = read_data(model=model, sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=seed)
     
@@ -49,7 +51,7 @@ def sim(model=1, sim_type=1, seed=0, p=3, q=3, d=3, n=500, alpha=.1, batchsize=5
         # flow test
         print("\nExecuting flow test.")
         start_time = time.time()
-        _, p_dc = flow_test(x=x.clone().detach(), y=y.clone().detach(), z=z.clone().detach(), batchsize=batchsize, n_iter=n_iter, seed=seed, hidden_num=hidden_num, lr=lr, num_steps=num_steps, device=device)
+        _, p_dc = flow_test(permutation=permutation, method=method, x=x.clone().detach(), y=y.clone().detach(), z=z.clone().detach(), batchsize=batchsize, n_iter=n_iter, seed=seed, hidden_num=hidden_num, lr=lr, num_steps=num_steps, device=device)
         flow_test_time = time.time() - start_time
         print("P-value: "+str(round(p_dc, 2))+". Execution time: "+str(round(flow_test_time, 2)))
     else:
@@ -95,7 +97,7 @@ def run_simulation(seed, args, device):
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
-    p_dc, p_fcit, p_cdc, p_ccit, _, _, _, _ = sim(model=args.model, seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device, hidden_num=args.hidden_num, batchsize=args.batchsize, n_iter=args.n_iter, lr=args.lr, num_steps=args.num_steps, FlowCIT=args.FlowCIT, FCIT=args.FCIT, CDC=args.CDC, CCIT_exe=args.CCIT)
+    p_dc, p_fcit, p_cdc, p_ccit, _, _, _, _ = sim(permutation=args.FlowCIT_permutation, method=args.FlowCIT_method, model=args.model, seed=seed, sim_type=args.sim_type, p=args.p, q=args.q, d=args.d, n=args.n, alpha=args.alpha, device=device, hidden_num=args.hidden_num, batchsize=args.batchsize, n_iter=args.n_iter, lr=args.lr, num_steps=args.num_steps, FlowCIT=args.FlowCIT, FCIT=args.FCIT, CDC=args.CDC, CCIT_exe=args.CCIT)
     return p_dc, p_fcit, p_cdc, p_ccit
 
 

@@ -7,8 +7,9 @@ python model_generate_data.py --model=2 --sim_type=4 --alpha=.80 --nsim=200 --d=
 
 # # python to execute our proposed test, CDC test, FCIT test
 nohup python -u model.py --model=2 --sim_type=4 --alpha=.00 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --gpu=0 --cpu=000-220 --nsim=200 --FlowCIT=1 --CDC=0 --FCIT=0 --CCIT=0 --hidden_num=6 --n_iter=300 &> model2_s4_a00_neuron6_iter300.txt & 
-# 6, 300, 0.085
 nohup python -u model.py --model=2 --sim_type=4 --alpha=.00 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --gpu=1 --cpu=000-220 --nsim=200 --FlowCIT=1 --CDC=0 --FCIT=0 --CCIT=0 --hidden_num=16 &> model2_s4_a00_neuron16_iter500.txt & 
+nohup python -u model.py --model=2 --sim_type=4 --alpha=.00 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --gpu=2 --cpu=000-220 --nsim=200 --FlowCIT=1 --CDC=0 --FCIT=0 --CCIT=0 --hidden_num=20 &> model2_s4_a00_neuron20_iter500.txt & 
+nohup python -u model.py --model=2 --sim_type=4 --alpha=.00 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --gpu=3 --cpu=000-220 --nsim=200 --FlowCIT=1 --CDC=0 --FCIT=0 --CCIT=0 --hidden_num=20 --n_iter=800 &> model2_s4_a00_neuron20_iter800.txt & 
 
 
 
