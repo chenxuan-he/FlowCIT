@@ -13,4 +13,5 @@ data/*
 *.rda
 .RData
 .Rhistory
+.DS_Store
 IPC/
