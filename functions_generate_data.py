@@ -47,7 +47,7 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, s=2, alpha=.1, see
         beta_2[0:s, 0:q] = torch.randn((s, q))
     # Now start generate X, Y, and Z.
     Z = torch.randn((n, d))
-    if sim_type == 1:
+    if sim_type == 1 or (model==4 and sim_type==3):
         X = Z @ beta_1 + torch.randn((n, p))
         Y = Z @ beta_2 + X @ beta_3 * alpha + torch.randn((n, q))
     elif model == 1 and sim_type == 2:

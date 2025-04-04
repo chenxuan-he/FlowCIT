@@ -1,9 +1,9 @@
 # First: generate data
-python model_generate_data.py --model=4 --sim_type=1 --alpha=.00 --nsim=200 --d=50 --p=5 --q=5 --n=1000
-python model_generate_data.py --model=4 --sim_type=1 --alpha=.10 --nsim=200 --d=50 --p=5 --q=5 --n=1000
-python model_generate_data.py --model=4 --sim_type=1 --alpha=.20 --nsim=200 --d=50 --p=5 --q=5 --n=1000
-python model_generate_data.py --model=4 --sim_type=1 --alpha=.30 --nsim=200 --d=50 --p=5 --q=5 --n=1000
-python model_generate_data.py --model=4 --sim_type=1 --alpha=.40 --nsim=200 --d=50 --p=5 --q=5 --n=1000
+python model_generate_data.py --model=4 --sim_type=1 --alpha=.00 --nsim=200 --d=50 --p=5 --q=5 --n=1000 --s=3
+python model_generate_data.py --model=4 --sim_type=1 --alpha=.10 --nsim=200 --d=50 --p=5 --q=5 --n=1000 --s=3
+python model_generate_data.py --model=4 --sim_type=1 --alpha=.20 --nsim=200 --d=50 --p=5 --q=5 --n=1000 --s=3
+python model_generate_data.py --model=4 --sim_type=1 --alpha=.30 --nsim=200 --d=50 --p=5 --q=5 --n=1000 --s=3
+python model_generate_data.py --model=4 --sim_type=1 --alpha=.40 --nsim=200 --d=50 --p=5 --q=5 --n=1000 --s=3
 
 # # python to execute our proposed test, CDC test, FCIT test, and CCIT test
 nohup python -u model.py --model=4 --sim_type=1 --FlowCIT=1 --FCIT=0 --CDC=0 --CCIT=0 --hidden_num=10 --alpha=.00 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=2 --cpu=040-080 --nsim=200 &> model4_s1_a00.txt &
