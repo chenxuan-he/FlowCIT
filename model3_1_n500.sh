@@ -28,6 +28,16 @@ nohup python -u model.py --model=3 --sim_type=1 --alpha=.40 --n=500 --p=1 --q=1 
 
 python model_result.py --model=3 --sim_type=1 --alphas="0.0,0.1,0.2,0.3,0.4" --n=500 --p=1 --q=1 --d=2
 
+# # add code to execute FlowCIT-IPC
+nohup python -u model.py --model=3 --sim_type=1 --alpha=.00 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=0 --cpu=100-200 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 &> model3_s1_a00.txt &
+nohup python -u model.py --model=3 --sim_type=1 --alpha=.10 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=1 --cpu=100-200 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 &> model3_s1_a10.txt &
+nohup python -u model.py --model=3 --sim_type=1 --alpha=.20 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=2 --cpu=100-200 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 &> model3_s1_a20.txt &
+nohup python -u model.py --model=3 --sim_type=1 --alpha=.30 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=6 --cpu=100-200 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 &> model3_s1_a30.txt &
+nohup python -u model.py --model=3 --sim_type=1 --alpha=.40 --n=500 --p=1 --q=1 --d=2 --par_task=5 --gpu=7 --cpu=100-200 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 &> model3_s1_a40.txt &
+
+python model_result.py --model=3 --sim_type=1 --alphas="0.0,0.1,0.2,0.3,0.4" --n=500 --p=1 --q=1 --d=2
+
+
 # # # conda activate py37
 # # # python code to execute GCIT
 # nohup python -u model_GCIT.py --model=3 --sim_type=1 --alpha=.00 --n=500 --p=1 --q=1 --d=2 --par_task=50 --cpu=000-040 --nsim=200 --test_prop=.1 &> model3_s1_GCIT_a00.txt &
