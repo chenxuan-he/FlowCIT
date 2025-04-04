@@ -1,4 +1,4 @@
-# Codes for Conditional Independence Test by Conditional Flow Models
+# Codes for Conditional Independence Test by Conditional Continuous Normalizing Flow Models
 
 ## Reproduction Guide
 
