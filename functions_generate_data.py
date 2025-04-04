@@ -47,13 +47,17 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, s=2, alpha=.1, see
             beta_1[0:s, 0:p] = torch.randn((s, p))
             beta_2[0:s, 0:q] = torch.randn((s, q))
             beta_3[0:p, 0:q] = torch.randn((p, q))
-        elif sim_type==2 or sim_type==4:
-            beta_1[0:s, 0:s] = torch.randn((s, s))
-            beta_2[0:s, 0:s] = torch.randn((s, s))
-            beta_3[0:s, 0:s] = torch.randn((s, s))
+        elif sim_type==2:
+            beta_1[0:s, 0:1] = torch.randn((s, 1))
+            beta_2[0:s, 0:1] = torch.randn((s, 1))
+            beta_3[0:s, 0:1] = torch.randn((s, 1))
+        elif sim_type==4:
+            beta_1 = torch.randn((d, p))
+            beta_2 = torch.randn((d, q))
+            beta_3 = torch.randn((p, q))
     # Now start generate X, Y, and Z.
     Z = torch.randn((n, d))
-    if sim_type == 1 or (model==4 and sim_type==3):
+    if sim_type == 1 or (model == 4 and sim_type==3):
         X = Z @ beta_1 + torch.randn((n, p))
         Y = Z @ beta_2 + X @ beta_3 * alpha + torch.randn((n, q))
     elif model == 1 and sim_type == 2:
@@ -86,6 +90,9 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, s=2, alpha=.1, see
     elif model == 4 and sim_type == 2:
         X = Z @ beta_1 + torch.randn((n, p))
         Y = torch.pow(Z @ beta_2, 2)+ X @ beta_3 * alpha + torch.randn((n, q))
+    elif model ==4 and sim_type == 4:
+        X = torch.sin(Z @ beta_1) + torch.randn((n, p))
+        Y = torch.abs(Z @ beta_2)+ torch.cos(X @ beta_3 * alpha) + torch.randn((n, q))
     df = pd.DataFrame(
         torch.cat([X, Y, Z], dim=1).numpy(),
         columns=[f"X{i+1}" for i in range(p)] + [f"Y{i+1}" for i in range(q)] + [f"Z{i+1}" for i in range(d)]
