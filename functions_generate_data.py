@@ -41,14 +41,16 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, s=2, alpha=.1, see
     elif model==4:
         beta_1 = torch.zeros((d, p))
         beta_2 = torch.zeros((d, q))
-        beta_3 = torch.randn((p, q))
+        beta_3 = torch.zeros((p, q))
         # Set the first 3 elements of Z is influencing X and Y
-        if s==2:
+        if sim_type==1 or sim_type==3:
             beta_1[0:s, 0:p] = torch.randn((s, p))
             beta_2[0:s, 0:q] = torch.randn((s, q))
-        elif s==3:
+            beta_3[0:p, 0:q] = torch.randn((p, q))
+        elif sim_type==2 or sim_type==4:
             beta_1[0:s, 0:s] = torch.randn((s, s))
             beta_2[0:s, 0:s] = torch.randn((s, s))
+            beta_3[0:s, 0:s] = torch.randn((s, s))
     # Now start generate X, Y, and Z.
     Z = torch.randn((n, d))
     if sim_type == 1 or (model==4 and sim_type==3):
