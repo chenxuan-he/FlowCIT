@@ -1,9 +1,9 @@
 # First: generate data
-python model_generate_data.py --model=4 --sim_type=2 --alpha=.00 --nsim=200 --d=50 --p=5 --q=5 --n=1000
-python model_generate_data.py --model=4 --sim_type=2 --alpha=.10 --nsim=200 --d=50 --p=5 --q=5 --n=1000
-python model_generate_data.py --model=4 --sim_type=2 --alpha=.20 --nsim=200 --d=50 --p=5 --q=5 --n=1000
-python model_generate_data.py --model=4 --sim_type=2 --alpha=.30 --nsim=200 --d=50 --p=5 --q=5 --n=1000
-python model_generate_data.py --model=4 --sim_type=2 --alpha=.40 --nsim=200 --d=50 --p=5 --q=5 --n=1000
+python model_generate_data.py --model=4 --sim_type=2 --alpha=.00 --nsim=200 --d=50 --p=5 --q=5 --n=1000 --s=3
+python model_generate_data.py --model=4 --sim_type=2 --alpha=.10 --nsim=200 --d=50 --p=5 --q=5 --n=1000 --s=3
+python model_generate_data.py --model=4 --sim_type=2 --alpha=.20 --nsim=200 --d=50 --p=5 --q=5 --n=1000 --s=3
+python model_generate_data.py --model=4 --sim_type=2 --alpha=.30 --nsim=200 --d=50 --p=5 --q=5 --n=1000 --s=3
+python model_generate_data.py --model=4 --sim_type=2 --alpha=.40 --nsim=200 --d=50 --p=5 --q=5 --n=1000 --s=3
 
 
 # trial code
