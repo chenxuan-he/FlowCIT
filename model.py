@@ -108,7 +108,9 @@ if __name__ == "__main__":
         if args.gpu:
             # Set the CUDA_VISIBLE_DEVICES environment variable
             os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        else:
+            device = "cpu"
         run_simulation(seed=args.seed, args=args, device=device)
     elif not args.demo:
         multiprocessing.set_start_method('spawn')
