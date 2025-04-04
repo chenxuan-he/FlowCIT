@@ -14,11 +14,11 @@ nohup python -u model.py --model=4 --sim_type=2 --FlowCIT=1 --FCIT=0 --CDC=0 --C
 nohup python -u model.py --model=4 --sim_type=2 --FlowCIT=1 --FCIT=0 --CDC=0 --CCIT=0 --hidden_num=8 --alpha=.30 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=4 --cpu=160-240 --nsim=200 &> model4_s2_a30.txt &
 nohup python -u model.py --model=4 --sim_type=2 --FlowCIT=1 --FCIT=0 --CDC=0 --CCIT=0 --hidden_num=8 --alpha=.40 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=5 --cpu=160-240 --nsim=200 &> model4_s2_a40.txt &
 
-nohup python -u model.py --model=4 --sim_type=2 --FlowCIT=0 --FCIT=0 --CDC=0 --CCIT=1 --sim_type=2 --alpha=.00 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --cpu=040-255 --nsim=200 &> model4_CCIT_s2_a00.txt &
-nohup python -u model.py --model=4 --sim_type=2 --FlowCIT=0 --FCIT=0 --CDC=0 --CCIT=1 --sim_type=2 --alpha=.10 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --cpu=040-255 --nsim=200 &> model4_CCIT_s2_a10.txt &
-nohup python -u model.py --model=4 --sim_type=2 --FlowCIT=0 --FCIT=0 --CDC=0 --CCIT=1 --sim_type=2 --alpha=.20 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --cpu=040-255 --nsim=200 &> model4_CCIT_s2_a20.txt &
-nohup python -u model.py --model=4 --sim_type=2 --FlowCIT=0 --FCIT=0 --CDC=0 --CCIT=1 --sim_type=2 --alpha=.30 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --cpu=040-255 --nsim=200 &> model4_CCIT_s2_a30.txt &
-nohup python -u model.py --model=4 --sim_type=2 --FlowCIT=0 --FCIT=0 --CDC=0 --CCIT=1 --sim_type=2 --alpha=.40 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --cpu=040-255 --nsim=200 &> model4_CCIT_s2_a40.txt &
+nohup python -u model.py --model=4 --sim_type=2 --FlowCIT=0 --FCIT=0 --CDC=0 --CCIT=1 --alpha=.00 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --cpu=040-255 --nsim=200 &> model4_CCIT_s2_a00.txt &
+nohup python -u model.py --model=4 --sim_type=2 --FlowCIT=0 --FCIT=0 --CDC=0 --CCIT=1 --alpha=.10 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --cpu=040-255 --nsim=200 &> model4_CCIT_s2_a10.txt &
+nohup python -u model.py --model=4 --sim_type=2 --FlowCIT=0 --FCIT=0 --CDC=0 --CCIT=1 --alpha=.20 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --cpu=040-255 --nsim=200 &> model4_CCIT_s2_a20.txt &
+nohup python -u model.py --model=4 --sim_type=2 --FlowCIT=0 --FCIT=0 --CDC=0 --CCIT=1 --alpha=.30 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --cpu=040-255 --nsim=200 &> model4_CCIT_s2_a30.txt &
+nohup python -u model.py --model=4 --sim_type=2 --FlowCIT=0 --FCIT=0 --CDC=0 --CCIT=1 --alpha=.40 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --cpu=040-255 --nsim=200 &> model4_CCIT_s2_a40.txt &
 
 python model_result.py --model=4 --sim_type=2 --alphas="0.0,0.1,0.2,0.3,0.4" --n=1000 --p=5 --q=5 --d=50 --hidden_num=64 
 
