@@ -65,10 +65,9 @@ if __name__ == "__main__":
 
     # Adjust the x-axis labels
     plt.xticks(alphas)
-    if model==3:
-        plt.yticks([0, 0.2, 0.4, 0.6, 0.8])
-    else:
-        plt.yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
+
+    plt.ylim(-0.01, 1.02)                    # Set y-axis limits
+    plt.yticks([0, 0.05, 0.25, 0.50, 0.75, 1.00])  # Set y-axis ticks
 
     # Show the plot
     plt.savefig(f"plots/model{model}_type{sim_type}-n-{n}.pdf", bbox_inches='tight')
