@@ -4,6 +4,13 @@ python model_generate_data.py --model=4 --sim_type=4 --alpha=.10 --nsim=200 --d=
 python model_generate_data.py --model=4 --sim_type=4 --alpha=.20 --nsim=200 --d=50 --p=5 --q=5 --n=1000
 python model_generate_data.py --model=4 --sim_type=4 --alpha=.30 --nsim=200 --d=50 --p=5 --q=5 --n=1000
 python model_generate_data.py --model=4 --sim_type=4 --alpha=.40 --nsim=200 --d=50 --p=5 --q=5 --n=1000
+python model_generate_data.py --model=4 --sim_type=4 --alpha=.50 --nsim=200 --d=50 --p=5 --q=5 --n=1000
+python model_generate_data.py --model=4 --sim_type=4 --alpha=.60 --nsim=200 --d=50 --p=5 --q=5 --n=1000
+python model_generate_data.py --model=4 --sim_type=4 --alpha=.70 --nsim=200 --d=50 --p=5 --q=5 --n=1000
+python model_generate_data.py --model=4 --sim_type=4 --alpha=.80 --nsim=200 --d=50 --p=5 --q=5 --n=1000
+python model_generate_data.py --model=4 --sim_type=4 --alpha=.90 --nsim=200 --d=50 --p=5 --q=5 --n=1000
+python model_generate_data.py --model=4 --sim_type=4 --alpha=1.0 --nsim=200 --d=50 --p=5 --q=5 --n=1000
+
 
 # 2. Python code to execute FlowCIT, CDC test, FCIT test, and CCIT test
 nohup python -u model.py --model=4 --sim_type=4 --FlowCIT=1 --FCIT=1 --CDC=1 --CCIT=1 --hidden_num=16 --alpha=.00 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=6 --cpu=000-220 --nsim=200 &> model4_s4_a00.txt &
@@ -11,6 +18,12 @@ nohup python -u model.py --model=4 --sim_type=4 --FlowCIT=1 --FCIT=1 --CDC=1 --C
 nohup python -u model.py --model=4 --sim_type=4 --FlowCIT=1 --FCIT=1 --CDC=1 --CCIT=1 --hidden_num=16 --alpha=.20 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=2 --cpu=000-220 --nsim=200 &> model4_s4_a20.txt &
 nohup python -u model.py --model=4 --sim_type=4 --FlowCIT=1 --FCIT=1 --CDC=1 --CCIT=1 --hidden_num=16 --alpha=.30 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=3 --cpu=000-220 --nsim=200 &> model4_s4_a30.txt &
 nohup python -u model.py --model=4 --sim_type=4 --FlowCIT=1 --FCIT=1 --CDC=1 --CCIT=1 --hidden_num=16 --alpha=.40 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=4 --cpu=000-220 --nsim=200 &> model4_s4_a40.txt &
+nohup python -u model.py --model=4 --sim_type=4 --FlowCIT=1 --FCIT=1 --CDC=1 --CCIT=1 --hidden_num=16 --alpha=.50 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=0 --cpu=000-220 --nsim=200 &> model4_s4_a50.txt &
+nohup python -u model.py --model=4 --sim_type=4 --FlowCIT=1 --FCIT=1 --CDC=1 --CCIT=1 --hidden_num=16 --alpha=.60 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=1 --cpu=000-220 --nsim=200 &> model4_s4_a60.txt &
+nohup python -u model.py --model=4 --sim_type=4 --FlowCIT=1 --FCIT=1 --CDC=1 --CCIT=1 --hidden_num=16 --alpha=.70 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=2 --cpu=000-220 --nsim=200 &> model4_s4_a70.txt &
+nohup python -u model.py --model=4 --sim_type=4 --FlowCIT=1 --FCIT=1 --CDC=1 --CCIT=1 --hidden_num=16 --alpha=.80 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=3 --cpu=000-220 --nsim=200 &> model4_s4_a80.txt &
+nohup python -u model.py --model=4 --sim_type=4 --FlowCIT=1 --FCIT=1 --CDC=1 --CCIT=1 --hidden_num=16 --alpha=.90 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=4 --cpu=000-220 --nsim=200 &> model4_s4_a90.txt &
+nohup python -u model.py --model=4 --sim_type=4 --FlowCIT=1 --FCIT=1 --CDC=1 --CCIT=1 --hidden_num=16 --alpha=1.0 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=5 --cpu=000-220 --nsim=200 &> model4_s4_a100.txt &
 python model_result.py --model=4 --sim_type=4 --alphas="0.0,0.1,0.2,0.3,0.4" --n=1000 --p=5 --q=5 --d=50 --hidden_num=16
 
 # 3. Python code to execute FlowCIT-IPC
@@ -19,6 +32,12 @@ nohup python -u model.py --model=4 --sim_type=4 --alpha=.1 --n=1000 --p=5 --q=5 
 nohup python -u model.py --model=4 --sim_type=4 --alpha=.2 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=2 --cpu=000-222 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=16 &> model4_s4_a20.txt &
 nohup python -u model.py --model=4 --sim_type=4 --alpha=.3 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=3 --cpu=000-222 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=16 &> model4_s4_a30.txt &
 nohup python -u model.py --model=4 --sim_type=4 --alpha=.4 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=3 --cpu=000-222 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=16 &> model4_s4_a40.txt &
+nohup python -u model.py --model=4 --sim_type=4 --alpha=.5 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=0 --cpu=000-222 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=16 &> model4_s4_a50.txt &
+nohup python -u model.py --model=4 --sim_type=4 --alpha=.6 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=1 --cpu=000-222 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=16 &> model4_s4_a60.txt &
+nohup python -u model.py --model=4 --sim_type=4 --alpha=.7 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=2 --cpu=000-222 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=16 &> model4_s4_a70.txt &
+nohup python -u model.py --model=4 --sim_type=4 --alpha=.8 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=3 --cpu=000-222 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=16 &> model4_s4_a80.txt &
+nohup python -u model.py --model=4 --sim_type=4 --alpha=.9 --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=4 --cpu=000-222 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=16 &> model4_s4_a90.txt &
+nohup python -u model.py --model=4 --sim_type=4 --alpha=1. --n=1000 --p=5 --q=5 --d=50 --par_task=5 --gpu=5 --cpu=000-222 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=16 &> model4_s4_a100.txt &
 python model_result.py --model=4 --sim_type=4 --alphas="0.0,0.1,0.2,0.3,0.4" --n=1000 --p=5 --q=5 --d=50 --hidden_num=16
 
 # 4. Generate plots
