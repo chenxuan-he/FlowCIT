@@ -25,7 +25,7 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, s=2, alpha=.1, see
             beta_1[0:s, 0:s] = torch.randn((s, s))
             beta_2[0:s, 0:s] = torch.randn((s, s))
             beta_3[0:s, 0:s] = torch.randn((s, s))
-        elif sim_type==1:
+        elif sim_type==1 or sim_type==3:
             beta_1[0:s, 0:p] = torch.randn((s, p))
             beta_2[0:s, 0:q] = torch.randn((s, q))
             beta_3[0:p, 0:q] = torch.randn((p, q))
