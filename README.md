@@ -2,7 +2,7 @@
 
 ## Reproduction Guide
 
-*There is a mismatch between the model ranks. Here: Models 1, 2, 3, 4 correspond to main article's Models 2, 4, 1, 3, respectively.*
+*Caution: There is a mismatch between the model ranks. Here: Models 1, 2, 3, 4 correspond to main article's Models 2, 4, 1, 3, respectively.*
 
 -   Each bash file contains command lines to reproduce results of one setting.
     -   For instance: **model1_1_n500.sh** reproduces the results of model 1, setting 1, with sample size $n=500$. We take it as an example.
