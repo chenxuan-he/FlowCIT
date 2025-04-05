@@ -92,7 +92,7 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, s=2, alpha=.1, see
         Y = torch.pow(Z @ beta_2, 2)+ X @ beta_3 * alpha + torch.randn((n, q))
     elif model ==4 and sim_type == 4:
         X = torch.sin(Z @ beta_1) + torch.randn((n, p))
-        Y = torch.abs(Z @ beta_2)+ torch.cos(X @ beta_3 * alpha) + torch.randn((n, q))
+        Y = Z @ beta_2+ torch.abs(X @ beta_3 * alpha) + torch.randn((n, q))
     df = pd.DataFrame(
         torch.cat([X, Y, Z], dim=1).numpy(),
         columns=[f"X{i+1}" for i in range(p)] + [f"Y{i+1}" for i in range(q)] + [f"Z{i+1}" for i in range(d)]
