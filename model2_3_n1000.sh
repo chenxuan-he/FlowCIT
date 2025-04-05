@@ -14,12 +14,14 @@ nohup python -u model.py --model=2 --sim_type=3 --alpha=.80 --n=1000 --p=50 --q=
 python model_result.py --model=2 --sim_type=3 --alphas="0.0,0.2,0.4,0.6,0.8" --n=1000 --p=50 --q=50 --d=100 --hidden_num=16
 
 # 3. Python code to execute FlowCIT-IPC
-nohup python -u model.py --model=2 --sim_type=3 --alpha=.0 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --gpu=4 --cpu=000-080 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=10 &> model2_s3_a00.txt &
-nohup python -u model.py --model=2 --sim_type=3 --alpha=.2 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --gpu=5 --cpu=000-080 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=10 &> model2_s3_a20.txt &
-nohup python -u model.py --model=2 --sim_type=3 --alpha=.4 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --gpu=2 --cpu=100-220 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=10 &> model2_s3_a40.txt &
-nohup python -u model.py --model=2 --sim_type=3 --alpha=.6 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --gpu=3 --cpu=100-220 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=10 &> model2_s3_a60.txt &
-nohup python -u model.py --model=2 --sim_type=3 --alpha=.8 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --gpu=7 --cpu=100-220 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=10 &> model2_s3_a80.txt &
-python model_result.py --model=2 --sim_type=3 --alphas="0.0,0.2,0.4,0.6,0.8" --n=1000 --p=50 --q=50 --d=100 --hidden_num=10
+nohup python -u model.py --model=2 --sim_type=3 --alpha=.0 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --gpu=4 --cpu=000-080 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=16 &> model2_s3_a00_neu16.txt &
+# neuron 10: exceeds
+
+nohup python -u model.py --model=2 --sim_type=3 --alpha=.2 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --gpu=5 --cpu=000-080 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=16 &> model2_s3_a20.txt &
+nohup python -u model.py --model=2 --sim_type=3 --alpha=.4 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --gpu=2 --cpu=100-220 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=16 &> model2_s3_a40.txt &
+nohup python -u model.py --model=2 --sim_type=3 --alpha=.6 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --gpu=3 --cpu=100-220 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=16 &> model2_s3_a60.txt &
+nohup python -u model.py --model=2 --sim_type=3 --alpha=.8 --n=1000 --p=50 --q=50 --d=100 --par_task=5 --gpu=7 --cpu=100-220 --nsim=200 --CCIT=0 --CDC=0 --FCIT=0 --FlowCIT=1 --FlowCIT_method="IPC" --FlowCIT_permutation=0 --hidden_num=16 &> model2_s3_a80.txt &
+python model_result.py --model=2 --sim_type=3 --alphas="0.0,0.2,0.4,0.6,0.8" --n=1000 --p=50 --q=50 --d=100 --hidden_num=16
 
 # 4. Generate plots
 python model_plot.py --model=2 --sim_type=3 --n=1000 --FlowCIT=1 --FCIT=1 --CDC=1 --CCIT=1 --CLZ=0 --KCI=0 --alphas="0.0,0.2,0.4,0.6,0.8" --legend=0
