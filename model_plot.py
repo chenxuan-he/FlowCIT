@@ -66,7 +66,7 @@ if __name__ == "__main__":
     # Adjust the x-axis labels
     plt.xticks(alphas)
 
-    plt.ylim(-0.01, 1.02)                    # Set y-axis limits
+    plt.ylim(-0.02, 1.02)                    # Set y-axis limits
     plt.yticks([0, 0.05, 0.25, 0.50, 0.75, 1.00])  # Set y-axis ticks
 
     # Show the plot
