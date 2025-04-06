@@ -15,3 +15,5 @@ data/*
 .Rhistory
 .DS_Store
 IPC/
+real_data_wine/*
+!real_data_wine/.gitkeep
