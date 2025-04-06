@@ -32,9 +32,9 @@ n_cpu <- opt$n_cpu
 old <- Sys.time() # get start time
 
 # Get data
-X <- read.csv(paste0("data/x_", postfix, ".csv"))
-Y <- read.csv(paste0("data/y_", postfix, ".csv"))
-Z <- read.csv(paste0("data/z_", postfix, ".csv"))
+X <- as.matrix(read.csv(paste0("data/x_", postfix, ".csv")))
+Y <- as.matrix(read.csv(paste0("data/y_", postfix, ".csv")))
+Z <- as.matrix(read.csv(paste0("data/z_", postfix, ".csv")))
 
 n <- dim(X)[1]
 p <- dim(X)[2]
@@ -79,58 +79,21 @@ if(CLZ){
 
 
 ## ---- Independence Test ----
-if(opt$demo){
-  if(CLZ){
-    h = bandwidth*1.06*(4/(3*n))^{1/(2*(d+min(p,q)-1)-1)}
-    
-    # pval1 corresponds to the proposed CIT of our paper
-    test.stat =  CI.multiXYZ.test(X, Y, Z, h)
-    pval1 = mean(boots.stat>test.stat)
-  }else{
-    pval1 = -1
-  }
-  if(KCI){
-    # pval5 corresponds to KCI
-    pval5 = KCI(X, Y, Z)$pvalue
-  }else{
-    pval5 = -1
-  }
-  print(c(pval1, pval5))
-  new <- Sys.time() - old # calculate difference
-  print(new) # print in nice format
+if(CLZ){
+  h = bandwidth*1.06*(4/(3*n))^{1/(2*(d+min(p,q)-1)-1)}
+  
+  # pval1 corresponds to the proposed CIT of our paper
+  test.stat =  CI.multiXYZ.test(X, Y, Z, h)
+  pval1 = mean(boots.stat>test.stat)
 }else{
-  num_cores <- min(detectCores() - 1, n_cpu)
-  cl <- makeCluster(num_cores)
-  registerDoParallel(cl)
-  
-  pvalues <- foreach(i = 0:(n_sim-1), .combine = rbind, .packages = c("CondIndTests")) %dopar%{
-    data_list <- read_data(model=model, sim_type=sim_type, alpha=alpha, n=n, p=p, q=q, d=d, seed=i)
-    X <- data_list$X
-    Y <- data_list$Y
-    Z <- data_list$Z
-    
-    if(CLZ){
-      h = bandwidth*1.06*(4/(3*n))^{1/(2*(d+min(p,q)-1)-1)}
-      
-      # pval1 corresponds to the proposed CIT of our paper
-      test.stat =  CI.multiXYZ.test(X, Y, Z, h)
-      pval1 = mean(boots.stat>test.stat)
-    }else{
-      pval1 = -1
-    }
-    
-    if(KCI){
-      # pval5 corresponds to KCI
-      pval5 = KCI(X, Y, Z)$pvalue
-    }else{
-      pval5 = -1
-    }
-    return(c(pval1, pval5))
-  }
-  stopCluster(cl)
-  
-  save(pvalues, file = rdaname)
-  
-  new <- Sys.time() - old # calculate difference
-  print(new) # print in nice format
+  pval1 = -1
 }
+if(KCI){
+  # pval5 corresponds to KCI
+  pval5 = KCI(X, Y, Z)$pvalue
+}else{
+  pval5 = -1
+}
+print(c(pval1, pval5))
+new <- Sys.time() - old # calculate difference
+print(new) # print in nice format

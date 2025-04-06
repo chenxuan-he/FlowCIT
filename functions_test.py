@@ -72,14 +72,17 @@ def permutation_test(X, Y, num_permutations=100, seed=0, permutation=1, method="
     torch.manual_seed(seed)
     if method=="DC":
         observed_dcor, _, rej = distance_correlation(X, Y)
+        # print(observed_dcor)
         if not permutation:
             return observed_dcor.item(), 1-rej
         n = X.size(0)
         
         permuted_dcors = []
-        for _ in range(num_permutations):
-            permuted_Y = Y[torch.randperm(n)]
+        for i in range(num_permutations):
+            permuted_Y = Y[torch.randperm(n)]                
             permuted_dcor, _, _ = distance_correlation(X, permuted_Y)
+            # if i == 0 or i == 1:
+            #     print(permuted_dcor)
             permuted_dcors.append(permuted_dcor.item())
         
         permuted_dcors = torch.tensor(permuted_dcors)

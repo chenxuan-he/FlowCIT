@@ -13,6 +13,17 @@ def flow_test(x, y, z, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_st
     n, p = x.shape
     _, q = y.shape
     _, d = z.shape
+    # a trick here: if p \ne q, we can padding the shorter one to be the same length to let the training stable.
+    if p < q:
+        pad_size = q - p
+        padding = torch.randn(x.size(0), pad_size, dtype=x.dtype, device=x.device)
+        x = torch.cat([x, padding], dim=1)
+        p = q
+    elif p > q:
+        pad_size = p - q
+        padding = torch.randn(y.size(0), pad_size, dtype=y.dtype, device=y.device)
+        y = torch.cat([y, padding], dim=1)
+        q = p
     eps1 = torch.randn((n,p))
     x1_pairs = [x, eps1, z.detach().clone()]
     rectified_flow_1 = ConditionalRectifiedFlow(model=MLP(input_dim=p+d+1, output_dim=p, hidden_num=hidden_num), num_steps=num_steps, device=device)
@@ -26,7 +37,7 @@ def flow_test(x, y, z, batchsize=50, n_iter=500, hidden_num=256, lr=5e-3, num_st
     rectified_flow_2, loss_curve2 = train_conditional_rectified_flow(rectified_flow_2, optimizer, y1_pairs, batchsize, n_iter, device=device)
     eps2_pred = rectified_flow_2.sample_conditional_ode(y, z, device=device)[-1]
     # perform test
-    print("Permutation to get p-value.")
+    # print("Permutation to get p-value.")
     dc, dc_p = permutation_test(eps1_pred.detach().clone(), eps2_pred.detach().clone(), method=method, permutation=permutation)
     return dc, dc_p
 
