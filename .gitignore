@@ -17,3 +17,5 @@ data/*
 IPC/
 real_data_wine/*
 !real_data_wine/.gitkeep
+.Rproj.user
+*.Rproj
