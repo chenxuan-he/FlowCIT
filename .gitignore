@@ -8,6 +8,8 @@ __pycache__
 !*simtype*.csv
 results/*
 !results/.gitkeep
+!results/*-n-500.csv
+!results/*-n-1000.csv
 data/*
 !data/.gitkeep
 *.rda
@@ -19,3 +21,4 @@ real_data_wine/*
 !real_data_wine/.gitkeep
 .Rproj.user
 *.Rproj
+DDR/

@@ -21,6 +21,28 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.manifold import TSNE
 import umap
 
+# basic functions
+import os
+import sys
+import math
+import numpy as np
+import shutil
+import setproctitle
+import argparse
+import matplotlib.pyplot as plt
+
+# torch functions
+import torch
+import torch.optim as optim
+import torchvision.transforms as transforms
+from torchvision.utils import save_image
+from torch.utils.data import DataLoader, TensorDataset
+import torchvision.transforms as transforms
+
+# local functions
+from DDR.model import *
+from DDR.toys import toy_2d, toy_3d
+from DDR.densenet_sim import DenseNet
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process GPU indices.')
@@ -117,28 +139,61 @@ if __name__=="__main__":
     X, y = load_data(file_path="/home/chenxhe/flow_test/real_data_wine/winequality-white.csv", target_column="quality")
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=seed, stratify=y)
 
-    method = args.method
-    latent_dim = args.latent_dim
-    if args.method == "full":
-        postfix = "full"
-    else:
-        postfix = f"{method}_{latent_dim}"
 
-    X_test_torch = torch.from_numpy(X_test).float()
-    y_test_torch = torch.from_numpy(y_test).float()
+    # 4. deep dimension reduction
+    train_dat = TensorDataset(torch.from_numpy(X_train).float(), torch.from_numpy(y_train))
+    trainLoader = DataLoader(train_dat, batch_size=args.batchSz, shuffle=True)
+    test_dat = TensorDataset(torch.from_numpy(X_test).float(), torch.from_numpy(y_test))
+    testLoader = DataLoader(test_dat, batch_size=args.batchSz, shuffle=False)
 
-    # baseline: X \indep Y \mid X, which is definitely H_0
-    if method == "full":
-        X_test_dr = X_test_torch
-    elif method == "pca":
-        pca = PCA(n_components=latent_dim).fit(X_train)
-        X_test_dr = torch.from_numpy(pca.transform(X_test)).float()
-    elif method == "sir":
-        sir = SlicedInverseRegression(n_directions=2).fit(X_train, y_train.squeeze())
-        X_test_dr = torch.from_numpy(sir.transform(X_test)).float()
-    elif method == "umap":
-        umap_model = umap.UMAP(n_neighbors=100, n_components=4, min_dist=0.5, metric="euclidean").fit(X_train)
-        X_test_dr = torch.from_numpy(umap_model.transform(X_test))
 
-    save_to_local(X_test_torch, y_test_torch, X_test_dr, postfix=postfix)
-    test(x=X_test_torch, y=y_test_torch, z=X_test_dr, args=args, device=device)
+    R_net = DenseNet(growthRate=12, depth=10, reduction=0.5,
+                            bottleneck=True, ndim = args.latent_dim, nClasses=10)
+    D_net = Discriminator(ndim = args.latent_dim)
+    print('  + Number of params (R net) : {}'.format(
+        sum([p.data.nelement() for p in R_net.parameters()])))
+    print('  + Number of params (D net) : {}'.format(
+        sum([p.data.nelement() for p in D_net.parameters()])))
+    if args.cuda:
+        R_net = R_net.cuda()
+        D_net = D_net.cuda()
+
+    optimizer_R = optim.Adam(R_net.parameters(), weight_decay=1e-4)
+    optimizer_D = optim.Adam(D_net.parameters(), weight_decay=1e-4)
+
+    trainF = open(os.path.join(args.save, 'train.csv'), 'w')
+    testF = open(os.path.join(args.save, 'test.csv'), 'w')
+
+    #------------------------------------------------------------------------------
+
+    # train models
+    for epoch in range(1, args.nEpochs + 1):
+        if epoch < 50: zlr = 2.0
+        elif epoch == 50: zlr = 1.5
+        elif epoch == 150: zlr = 1.0
+        train(args, epoch, R_net, D_net, trainLoader, optimizer_R, optimizer_D, trainF, zlr, device)
+        test(args, epoch, R_net, testLoader, optimizer_R, testF, device)
+        torch.save(R_net.state_dict(), os.path.join(args.save, 'R.pt'))
+        torch.save(D_net.state_dict(), os.path.join(args.save, 'D.pt'))
+        if epoch % 5 ==0:
+            X_train, y_train = npLoader(trainLoader, R_net, device)
+            X_test, y_test = npLoader(testLoader, R_net, device)
+            scatter_plots(X_test, y_test)
+            plt.savefig(os.path.join(args.save, 'latent_{}.png'.format(epoch)))
+        
+    trainF.close()
+    testF.close()
+    print("Done!")
+
+
+    # 1. Principal component analysis
+    if args.pca_2:
+        pca = PCA(n_components=2).fit(X_train)
+        X_train_pca = torch.from_numpy(pca.transform(X_train)).float()
+        X_test_pca = torch.from_numpy(pca.transform(X_test)).float()
+        y_test_torch = torch.from_numpy(y_test).float()
+        X_test_torch = torch.from_numpy(X_test).float()
+        save_to_local(X_test_torch, y_test_torch, X_test_pca, postfix="pca_2")
+        test(x=X_test_torch, y=y_test_torch, z=X_test_pca, args=args, device=device)
+
+        
