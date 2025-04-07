@@ -1,5 +1,5 @@
 # baseline: X \indep Y \mid X
-python real_data_wine.py --full=1
+python real_data_wine.py --method="full"
 Rscript real_data_wine.R --postfix="full"
 
 # 1. PCA
@@ -38,3 +38,7 @@ Rscript real_data_wine.R --postfix="umap_11"
 # conda create --name ddr python=3.8
 # conda activate ddr
 # pip install -r requirements.txt
+python real_data_wine_ddr.py --gpu="" --latent_dim=2
+python real_data_wine.py --method="ddr" --latent_dim=2
+Rscript real_data_wine.R --postfix="ddr_2"
+

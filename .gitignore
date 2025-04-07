@@ -21,5 +21,7 @@ real_data_wine/*
 !real_data_wine/.gitkeep
 .Rproj.user
 *.Rproj
-DDR/
+DDR/*
+!DDR/model_reg.py
 results_ddr/*
+!results_ddr/.gitkeep

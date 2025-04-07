@@ -7,31 +7,6 @@ import random
 import torch
 import argparse
 import os
-# the sliced package requires numpy version lower than 1.20
-from sliced import SlicedInverseRegression
-
-# test methods
-# from functions_test import fcit_test, cdc_test
-# from functions_flow import flow_test
-# from CCIT import CCIT
-
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
-from sklearn.manifold import TSNE
-
-# basic functions
-import os
-import sys
-import math
-import numpy as np
-import shutil
-import setproctitle
-import argparse
-import matplotlib.pyplot as plt
-
-# torch functions
-import torch
 import torch.optim as optim
 import torchvision.transforms as transforms
 from torchvision.utils import save_image
@@ -40,8 +15,6 @@ import torchvision.transforms as transforms
 
 # local functions
 from DDR.model_reg import *
-from DDR.toys import toy_2d, toy_3d
-from DDR.densenet_sim import DenseNet
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process GPU indices.')
@@ -76,50 +49,6 @@ def load_data(file_path, target_column, standardize=True):
         return X_scaler, y_scaler
     else:
         return X, y
-
-
-def save_to_local(x, y, z, postfix):  
-    # Convert to DataFrames with column labels
-    df_x = pd.DataFrame(x.numpy(), columns=[f"x_{i}" for i in range(x.shape[1])])
-    df_y = pd.DataFrame(y.numpy(), columns=[f"y_{i}" for i in range(y.shape[1])])
-    df_z = pd.DataFrame(z.numpy(), columns=[f"z_{i}" for i in range(z.shape[1])])
-    # Save to CSV
-    df_x.to_csv(f"/home/chenxhe/flow_test/data/x_{postfix}.csv", index=False)
-    df_y.to_csv(f"/home/chenxhe/flow_test/data/y_{postfix}.csv", index=False)
-    df_z.to_csv(f"/home/chenxhe/flow_test/data/z_{postfix}.csv", index=False)
-
-
-# def test(x, y, z, args, device):
-#     seed = args.seed
-#     device = device
-
-#     batchsize = args.batchsize
-#     n_iter = args.n_iter
-#     hidden_num = args.hidden_num
-#     lr = args.lr
-#     num_steps = args.num_steps
-#     random.seed(seed)
-#     np.random.seed(seed)
-#     torch.manual_seed(seed)
-#     if torch.cuda.is_available():
-#         torch.cuda.manual_seed(seed)
-#         torch.cuda.manual_seed_all(seed)
-
-#     if args.CDC:
-#         _, p_cdc =  cdc_test(x, y, z)
-#         print("CDC test, p_value:", p_cdc)
-#     if args.FCIT:
-#         _, p_fcit = fcit_test(x, y, z)
-#         print("FCIT test, p_value:", p_fcit)
-#     if args.CCIT:
-#         p_ccit = CCIT.CCIT(x.numpy(), y.numpy(), z.numpy())
-#         print("CCIT test, p_value:", p_ccit)
-#     if args.FlowCIT_DC:
-#         _, p_flowcit_dc = flow_test(x=x, y=y, z=z, permutation=1, method="DC", seed=seed, batchsize=batchsize, n_iter=n_iter, hidden_num=hidden_num, lr=lr, num_steps=num_steps, device=device)
-#         print("FlowCIT-DC test, p_value:", p_flowcit_dc)
-#     if args.FlowCIT_IPC:
-#         _, p_flowcit_ipc = flow_test(x=x, y=y, z=z, permutation=1, method="IPC", seed=seed, batchsize=batchsize, n_iter=n_iter,  hidden_num=hidden_num, lr=lr, num_steps=num_steps, device=device)
-#         print("FlowCIT-IPC test, p_value:", p_flowcit_ipc)
 
 
 if __name__=="__main__":
