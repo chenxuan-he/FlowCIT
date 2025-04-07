@@ -14,7 +14,7 @@ from torch.utils.data import DataLoader, TensorDataset
 import torchvision.transforms as transforms
 
 # local functions
-from DDR.model_reg import *
+from ddr.model_reg import *
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process GPU indices.')

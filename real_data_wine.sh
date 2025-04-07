@@ -38,6 +38,7 @@ Rscript real_data_wine.R --postfix="umap_11"
 # conda create --name ddr python=3.8
 # conda activate ddr
 # pip install -r requirements.txt
+# I have keep one file in the folder ddr/model_reg.py which can be executed directly.
 python real_data_wine_ddr.py --gpu="" --latent_dim=2
 python real_data_wine.py --method="ddr" --latent_dim=2
 Rscript real_data_wine.R --postfix="ddr_2"
