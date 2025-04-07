@@ -1,10 +1,10 @@
-# Codes for Conditional Independence Test by Conditional Continuous Normalizing Flow Models
+# Code for the paper *Transport Map-Based Conditional Independence Test*
 
 ## Reproduction Guide
 
 *Caution: There is a mismatch between the model ranks. Here: Models 1, 2, 3, 4 correspond to main article's Models 2, 4, 1, 3, respectively.*
 
--   Each bash file contains command lines to reproduce results of one setting.
+-   Each bash file in the folder *commands/* contains command lines to reproduce results of one setting.
     -   For instance: **model1_1_n500.sh** reproduces the results of model 1, setting 1, with sample size $n=500$. We take it as an example.
     -   1. It generates data and stores at the *data/* folder, e.g.,
         ```bash

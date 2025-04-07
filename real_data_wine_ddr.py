@@ -23,7 +23,7 @@ def parse_arguments():
     parser.add_argument('--hidden_num', type=int, default=8, help='Hidden dimensions of flow training.')
     parser.add_argument('--lr', type=float, default=2e-3, help='Learning rate of flow training.')
     parser.add_argument('--batchsize', type=int, default=200, help='Batchsize of flow training.')
-    parser.add_argument('--n_iter', type=int, default=100, help='Iteration of flow training.')
+    parser.add_argument('--n_iter', type=int, default=25, help='Iteration of flow training.')
     parser.add_argument('--num_steps', type=int, default=500, help='Number of steps when sampling ODE.')
     parser.add_argument('--FlowCIT_DC', type=int, default=1, help='Implement FlowCIT-DC or not.')
     parser.add_argument('--FlowCIT_IPC', type=int, default=1, help='Implement FlowCIT-IPC or not.')

@@ -211,7 +211,7 @@ def test(args, epoch, R_net, testLoader, optimizer, device):
         data=latent_np,
         columns=[f'z_{i}' for i in range(latent_np.shape[1])]
     )
-    df_z.to_csv(f'results_ddr/test_results_epoch_z_{epoch}.csv', index=False)    
+    df_z.to_csv(f'results_ddr/test_results_epoch_z_dim{latent_np.shape[1]}_ep{epoch}.csv', index=False)    
 
     dCor_loss /= len(testLoader)
     print('\nEpoch {}: Test set: dCor_loss: {:.4f}'.format(

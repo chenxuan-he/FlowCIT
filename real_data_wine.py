@@ -134,13 +134,13 @@ if __name__=="__main__":
         pca = PCA(n_components=latent_dim).fit(X_train)
         X_test_dr = torch.from_numpy(pca.transform(X_test)).float()
     elif method == "sir":
-        sir = SlicedInverseRegression(n_directions=2).fit(X_train, y_train.squeeze())
+        sir = SlicedInverseRegression(n_directions=latent_dim).fit(X_train, y_train.squeeze())
         X_test_dr = torch.from_numpy(sir.transform(X_test)).float()
     elif method == "umap":
-        umap_model = umap.UMAP(n_neighbors=100, n_components=4, min_dist=0.5, metric="euclidean").fit(X_train)
+        umap_model = umap.UMAP(n_neighbors=100, n_components=latent_dim, min_dist=0.5, metric="euclidean").fit(X_train)
         X_test_dr = torch.from_numpy(umap_model.transform(X_test))
     elif method == "ddr":
-        X_test_dr = torch.from_numpy(pd.read_csv('results_ddr/test_results_epoch_z_100.csv').to_numpy()).float()
+        X_test_dr = torch.from_numpy(pd.read_csv(f'results_ddr/test_results_epoch_z_dim{latent_dim}_ep25.csv').to_numpy()).float()
 
     save_to_local(X_test_torch, y_test_torch, X_test_dr, postfix=postfix)
     test(x=X_test_torch, y=y_test_torch, z=X_test_dr, args=args, device=device)

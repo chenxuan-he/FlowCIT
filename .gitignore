@@ -24,3 +24,6 @@ real_data_wine/*
 DDR/*
 results_ddr/*
 !results_ddr/.gitkeep
+functions_dgcit.py
+functions_gcit.py
+model_GCIT.py
