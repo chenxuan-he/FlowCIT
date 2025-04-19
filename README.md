@@ -1,4 +1,4 @@
-# Code for the paper *Transport Map-Based Conditional Independence Test*
+# Code for the paper *Conditional Independence Test Based on Transport Maps*
 
 ## Reproduction Guide
 

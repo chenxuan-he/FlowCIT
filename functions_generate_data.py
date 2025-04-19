@@ -102,37 +102,9 @@ def generate_data(model=1, sim_type=0, n=1000, p=3, q=3, d=3, s=2, alpha=.1, see
 
 
 def read_data(model, sim_type, alpha, n, p, q, d, seed):
-    df = pd.read_csv(f"/home/chenxhe/flow_test/data/data_model{model}_simtype{sim_type}_alpha{alpha}_n{n}_p{p}_q{q}_d{d}_seed{seed}.csv")
+    df = pd.read_csv(f"/home/chenxhe/FlowCIT/data/data_model{model}_simtype{sim_type}_alpha{alpha}_n{n}_p{p}_q{q}_d{d}_seed{seed}.csv")
     # Convert back to PyTorch tensors
     X = torch.tensor(df[[f"X{i+1}" for i in range(p)]].values)
     Y = torch.tensor(df[[f"Y{i+1}" for i in range(q)]].values)
     Z = torch.tensor(df[[f"Z{i+1}" for i in range(d)]].values)
     return X.type(torch.float32), Y.type(torch.float32), Z.type(torch.float32)
-
-
-def generate_swiss_roll(n_samples, dim=3, noise=0.05, seed=0):
-    """
-    Generate data in the shape of a Swiss Roll.
-    """
-    np.random.seed(seed)
-    data, _ = make_swiss_roll(n_samples=n_samples, noise=noise, random_state=seed)
-    if dim > 3:
-        extra_dims = np.random.randn(n_samples, dim - 3)
-        return np.hstack((data, extra_dims))
-    return data
-
-
-def generate_helix(n_samples, dim=3, noise=0.1, seed=0):
-    """
-    Generate data in the shape of a 3D helix.
-    """
-    np.random.seed(seed)
-    t = np.linspace(0, 4 * np.pi, n_samples)
-    x = np.sin(t)
-    y = np.cos(t)
-    z = t
-    data = np.stack((x, y, z), axis=1)
-    if dim > 3:
-        extra_dims = np.random.randn(n_samples, dim - 3) * noise
-        return np.hstack((data, extra_dims))
-    return data + np.random.normal(scale=noise, size=data.shape)

@@ -14,8 +14,6 @@ def parse_arguments():
     parser.add_argument('--model', type=int, default=1, help='Different models in the simulations.')
     parser.add_argument('--sim_type', type=int, default=1, help='Different simulation types.')
     parser.add_argument('--hidden_num', type=int, default=64, help='Hidden dimension of FlowCIT.')
-    parser.add_argument('--GCIT', type=bool, default=False, help='Whether we are extracting GCIT.')
-    parser.add_argument('--GCIT_test_prop', type=float, default=0.1, help='Testing proportions of GCIT.')
     return parser.parse_args()
 
 
@@ -29,18 +27,13 @@ if __name__ == "__main__":
     model = args.model
     sim_type = args.sim_type
     hidden_num = args.hidden_num
-    GCIT = args.GCIT
-    GCIT_test_prop = args.GCIT_test_prop
 
     # Create an empty list to store the means
     means_list = []
 
     for alpha in alphas:
         # Specify the file name
-        if not GCIT:
-            file_name = f'results/model{model}_type{sim_type}-alpha-{alpha}-n-{n}-x-{p}-y-{q}-z-{d}-hidden_num{hidden_num}.csv'
-        else:
-            file_name = f'results/model{model}_type{sim_type}-alpha-{alpha}-n-{n}-x-{p}-y-{q}-z-{d}-GCIT-test_prop{GCIT_test_prop}.csv'
+        file_name = f'results/model{model}_type{sim_type}-alpha-{alpha}-n-{n}-x-{p}-y-{q}-z-{d}-hidden_num{hidden_num}.csv'
 
         # Read the CSV file into a DataFrame
         data = pd.read_csv(file_name, header=None)
@@ -58,14 +51,7 @@ if __name__ == "__main__":
     means_df.reset_index(inplace=True)
     means_df.rename(columns={'index': 'alpha'}, inplace=True)
 
-    if not GCIT:
-        means_df.columns = ['alpha', 'FlowCIT', 'FCIT', 'CDC', 'CCIT'] + list(means_df.columns[5:])
-        means_df_truncated = means_df.iloc[:, :5]
+    means_df.columns = ['alpha', 'FlowCIT', 'FCIT', 'CDC', 'CCIT'] + list(means_df.columns[5:])
+    means_df_truncated = means_df.iloc[:, :5]
 
-        means_df_truncated.to_csv(f'model{model}_simtype{sim_type}-n-{n}-x-{p}-y-{q}-z-{d}.csv', index=False)
-
-    else:
-        means_df.columns = ['alpha', 'GCIT'] + list(means_df.columns[2:])
-        means_df_truncated = means_df.iloc[:, :2]
-
-        means_df_truncated.to_csv(f'model{model}_simtype{sim_type}-n-{n}-x-{p}-y-{q}-z-{d}-GCIT.csv', index=False)
+    means_df_truncated.to_csv(f'model{model}_simtype{sim_type}-n-{n}-x-{p}-y-{q}-z-{d}.csv', index=False)
